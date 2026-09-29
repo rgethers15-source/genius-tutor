@@ -13,8 +13,8 @@
     "build:renderer": "vite build",
     "typecheck": "tsc --noEmit",
     "electron:preview": "vite build && electron .",
-    "dist:win": "vite build && electron-builder --win",
-    "dist:mac": "vite build && electron-builder --mac"
+    "dist:win": "vite build && electron-builder --win --publish never",
+    "dist:mac": "vite build && electron-builder --mac --publish never"
   },
   "dependencies": {
     "react": "^18.3.1",
