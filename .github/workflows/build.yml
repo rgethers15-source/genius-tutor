@@ -1,0 +1,76 @@
+name: Build Desktop Installers
+
+# Builds the Windows (.exe) and macOS (.dmg) installers automatically.
+# - Runs on every push to main and on any version tag (v*).
+# - Pushing a tag like v0.1.0 also publishes a GitHub Release with the
+#   installers attached, so they can be downloaded with one click.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch: # lets you trigger a build manually from the Actions tab
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            build_cmd: npm run dist:win
+            artifact_name: windows-installer
+            artifact_path: release/*.exe
+          - os: macos-latest
+            build_cmd: npm run dist:mac
+            artifact_name: macos-installer
+            artifact_path: release/*.dmg
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build installer
+        run: ${{ matrix.build_cmd }}
+        env:
+          # Skip code-signing in CI (unsigned builds are fine for personal use).
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: warn
+
+  # When a version tag (v*) is pushed, collect both installers into a Release.
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/windows-installer/*
+            artifacts/macos-installer/*
+          generate_release_notes: true
