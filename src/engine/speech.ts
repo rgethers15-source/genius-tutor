@@ -87,6 +87,72 @@ export const webSpeechProvider: SpeechProvider = {
   },
 };
 
+// ============================================================
+// OpenAI Text-to-Speech provider — natural, human-sounding voices.
+// Uses the caregiver's OpenAI key. Falls back to Web Speech on error.
+// Voice names: alloy, echo, fable, onyx, nova, shimmer.
+// ============================================================
+export function openAiSpeechProvider(apiKey: string): SpeechProvider {
+  let currentAudio: HTMLAudioElement | null = null;
+
+  function voiceName(cfg: VoiceConfig): string {
+    // Map our simple config to pleasant human voices.
+    if (cfg.preferredVoice && /alloy|echo|fable|onyx|nova|shimmer/i.test(cfg.preferredVoice)) {
+      return cfg.preferredVoice.toLowerCase();
+    }
+    // Male-leaning: onyx/echo; female-leaning: nova/shimmer.
+    return cfg.gender === 'female' ? 'nova' : 'onyx';
+  }
+
+  return {
+    isSupported() {
+      return apiKey.trim().length > 10;
+    },
+    stop() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+    },
+    speak(text, opts) {
+      this.stop();
+      opts.onStart?.();
+      fetch('https://api.openai.com/v1/audio/speech', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey.trim()}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini-tts',
+          voice: voiceName(opts.voice),
+          input: text,
+          speed: opts.voice.rate, // 0.25–4.0; our rates ~0.9 read calmly
+        }),
+      })
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`TTS ${res.status}`);
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          currentAudio = audio;
+          audio.onended = () => {
+            URL.revokeObjectURL(url);
+            currentAudio = null;
+            opts.onEnd?.();
+          };
+          // Approximate lip-sync ticks while the human voice plays.
+          audio.ontimeupdate = () => opts.onBoundary?.();
+          await audio.play();
+        })
+        .catch(() => {
+          // Fall back to the built-in (robotic) voice so speech still happens.
+          webSpeechProvider.speak(text, opts);
+        });
+    },
+  };
+}
+
 let active: SpeechProvider = webSpeechProvider;
 export function getSpeech(): SpeechProvider {
   return active;

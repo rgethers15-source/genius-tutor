@@ -15,6 +15,7 @@ export function LessonPlayer({
   onEarnStar,
   onRecordAnswer,
   onLessonComplete,
+  onGenerateQuestions,
   onBack,
 }: {
   tutor: AnimeTutor;
@@ -23,6 +24,8 @@ export function LessonPlayer({
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
   onLessonComplete?: (lessonId: string, title: string) => void;
+  /** When provided, enables unlimited AI-generated practice questions. */
+  onGenerateQuestions?: (count: number) => Promise<QuizItem[]>;
   onBack: () => void;
 }) {
   const lessons = allLessonsForSubject(tutor.subject);
@@ -38,6 +41,31 @@ export function LessonPlayer({
   const [testItems, setTestItems] = useState<QuizItem[]>([]);
   const [testIdx, setTestIdx] = useState(0);
   const [testScore, setTestScore] = useState(0);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState('');
+
+  async function startAiPractice() {
+    if (!onGenerateQuestions) return;
+    setAiBusy(true);
+    setAiError('');
+    try {
+      const items = await onGenerateQuestions(5);
+      if (items.length === 0) throw new Error('No questions came back.');
+      setTestItems(items);
+      setTestIdx(0);
+      setTestScore(0);
+      setLocked(false);
+      setPhase('test');
+      speak(`New practice made just for you! ${items[0].q}`);
+    } catch (e) {
+      setAiError(
+        e instanceof Error && /fetch|network|openai/i.test(e.message)
+          ? 'Could not reach OpenAI. Check the key in Settings and your internet.'
+          : 'Could not make new questions. Try the regular lessons for now.'
+      );
+    }
+    setAiBusy(false);
+  }
 
   const speak = useCallback(
     (text: string, nextMood: AvatarMood = 'speaking') => {
@@ -195,7 +223,20 @@ export function LessonPlayer({
               <strong style={{ fontSize: '1.15rem' }}>📝 Take a Test</strong>
               <div className="muted">5 quick questions. Earn stars!</div>
             </div>
+            {onGenerateQuestions && (
+              <div
+                className="card clickable"
+                style={{ borderColor: tutor.accent }}
+                onClick={aiBusy ? undefined : startAiPractice}
+              >
+                <strong style={{ fontSize: '1.15rem' }}>
+                  {aiBusy ? '🎲 Making questions…' : '🎲 Endless Practice (AI)'}
+                </strong>
+                <div className="muted">Brand-new questions every time!</div>
+              </div>
+            )}
           </div>
+          {aiError && <p style={{ color: 'var(--danger)', marginTop: 12 }}>{aiError}</p>}
         </div>
       ) : (
         <div className="lesson-stage">

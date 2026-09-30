@@ -586,6 +586,97 @@ CURRICULUM_6.push(
   }
 );
 
+// Third wave — broader coverage so every subject has several lessons even
+// without AI generation. (For truly unlimited practice, the app can also
+// generate NC-aligned questions on demand via OpenAI.)
+CURRICULUM_6.push(
+  {
+    id: 'm-rp-extra',
+    subject: 'math',
+    name: 'Math: Ratios Practice',
+    lessons: [
+      {
+        id: 'm-rp-3',
+        subject: 'math',
+        standard: 'NC.6.RP.2',
+        topic: 'Unit rate',
+        title: 'How much for one?',
+        steps: [
+          { say: 'If 2 apples cost 4 dollars, one apple costs 2 dollars.', visual: '🍎💲' },
+          { say: 'We split the price by how many. 4 ÷ 2 = 2.' },
+        ],
+        quiz: [
+          { q: 'If 3 pens cost 6 dollars, how much is 1 pen?', choices: ['2 dollars', '3 dollars', '6 dollars'], answer: '2 dollars', hint: 'Split: 6 ÷ 3 = ?' },
+          { q: 'If 2 toys cost 10 dollars, how much is 1 toy?', choices: ['5 dollars', '2 dollars', '10 dollars'], answer: '5 dollars', hint: '10 ÷ 2 = ?' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'm-ns-extra',
+    subject: 'math',
+    name: 'Math: Fractions',
+    lessons: [
+      {
+        id: 'm-ns-2',
+        subject: 'math',
+        standard: 'NC.6.NS.1',
+        topic: 'Simple fractions',
+        title: 'Parts of a whole',
+        steps: [
+          { say: 'A pizza cut in 2 equal parts — each part is one half (1/2).', visual: '🍕' },
+          { say: 'Cut in 4 equal parts — each is one quarter (1/4).' },
+        ],
+        quiz: [
+          { q: 'A pizza is cut into 2 equal pieces. One piece is…', choices: ['One half', 'One third', 'A whole'], answer: 'One half', hint: '2 equal parts means halves.' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'r-seq',
+    subject: 'reading',
+    name: 'Reading: Order',
+    lessons: [
+      {
+        id: 'r-seq-1',
+        subject: 'reading',
+        standard: 'RL.6.3',
+        topic: 'Sequence of events',
+        title: 'What happened first?',
+        steps: [
+          { say: 'Stories happen in order: first, then, last.', visual: '➡️' },
+          { say: '"She woke up. Then she ate. Last she went to school."' },
+        ],
+        quiz: [
+          { q: '"He put on socks, then shoes." What went on FIRST?', choices: ['Socks', 'Shoes', 'Hat'], answer: 'Socks', hint: 'Which word comes before "then"?' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'ss-3',
+    subject: 'socialStudies',
+    name: 'Social Studies: Government',
+    lessons: [
+      {
+        id: 'ss-3-1',
+        subject: 'socialStudies',
+        standard: 'NC.6.C&G',
+        topic: 'Rules and laws',
+        title: 'Why we have rules',
+        steps: [
+          { say: 'Rules keep people safe and fair.', visual: '⚖️' },
+          { say: 'A law is a rule for a whole town or country.' },
+        ],
+        quiz: [
+          { q: 'Why do we have rules?', choices: ['To keep us safe', 'To be mean', 'For no reason'], answer: 'To keep us safe', hint: 'Rules help everyone stay safe and fair.' },
+        ],
+      },
+    ],
+  }
+);
+
 export function unitsForSubject(subject: Subject): Unit[] {
   return CURRICULUM_6.filter((u) => u.subject === subject);
 }

@@ -101,9 +101,10 @@ export async function generateAvatar(
     }
     return { ok: false, error: 'No image returned by OpenAI.' };
   } catch (e) {
-    return {
-      ok: false,
-      error: e instanceof Error ? e.message : 'Network error reaching OpenAI.',
-    };
+    const msg = e instanceof Error ? e.message : String(e);
+    const friendly = /failed to fetch|networkerror|load failed/i.test(msg)
+      ? 'Could not reach OpenAI. Check your internet connection, and make sure your OpenAI account has image generation and billing enabled.'
+      : msg;
+    return { ok: false, error: friendly };
   }
 }

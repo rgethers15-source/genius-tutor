@@ -3,7 +3,7 @@ import type { Profile } from '../types';
 import { ANIME_TUTORS, type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
 import { AnimatedAvatar, type AvatarMood } from './AnimatedAvatar';
-import { getSpeech, warmUpVoices } from '../engine/speech';
+import { getSpeech, warmUpVoices, setSpeech, openAiSpeechProvider, webSpeechProvider } from '../engine/speech';
 import {
   nextQuestion,
   checkAnswer,
@@ -24,6 +24,7 @@ import { activeImageFor } from '../data/gallery';
 import { recordAnswer, recordLessonComplete, recordHomework, recordReading } from '../data/stats';
 import { APP_VERSION, RELEASES_URL, checkForUpdate, type UpdateStatus } from '../version';
 import { checkNewBadges, type Badge } from '../data/badges';
+import { generateQuestions } from '../engine/questionGen';
 import { BadgeShelf } from './BadgeShelf';
 import { ReadingPractice } from './ReadingPractice';
 import {
@@ -88,14 +89,21 @@ export function AnimeEnvironment({
     return () => getSpeech().stop();
   }, []);
 
-  // Activate smart Homework Help when an API key is stored on the profile.
+  // Activate smart Homework Help + natural human voice when a key is present.
   useEffect(() => {
     if (profile.openAiKey && profile.openAiKey.trim().length > 10) {
       setHomeworkAi(openAiHomeworkProvider(profile.openAiKey.trim()));
+      // Use natural OpenAI voices unless the caregiver turned them off.
+      if (profile.humanVoice !== false) {
+        setSpeech(openAiSpeechProvider(profile.openAiKey.trim()));
+      } else {
+        setSpeech(webSpeechProvider);
+      }
     } else {
       setHomeworkAi(offlineHomeworkProvider);
+      setSpeech(webSpeechProvider);
     }
-  }, [profile.openAiKey]);
+  }, [profile.openAiKey, profile.humanVoice]);
 
   // Activate talking-head video avatars when a D-ID key is present.
   useEffect(() => {
@@ -586,6 +594,17 @@ export function AnimeEnvironment({
             onLessonComplete={(id, title) =>
               update_(recordLessonComplete(profile, activeTutor.subject, id, title))
             }
+            onGenerateQuestions={
+              profile.openAiKey && profile.openAiKey.trim().length > 10
+                ? (count) =>
+                    generateQuestions(
+                      profile.openAiKey!,
+                      activeTutor.subject,
+                      profile.reasoningLevel ?? '3',
+                      count
+                    )
+                : undefined
+            }
             onBack={() => setScreen('activity')}
           />
         )}
@@ -745,6 +764,24 @@ export function AnimeEnvironment({
                   {profile.autoSpeak !== false ? 'On' : 'Off'}
                 </button>
               </div>
+              <div className="toggle-row">
+                <span>
+                  Natural human voice (uses OpenAI)
+                  {!profile.openAiKey && <span className="faint"> — needs OpenAI key</span>}
+                </span>
+                <button
+                  type="button"
+                  className={`chip ${profile.humanVoice !== false && profile.openAiKey ? 'on' : ''}`}
+                  disabled={!profile.openAiKey}
+                  onClick={() => onUpdate({ ...profile, humanVoice: !(profile.humanVoice !== false) })}
+                >
+                  {profile.humanVoice !== false ? 'On' : 'Off'}
+                </button>
+              </div>
+              <p className="faint" style={{ marginTop: 8 }}>
+                With your OpenAI key, tutors use a real human-sounding voice. Without it,
+                they use the computer's built-in (more robotic) voice.
+              </p>
             </div>
 
             <div className="card" style={{ marginTop: 16 }}>
