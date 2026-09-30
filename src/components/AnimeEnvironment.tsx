@@ -21,7 +21,11 @@ import { LessonPlayer } from './LessonPlayer';
 import { HomeworkHelp } from './HomeworkHelp';
 import { TutorGallery } from './TutorGallery';
 import { activeImageFor } from '../data/gallery';
-import { recordAnswer, recordLessonComplete, recordHomework } from '../data/stats';
+import { recordAnswer, recordLessonComplete, recordHomework, recordReading } from '../data/stats';
+import { APP_VERSION, RELEASES_URL, checkForUpdate, type UpdateStatus } from '../version';
+import { checkNewBadges, type Badge } from '../data/badges';
+import { BadgeShelf } from './BadgeShelf';
+import { ReadingPractice } from './ReadingPractice';
 import {
   setVideoAvatar,
   didVideoProvider,
@@ -34,7 +38,7 @@ import {
   offlineHomeworkProvider,
 } from '../engine/homeworkAi';
 
-type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings' | 'gallery';
+type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings' | 'gallery' | 'reading' | 'badges';
 type UploadKind = 'tutor' | 'room' | 'music';
 
 export function AnimeEnvironment({
@@ -61,6 +65,20 @@ export function AnimeEnvironment({
   const [didKeyInput, setDidKeyInput] = useState('');
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoBusy, setVideoBusy] = useState(false);
+  const [update, setUpdate] = useState<UpdateStatus | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [badgeToast, setBadgeToast] = useState<Badge | null>(null);
+
+  // Wrap updates so newly-earned badges are recorded + celebrated.
+  function update_(next: Profile) {
+    const { newly, all } = checkNewBadges(next);
+    const withBadges = { ...next, earnedBadges: all };
+    onUpdate(withBadges);
+    if (newly.length > 0) {
+      setBadgeToast(newly[0]);
+      window.setTimeout(() => setBadgeToast(null), 4000);
+    }
+  }
 
   const room = getRoom(profile.activeRoomId);
   const roomImage = profile.roomImages?.[room.id];
@@ -311,6 +329,16 @@ export function AnimeEnvironment({
         </div>
       </div>
 
+      {badgeToast && (
+        <div className="badge-toast">
+          <span className="badge-toast-emoji">{badgeToast.emoji}</span>
+          <div>
+            <strong>New Trophy! {badgeToast.name}</strong>
+            <div className="faint">{badgeToast.description}</div>
+          </div>
+        </div>
+      )}
+
       <div className="content">
         {screen === 'roster' && (
           <div className="center">
@@ -318,10 +346,28 @@ export function AnimeEnvironment({
               <h1 className="anime-title">
                 <span className="sparkle">✨</span> {profile.name}'s Anime Academy
               </h1>
-              <button className="btn ghost" type="button" onClick={onExit}>
-                ← Back
-              </button>
+              <div className="row">
+                <button className="btn small" type="button" onClick={() => setScreen('settings')}>
+                  ⚙️ Settings
+                </button>
+                <button className="btn ghost" type="button" onClick={onExit}>
+                  ← Back
+                </button>
+              </div>
             </div>
+
+            {!profile.openAiKey && (
+              <div className="card" style={{ borderColor: 'var(--accent)', marginTop: 8 }}>
+                <div className="row between">
+                  <span>
+                    🧠 <strong>Turn on Smart Homework Help</strong> — add your OpenAI key in Settings.
+                  </span>
+                  <button className="btn small" type="button" onClick={() => setScreen('settings')}>
+                    Open Settings
+                  </button>
+                </div>
+              </div>
+            )}
             <p className="muted" style={{ fontSize: '1.15rem' }}>
               Pick a tutor to start. Tap a card to learn — they will talk to you! 🎧
             </p>
@@ -482,6 +528,24 @@ export function AnimeEnvironment({
                       ⚡ Quick Practice
                     </button>
                     <button
+                      className="btn big-btn"
+                      type="button"
+                      style={{ background: activeTutor.accent }}
+                      onClick={() => {
+                        getSpeech().stop();
+                        setScreen('reading');
+                      }}
+                    >
+                      🎤 Read Out Loud
+                    </button>
+                    <button
+                      className="btn big-btn ghost"
+                      type="button"
+                      onClick={() => setScreen('badges')}
+                    >
+                      🏆 My Trophies
+                    </button>
+                    <button
                       className="btn big-btn ghost"
                       type="button"
                       onClick={() => {
@@ -517,10 +581,10 @@ export function AnimeEnvironment({
                   },
                 };
               }
-              onUpdate(next);
+              update_(next);
             }}
             onLessonComplete={(id, title) =>
-              onUpdate(recordLessonComplete(profile, activeTutor.subject, id, title))
+              update_(recordLessonComplete(profile, activeTutor.subject, id, title))
             }
             onBack={() => setScreen('activity')}
           />
@@ -532,7 +596,7 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             profile={profile}
             onBack={() => setScreen('activity')}
-            onUsed={() => onUpdate(recordHomework(profile, activeTutor.subject))}
+            onUsed={() => update_(recordHomework(profile, activeTutor.subject))}
           />
         )}
 
@@ -546,12 +610,38 @@ export function AnimeEnvironment({
           />
         )}
 
+        {/* Reading out loud (microphone practice) */}
+        {screen === 'reading' && activeTutor && (
+          <ReadingPractice
+            tutor={activeTutor}
+            profile={profile}
+            onEarnStar={() => {
+              const recorded = recordReading(profile, activeTutor.subject);
+              update_({ ...recorded, starsEarned: recorded.starsEarned + 1 });
+            }}
+            onBack={() => setScreen('activity')}
+          />
+        )}
+
+        {/* Trophy shelf / badges */}
+        {screen === 'badges' && (
+          <BadgeShelf
+            profile={profile}
+            accent={activeTutor?.accent}
+            onBack={() => setScreen(activeTutor ? 'activity' : 'roster')}
+          />
+        )}
+
         {/* Settings: OpenAI key for smart mode */}
         {screen === 'settings' && (
           <div className="center">
             <div className="row between" style={{ marginBottom: 16 }}>
               <h1 className="anime-title">⚙️ Settings</h1>
-              <button className="btn ghost" type="button" onClick={() => setScreen('activity')}>
+              <button
+                className="btn ghost"
+                type="button"
+                onClick={() => setScreen(activeTutor ? 'activity' : 'roster')}
+              >
                 ← Back
               </button>
             </div>
@@ -655,6 +745,41 @@ export function AnimeEnvironment({
                   {profile.autoSpeak !== false ? 'On' : 'Off'}
                 </button>
               </div>
+            </div>
+
+            <div className="card" style={{ marginTop: 16 }}>
+              <h2>⬆️ App Version & Updates</h2>
+              <p className="muted">
+                You are running <strong>Genius Tutor v{APP_VERSION}</strong>.
+                Updates are installed by downloading the newest file from the
+                releases page (your profiles and progress are kept).
+              </p>
+              <div className="row" style={{ marginTop: 8 }}>
+                <button
+                  className="btn"
+                  type="button"
+                  disabled={checking}
+                  onClick={async () => {
+                    setChecking(true);
+                    setUpdate(await checkForUpdate());
+                    setChecking(false);
+                  }}
+                >
+                  {checking ? 'Checking…' : 'Check for updates'}
+                </button>
+                <a className="btn ghost" href={RELEASES_URL} target="_blank" rel="noreferrer">
+                  Open downloads page ↗
+                </a>
+              </div>
+              {update && (
+                <p className="muted" style={{ marginTop: 10 }}>
+                  {update.error
+                    ? `Could not check: ${update.error}`
+                    : update.upToDate
+                      ? '✅ You are on the latest version!'
+                      : `🎉 A newer version (v${update.latest}) is available — open the downloads page to get it.`}
+                </p>
+              )}
             </div>
           </div>
         )}

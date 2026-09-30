@@ -470,6 +470,122 @@ CURRICULUM_6.push(
   }
 );
 
+// A second wave of lessons for more variety and practice.
+CURRICULUM_6.push(
+  {
+    id: 'm-sp',
+    subject: 'math',
+    name: 'Math: Data (NC.6.SP)',
+    lessons: [
+      {
+        id: 'm-sp-1',
+        subject: 'math',
+        standard: 'NC.6.SP.5',
+        topic: 'Finding the biggest number',
+        title: 'Most and least',
+        steps: [
+          { say: 'Look at these numbers: 3, 7, 2. The biggest is 7!', visual: '📊' },
+          { say: 'The smallest is 2. We just compare them.' },
+        ],
+        quiz: [
+          {
+            q: 'Which is the biggest? 4, 9, 1',
+            choices: ['9', '4', '1'],
+            answer: '9',
+            hint: 'Which number is the most? Count up: 1, 4, 9.',
+          },
+          {
+            q: 'Which is the smallest? 8, 5, 6',
+            choices: ['5', '8', '6'],
+            answer: '5',
+            hint: 'The smallest is the least. 5 is less than 6 and 8.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'r-vocab',
+    subject: 'reading',
+    name: 'Reading: New Words',
+    lessons: [
+      {
+        id: 'r-vocab-1',
+        subject: 'reading',
+        standard: 'L.6.4',
+        topic: 'Using context clues',
+        title: 'Guessing a word',
+        steps: [
+          { say: 'If you see a hard word, look at the other words to help.', visual: '🔍' },
+          { say: '"The huge elephant was very big." Huge means... big!' },
+        ],
+        quiz: [
+          {
+            q: '"The tiny ant was very small." What does tiny mean?',
+            choices: ['Small', 'Loud', 'Fast'],
+            answer: 'Small',
+            hint: 'Look at the other words. It says "very small."',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'w-3',
+    subject: 'writing',
+    name: 'Writing: Telling a Story',
+    lessons: [
+      {
+        id: 'w-3-1',
+        subject: 'writing',
+        standard: 'W.6.3',
+        topic: 'Beginning, middle, end',
+        title: 'Parts of a story',
+        steps: [
+          { say: 'Every story has 3 parts: a beginning, a middle, and an end.', visual: '1️⃣2️⃣3️⃣' },
+          { say: 'The beginning tells who and where.' },
+          { say: 'The middle is what happens. The end is how it finishes.' },
+        ],
+        quiz: [
+          {
+            q: 'Which part comes FIRST in a story?',
+            choices: ['The beginning', 'The middle', 'The end'],
+            answer: 'The beginning',
+            hint: 'First, middle, last. Which is first?',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 's-3',
+    subject: 'science',
+    name: 'Science: Animals',
+    lessons: [
+      {
+        id: 's-3-1',
+        subject: 'science',
+        standard: 'NC.6.L',
+        topic: 'Animal groups',
+        title: 'Kinds of animals',
+        steps: [
+          { say: 'Some animals have fur, like a dog. They are mammals.', visual: '🐶' },
+          { say: 'Some have feathers and fly. They are birds.', visual: '🐦' },
+          { say: 'Some live in water and have fins. They are fish.', visual: '🐟' },
+        ],
+        quiz: [
+          {
+            q: 'Which animal is a bird?',
+            choices: ['An eagle', 'A shark', 'A cow'],
+            answer: 'An eagle',
+            hint: 'A bird has feathers and can fly. Which one flies?',
+          },
+        ],
+      },
+    ],
+  }
+);
+
 export function unitsForSubject(subject: Subject): Unit[] {
   return CURRICULUM_6.filter((u) => u.subject === subject);
 }

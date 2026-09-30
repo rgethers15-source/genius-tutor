@@ -115,6 +115,8 @@ export interface Profile {
   stats?: LearnerStats;
   /** PIN that gates the grown-up parent dashboard (kept simple, local only). */
   parentPin?: string;
+  /** Ids of badges the learner has earned (for celebrating new unlocks). */
+  earnedBadges?: string[];
 }
 
 /** Aggregate learning stats, per subject, for the parent dashboard. */

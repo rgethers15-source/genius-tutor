@@ -115,6 +115,29 @@ export function recordHomework(profile: Profile, subject: Subject): Profile {
   };
 }
 
+/** Record a reading-out-loud success (feeds the Brave Reader badge). */
+export function recordReading(profile: Profile, subject: Subject): Profile {
+  const stats = getStats(profile);
+  const s = subjectStats(stats, subject);
+  s.attempts += 1;
+  s.correct += 1;
+  const now = new Date().toISOString();
+  return {
+    ...profile,
+    stats: {
+      ...stats,
+      bySubject: { ...stats.bySubject, [subject]: s },
+      lastActive: now,
+      recent: pushRecent(stats, {
+        at: now,
+        subject,
+        kind: 'quiz',
+        detail: 'Read a word out loud',
+      }),
+    },
+  };
+}
+
 /** Add approximate minutes spent (called on exit). */
 export function addMinutes(profile: Profile, minutes: number): Profile {
   const stats = getStats(profile);
