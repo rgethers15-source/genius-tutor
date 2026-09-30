@@ -1,0 +1,10 @@
+Lo-fi music tracks in this folder are from the "OpenLo-Fi" collection
+(https://github.com/btahir/open-lofi), released under CC0 1.0 Universal
+(public domain). No attribution required. Free to use in this app.
+
+Tracks included:
+- rain-off-the-neon-signs.mp3
+- elevator-to-the-moon.mp3
+- midnight-window-glow.mp3
+- electric-puddles.mp3
+- high-rise-haze.mp3

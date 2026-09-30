@@ -384,3 +384,119 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
   from { transform: translateX(40px); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+/* ============================================================
+   Cyber-fantasy animated room scenes (behind lesson content)
+   Warm palette (amber/magenta), no harsh strobing.
+   ============================================================ */
+.scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.anime-env { position: relative; }
+.anime-env .room-bar,
+.anime-env .content,
+.anime-env .badge-toast { position: relative; z-index: 1; }
+
+/* Twinkling starfield (two layers for depth) */
+.scene-stars {
+  position: absolute; inset: -50%;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, #ffe4c4 40%, transparent),
+    radial-gradient(1px 1px at 60% 70%, #ffd9a0 40%, transparent),
+    radial-gradient(1.5px 1.5px at 80% 20%, #ffe9d0 40%, transparent),
+    radial-gradient(1px 1px at 40% 80%, #ffcf9a 40%, transparent),
+    radial-gradient(1.5px 1.5px at 90% 60%, #ffe4c4 40%, transparent),
+    radial-gradient(1px 1px at 10% 60%, #ffd9a0 40%, transparent);
+  background-repeat: repeat;
+  background-size: 400px 400px;
+  animation: twinkle 4s ease-in-out infinite, drift 90s linear infinite;
+  opacity: 0.7;
+}
+.scene-stars-2 { background-size: 250px 250px; opacity: 0.4; animation-duration: 6s, 140s; }
+@keyframes twinkle { 0%,100%{opacity:0.35;} 50%{opacity:0.8;} }
+@keyframes drift { from{transform:translateY(0);} to{transform:translateY(60px);} }
+
+/* Floating planet + glowing orbs (galaxy) */
+.scene-planet {
+  position: absolute; top: 12%; right: 14%;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f0a860, #b8532e 70%, #6a2a1e);
+  box-shadow: 0 0 60px #e8925c66, inset -12px -8px 30px #00000055;
+  animation: floaty 12s ease-in-out infinite;
+}
+.scene-orb {
+  position: absolute; border-radius: 50%; filter: blur(2px);
+  animation: floaty 9s ease-in-out infinite;
+}
+.scene-orb-a { width: 60px; height: 60px; top: 30%; left: 12%; background: radial-gradient(circle,#e8a04b,#a85a2e); box-shadow:0 0 40px #e8a04b88; }
+.scene-orb-b { width: 34px; height: 34px; bottom: 20%; right: 30%; background: radial-gradient(circle,#e39a6f,#8a3a4a); box-shadow:0 0 30px #e39a6f88; animation-duration: 7s; }
+@keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-22px);} }
+
+/* Neon city silhouette + rain + glows */
+.scene-city {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 42%;
+  background:
+    linear-gradient(180deg, transparent, #0d0716 90%),
+    repeating-linear-gradient(90deg, #2a1740 0 34px, #1c1030 34px 60px, #331a44 60px 96px, #1a0f2a 96px 130px);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 40%);
+  mask-image: linear-gradient(180deg, transparent, #000 40%);
+  opacity: 0.9;
+}
+.scene-rain {
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(115deg, transparent 0 6px, #e8a04b22 6px 7px);
+  animation: rain 0.6s linear infinite;
+  opacity: 0.35;
+}
+@keyframes rain { from{background-position:0 0;} to{background-position:-40px 120px;} }
+.scene-glow {
+  position: absolute; width: 420px; height: 420px; border-radius: 50%;
+  filter: blur(70px); opacity: 0.5;
+  animation: pulseGlow 8s ease-in-out infinite;
+}
+.scene-glow-a { top: -80px; left: -60px; background: #b8532e; }
+.scene-glow-b { bottom: -100px; right: -60px; background: #8a3a5a; animation-duration: 11s; }
+@keyframes pulseGlow { 0%,100%{opacity:0.35; transform:scale(1);} 50%{opacity:0.6; transform:scale(1.15);} }
+
+/* Aurora ribbons */
+.scene-aurora {
+  position: absolute; left: -20%; right: -20%; height: 55%;
+  filter: blur(38px); opacity: 0.5; border-radius: 50%;
+  animation: auroraWave 14s ease-in-out infinite;
+}
+.scene-aurora-a { top: 4%; background: linear-gradient(90deg, transparent, #e8a04b, #b8532e, transparent); }
+.scene-aurora-b { top: 22%; background: linear-gradient(90deg, transparent, #d98a5a, #8a3a5a, transparent); animation-duration: 18s; }
+.scene-aurora-c { top: 40%; background: linear-gradient(90deg, transparent, #e39a6f, #a8425a, transparent); animation-duration: 22s; }
+@keyframes auroraWave {
+  0%,100% { transform: translateX(-6%) skewY(-3deg); }
+  50% { transform: translateX(6%) skewY(3deg); }
+}
+
+/* Retro cyber grid + sun */
+.scene-sun {
+  position: absolute; left: 50%; top: 24%; transform: translateX(-50%);
+  width: 220px; height: 220px; border-radius: 50%;
+  background: linear-gradient(180deg, #f0b25c, #d9525a);
+  box-shadow: 0 0 90px #e8925c88;
+}
+.scene-grid {
+  position: absolute; left: -20%; right: -20%; bottom: 0; height: 55%;
+  background-image:
+    linear-gradient(#e8a04b55 2px, transparent 2px),
+    linear-gradient(90deg, #e8a04b44 2px, transparent 2px);
+  background-size: 60px 60px;
+  transform: perspective(320px) rotateX(62deg);
+  transform-origin: bottom center;
+  animation: gridMove 3.5s linear infinite;
+  opacity: 0.55;
+}
+@keyframes gridMove { from{background-position:0 0;} to{background-position:0 60px;} }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-stars, .scene-planet, .scene-orb, .scene-rain, .scene-glow,
+  .scene-aurora, .scene-grid { animation: none; }
+}

@@ -18,11 +18,15 @@ import {
 } from '../engine/tutorBrain';
 import { fileToDataUrl } from '../data/image';
 import { STUDY_ROOMS, getRoom } from '../data/rooms';
+import { RoomScene } from './RoomScene';
 import {
   startFocusMusic,
   stopFocusMusic,
   setVolume,
   setCustomTrack,
+  nextTrack,
+  currentTitle,
+  onTrackChange,
 } from '../engine/focusMusic';
 import { LessonPlayer } from './LessonPlayer';
 import { HomeworkHelp } from './HomeworkHelp';
@@ -129,15 +133,21 @@ export function AnimeEnvironment({
     }
   }, [profile.didKey]);
 
+  const [nowPlaying, setNowPlaying] = useState(currentTitle());
+
   // Focus music lifecycle — starts/stops with the profile preference.
   useEffect(() => {
+    onTrackChange(() => setNowPlaying(currentTitle()));
     if (profile.customMusic) setCustomTrack(profile.customMusic);
     if (profile.focusMusic) {
       startFocusMusic(profile.musicVolume ?? 0.5);
     } else {
       stopFocusMusic();
     }
-    return () => stopFocusMusic();
+    return () => {
+      stopFocusMusic();
+      onTrackChange(null);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile.focusMusic, profile.customMusic]);
 
@@ -281,6 +291,9 @@ export function AnimeEnvironment({
           : room.gradient,
       }}
     >
+      {/* Animated cyber-fantasy scene (only when no custom room photo) */}
+      {!roomImage && <RoomScene scene={room.scene} />}
+
       <input
         ref={fileInputRef}
         type="file"
@@ -331,6 +344,21 @@ export function AnimeEnvironment({
           >
             {profile.focusMusic ? '🎵 Music On' : '🔇 Music Off'}
           </button>
+          {profile.focusMusic && (
+            <>
+              <span className="faint" style={{ fontSize: '0.82rem', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                ♪ {nowPlaying}
+              </span>
+              <button
+                type="button"
+                className="chip small"
+                title="Next track"
+                onClick={() => nextTrack()}
+              >
+                ⏭️
+              </button>
+            </>
+          )}
           <input
             type="range"
             min={0}
