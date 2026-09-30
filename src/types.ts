@@ -69,10 +69,20 @@ export interface Profile {
   /** Turns on the immersive anime learning environment for this learner. */
   animeEnvironment?: boolean;
   /**
-   * Uploaded tutor portrait images, keyed by anime tutor id.
-   * Stored as data URLs so they persist locally with the profile.
+   * LEGACY: single uploaded tutor portrait, keyed by anime tutor id.
+   * Kept for backward compatibility; migrated into `tutorGallery`.
    */
   tutorImages?: Record<string, string>;
+  /**
+   * Per-tutor image gallery (data URLs) — holds BOTH uploaded and
+   * AI-generated avatars. Keyed by anime tutor id.
+   */
+  tutorGallery?: Record<string, string[]>;
+  /**
+   * Which gallery image is the active (talking/animated) face per tutor.
+   * Stores the data URL of the chosen image.
+   */
+  activeTutorImage?: Record<string, string>;
   /**
    * Reasoning level the tutor should pitch content to (grade equivalent),
    * which can differ from the enrolled grade (e.g. 6th grade enrolled but

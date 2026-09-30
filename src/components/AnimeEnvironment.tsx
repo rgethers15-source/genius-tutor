@@ -19,13 +19,15 @@ import {
 } from '../engine/focusMusic';
 import { LessonPlayer } from './LessonPlayer';
 import { HomeworkHelp } from './HomeworkHelp';
+import { TutorGallery } from './TutorGallery';
+import { activeImageFor } from '../data/gallery';
 import {
   setHomeworkAi,
   openAiHomeworkProvider,
   offlineHomeworkProvider,
 } from '../engine/homeworkAi';
 
-type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings';
+type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings' | 'gallery';
 type UploadKind = 'tutor' | 'room' | 'music';
 
 export function AnimeEnvironment({
@@ -195,7 +197,7 @@ export function AnimeEnvironment({
     onUpdate({ ...profile, focusMusic: !profile.focusMusic });
   }
 
-  const imageFor = (id: string) => profile.tutorImages?.[id];
+  const imageFor = (id: string) => activeImageFor(profile, id);
 
   return (
     <div
@@ -315,9 +317,12 @@ export function AnimeEnvironment({
                       className="btn ghost small"
                       type="button"
                       style={{ marginTop: 12 }}
-                      onClick={() => triggerUpload('tutor', t.id)}
+                      onClick={() => {
+                        setActiveTutor(t);
+                        setScreen('gallery');
+                      }}
                     >
-                      {img ? '🔄 Change picture' : '⬆️ Add picture'}
+                      🖼️ {img ? 'Gallery' : 'Add / Generate'}
                     </button>
                   </div>
                 );
@@ -426,6 +431,16 @@ export function AnimeEnvironment({
                     >
                       ⚡ Quick Practice
                     </button>
+                    <button
+                      className="btn big-btn ghost"
+                      type="button"
+                      onClick={() => {
+                        getSpeech().stop();
+                        setScreen('gallery');
+                      }}
+                    >
+                      🖼️ Change Avatar
+                    </button>
                   </div>
                 )}
               </div>
@@ -459,6 +474,16 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             profile={profile}
             onBack={() => setScreen('activity')}
+          />
+        )}
+
+        {/* Avatar gallery: upload + AI-generate + pick active */}
+        {screen === 'gallery' && activeTutor && (
+          <TutorGallery
+            tutor={activeTutor}
+            profile={profile}
+            onUpdate={onUpdate}
+            onBack={() => setScreen(activeTutor ? 'roster' : 'activity')}
           />
         )}
 

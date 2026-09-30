@@ -4,6 +4,7 @@ import type { Profile } from '../types';
 import { AnimatedAvatar, type AvatarMood } from './AnimatedAvatar';
 import { getSpeech } from '../engine/speech';
 import { fileToDataUrl } from '../data/image';
+import { activeImageFor } from '../data/gallery';
 import {
   getHomeworkAi,
   resetHomeworkRoutine,
@@ -120,7 +121,7 @@ export function HomeworkHelp({
       <div className="lesson-stage">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
           <AnimatedAvatar
-            imageSrc={profile.tutorImages?.[tutor.id]}
+            imageSrc={activeImageFor(profile, tutor.id)}
             mood={mood}
             accent={tutor.accent}
             size={240}
