@@ -8,10 +8,12 @@ export function Dashboard({
   profile,
   onExit,
   onUpdate,
+  onEnterAnime,
 }: {
   profile: Profile;
   onExit: () => void;
   onUpdate: (p: Profile) => void;
+  onEnterAnime?: () => void;
 }) {
   const avatar = getAvatar(profile.avatarId);
   const grade = GRADE_LEVELS.find((g) => g.value === profile.plan.gradeLevel);
@@ -61,9 +63,21 @@ export function Dashboard({
             {grade?.label} • {profile.plan.primaryLearningStyle} learner • ⭐ {profile.starsEarned} stars earned
           </div>
         </div>
-        <button className="btn ghost small" type="button" onClick={onExit}>
-          Switch Learner
-        </button>
+        <div className="row">
+          {onEnterAnime && (
+            <button
+              className="btn small"
+              type="button"
+              onClick={onEnterAnime}
+              title="Immersive anime study rooms with talking tutors"
+            >
+              ✨ Anime Academy
+            </button>
+          )}
+          <button className="btn ghost small" type="button" onClick={onExit}>
+            Switch Learner
+          </button>
+        </div>
       </div>
 
       {activity ? (

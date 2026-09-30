@@ -4,8 +4,9 @@ import { loadData, saveData, upsertProfile, removeProfile } from './data/store';
 import { ProfilePicker } from './components/ProfilePicker';
 import { SetupWizard } from './components/SetupWizard';
 import { Dashboard } from './components/Dashboard';
+import { AnimeEnvironment } from './components/AnimeEnvironment';
 
-type View = 'loading' | 'picker' | 'setup' | 'dashboard';
+type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime';
 
 export function App() {
   const [data, setData] = useState<AppData>({ profiles: [], version: 1 });
@@ -54,7 +55,8 @@ export function App() {
 
   function openProfile(p: Profile) {
     setActiveId(p.id);
-    setView('dashboard');
+    // Learners with the immersive anime environment go straight into it.
+    setView(p.animeEnvironment ? 'anime' : 'dashboard');
   }
 
   function toggleNight() {
@@ -77,6 +79,7 @@ export function App() {
         </div>
       </div>
 
+      {view !== 'anime' && (
       <div className="content">
         {view === 'loading' && <div className="center muted">Loading…</div>}
 
@@ -101,9 +104,22 @@ export function App() {
             profile={active}
             onExit={() => setView('picker')}
             onUpdate={handleUpdate}
+            onEnterAnime={() => {
+              handleUpdate({ ...active, animeEnvironment: true });
+              setView('anime');
+            }}
           />
         )}
       </div>
+      )}
+
+      {view === 'anime' && active && (
+        <AnimeEnvironment
+          profile={active}
+          onExit={() => setView('picker')}
+          onUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 }

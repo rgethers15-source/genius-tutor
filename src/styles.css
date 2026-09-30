@@ -170,3 +170,193 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 
 .activity-prompt { font-size: 1.15rem; line-height: 1.6; margin: 14px 0; }
 .kinetic-badge { color: var(--accent-strong); font-weight: 800; }
+
+/* ============================================================
+   Animated avatar (brings uploaded portrait to life)
+   ============================================================ */
+.avatar-stage {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--bg-raised);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  will-change: transform;
+}
+.avatar-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+}
+.avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  background: var(--accent-soft);
+}
+
+/* Gentle breathing/floating idle motion */
+@keyframes avatarIdle {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.012); }
+}
+.avatar-idle { animation: avatarIdle 4.2s ease-in-out infinite; }
+
+@keyframes avatarCheer {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  25% { transform: translateY(-10px) rotate(2deg); }
+  50% { transform: translateY(0) rotate(-2deg); }
+  75% { transform: translateY(-6px) rotate(1deg); }
+}
+.avatar-cheer { animation: avatarCheer 0.9s ease-in-out infinite; }
+
+/* Blink: quick shade near the eyes (upper third) */
+.avatar-blink {
+  position: absolute;
+  left: 0; right: 0; top: 26%;
+  height: 14%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.0), rgba(0,0,0,0.35), rgba(0,0,0,0.0));
+  opacity: 0;
+  transition: opacity 0.07s ease;
+  pointer-events: none;
+}
+.avatar-blink.on { opacity: 0.6; }
+
+/* Mouth lip-sync overlay (lower-center) */
+.avatar-mouth {
+  position: absolute;
+  left: 42%; right: 42%; top: 66%;
+  height: 8%;
+  border-radius: 50%;
+  background: rgba(60, 20, 20, 0.5);
+  filter: blur(3px);
+  transition: opacity 0.05s linear, transform 0.05s linear;
+  pointer-events: none;
+}
+
+/* Speaking sound waves */
+.avatar-waves {
+  position: absolute;
+  bottom: 10px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 5px; align-items: flex-end; height: 22px;
+}
+.avatar-waves span {
+  width: 5px; border-radius: 3px;
+  animation: wave 0.7s ease-in-out infinite;
+}
+.avatar-waves span:nth-child(1) { height: 10px; animation-delay: 0s; }
+.avatar-waves span:nth-child(2) { height: 20px; animation-delay: 0.15s; }
+.avatar-waves span:nth-child(3) { height: 13px; animation-delay: 0.3s; }
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.5); }
+  50% { transform: scaleY(1.2); }
+}
+
+/* Respect reduced-motion preferences (helps some ADHD/sensory needs) */
+@media (prefers-reduced-motion: reduce) {
+  .avatar-idle, .avatar-cheer, .avatar-waves span { animation: none; }
+}
+
+/* ============================================================
+   Anime immersive theme (Madeline's environment)
+   ============================================================ */
+.anime-env {
+  background:
+    radial-gradient(900px 500px at 20% -10%, #3a2340, transparent),
+    radial-gradient(900px 500px at 90% 10%, #4a2a2a, transparent),
+    linear-gradient(160deg, #1a1220, #201318);
+  min-height: 100%;
+}
+.anime-title {
+  font-size: 2.2rem;
+  background: linear-gradient(90deg, var(--accent-strong), #e39a6f, #d98a5a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+.sparkle { animation: sparkle 2.4s ease-in-out infinite; display: inline-block; }
+@keyframes sparkle {
+  0%, 100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(12deg); }
+}
+
+/* Big, calm, ADHD/dyslexia-friendly lesson layout */
+.lesson-stage {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.tutor-speech {
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 24px 28px;
+  font-size: 1.5rem;
+  line-height: 2;
+  min-height: 120px;
+}
+.big-input {
+  font-size: 1.5rem !important;
+  padding: 18px 20px !important;
+  border-width: 2px !important;
+}
+.big-btn { font-size: 1.3rem; padding: 16px 28px; }
+
+.subject-card {
+  text-align: center;
+  padding: 16px;
+}
+.subject-card .mini-avatar {
+  width: 96px; height: 96px; border-radius: 18px; object-fit: cover;
+  margin: 0 auto 10px; display: block; border: 2px solid var(--border);
+}
+.mini-avatar.fallback { display: flex; align-items: center; justify-content: center; font-size: 3rem; background: var(--accent-soft); }
+
+.read-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-soft); color: var(--accent-strong);
+  border: none; border-radius: 999px; padding: 8px 16px;
+  font-weight: 800; cursor: pointer; font-size: 1rem;
+}
+.read-btn:hover { filter: brightness(1.1); }
+
+.upload-drop {
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+.upload-drop:hover { border-color: var(--accent); }
+
+@media (max-width: 820px) {
+  .lesson-stage { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   Study rooms + focus-music control bar
+   ============================================================ */
+.room-backdrop {
+  transition: background 0.6s ease;
+}
+.room-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 18px;
+  background: rgba(20, 15, 18, 0.55);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.room-now { font-weight: 800; color: var(--text); }
+.room-rooms, .room-music { display: flex; align-items: center; gap: 8px; }
+.chip.small { padding: 6px 12px; font-size: 0.9rem; }
+.room-music input[type='range'] { accent-color: var(--accent); }

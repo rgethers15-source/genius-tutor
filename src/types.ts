@@ -66,6 +66,34 @@ export interface Profile {
   progress: Record<string, number>;
   /** Encouragement counter to reinforce self-esteem. */
   starsEarned: number;
+  /** Turns on the immersive anime learning environment for this learner. */
+  animeEnvironment?: boolean;
+  /**
+   * Uploaded tutor portrait images, keyed by anime tutor id.
+   * Stored as data URLs so they persist locally with the profile.
+   */
+  tutorImages?: Record<string, string>;
+  /**
+   * Reasoning level the tutor should pitch content to (grade equivalent),
+   * which can differ from the enrolled grade (e.g. 6th grade enrolled but
+   * content pitched to a 3rd-grade reasoning level).
+   */
+  reasoningLevel?: GradeLevel;
+  /** True to read all tutor speech aloud automatically. */
+  autoSpeak?: boolean;
+  /**
+   * Uploaded study-room background images, keyed by room id (data URLs).
+   * Rooms are the immersive spaces tutors teach in.
+   */
+  roomImages?: Record<string, string>;
+  /** Selected study room id for the immersive environment. */
+  activeRoomId?: string;
+  /** Play calm lofi focus music in the study room. */
+  focusMusic?: boolean;
+  /** Focus-music volume 0..1. */
+  musicVolume?: number;
+  /** Optional caregiver-uploaded focus track (data URL). */
+  customMusic?: string;
 }
 
 export interface AppData {
