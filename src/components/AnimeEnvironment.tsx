@@ -17,8 +17,15 @@ import {
   setVolume,
   setCustomTrack,
 } from '../engine/focusMusic';
+import { LessonPlayer } from './LessonPlayer';
+import { HomeworkHelp } from './HomeworkHelp';
+import {
+  setHomeworkAi,
+  openAiHomeworkProvider,
+  offlineHomeworkProvider,
+} from '../engine/homeworkAi';
 
-type Screen = 'roster' | 'lesson';
+type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings';
 type UploadKind = 'tutor' | 'room' | 'music';
 
 export function AnimeEnvironment({
@@ -41,6 +48,8 @@ export function AnimeEnvironment({
   const uploadKindRef = useRef<UploadKind>('tutor');
   const musicFileRef = useRef<HTMLInputElement | null>(null);
 
+  const [apiKeyInput, setApiKeyInput] = useState('');
+
   const room = getRoom(profile.activeRoomId);
   const roomImage = profile.roomImages?.[room.id];
 
@@ -48,6 +57,15 @@ export function AnimeEnvironment({
     warmUpVoices();
     return () => getSpeech().stop();
   }, []);
+
+  // Activate smart Homework Help when an API key is stored on the profile.
+  useEffect(() => {
+    if (profile.openAiKey && profile.openAiKey.trim().length > 10) {
+      setHomeworkAi(openAiHomeworkProvider(profile.openAiKey.trim()));
+    } else {
+      setHomeworkAi(offlineHomeworkProvider);
+    }
+  }, [profile.openAiKey]);
 
   // Focus music lifecycle — starts/stops with the profile preference.
   useEffect(() => {
@@ -84,16 +102,18 @@ export function AnimeEnvironment({
 
   function openTutor(tutor: AnimeTutor) {
     setActiveTutor(tutor);
-    setScreen('lesson');
+    setScreen('activity');
     setLocked(false);
     setTurn(null);
-    // Greeting first, then first question.
     speak(tutor.greeting, tutor, 'speaking');
-    window.setTimeout(() => {
-      const q = nextQuestion(tutor.subject);
-      setTurn(q);
-      speak(q.say, tutor, 'speaking');
-    }, 2600);
+  }
+
+  function startQuickPractice() {
+    if (!activeTutor) return;
+    setTurn(null);
+    const q = nextQuestion(activeTutor.subject);
+    setTurn(q);
+    speak(q.say, activeTutor, 'speaking');
   }
 
   function handleChoice(choice: string) {
@@ -316,22 +336,26 @@ export function AnimeEnvironment({
           </div>
         )}
 
-        {screen === 'lesson' && activeTutor && (
+        {/* Tutor hub: choose Lessons, Quick Practice, or Homework Help */}
+        {screen === 'activity' && activeTutor && (
           <div className="center">
             <div className="row between" style={{ marginBottom: 16 }}>
+              <span className="stars">⭐ {profile.starsEarned}</span>
               <div className="row">
-                <span className="stars">⭐ {profile.starsEarned}</span>
+                <button className="btn ghost small" type="button" onClick={() => setScreen('settings')}>
+                  ⚙️ Settings
+                </button>
+                <button
+                  className="btn ghost"
+                  type="button"
+                  onClick={() => {
+                    getSpeech().stop();
+                    setScreen('roster');
+                  }}
+                >
+                  ← Choose another tutor
+                </button>
               </div>
-              <button
-                className="btn ghost"
-                type="button"
-                onClick={() => {
-                  getSpeech().stop();
-                  setScreen('roster');
-                }}
-              >
-                ← Choose another tutor
-              </button>
             </div>
 
             <div className="lesson-stage">
@@ -349,17 +373,14 @@ export function AnimeEnvironment({
               </div>
 
               <div>
-                <div className="tutor-speech dyslexia">
-                  {bubble || '…'}
-                </div>
-
+                <div className="tutor-speech dyslexia">{bubble || '…'}</div>
                 <div className="row" style={{ marginTop: 12 }}>
                   <button className="read-btn" type="button" onClick={repeat}>
                     🔊 Say it again
                   </button>
                 </div>
 
-                {turn?.choices && (
+                {turn?.choices ? (
                   <div className="grid cols-3" style={{ marginTop: 20 }}>
                     {turn.choices.map((c) => (
                       <button
@@ -374,7 +395,137 @@ export function AnimeEnvironment({
                       </button>
                     ))}
                   </div>
+                ) : (
+                  <div className="grid cols-2" style={{ marginTop: 20 }}>
+                    <button
+                      className="btn big-btn"
+                      type="button"
+                      style={{ background: activeTutor.accent }}
+                      onClick={() => {
+                        getSpeech().stop();
+                        setScreen('lessons');
+                      }}
+                    >
+                      📚 Lessons & Tests
+                    </button>
+                    <button
+                      className="btn big-btn"
+                      type="button"
+                      style={{ background: activeTutor.accent }}
+                      onClick={() => {
+                        getSpeech().stop();
+                        setScreen('homework');
+                      }}
+                    >
+                      📝 Homework Help
+                    </button>
+                    <button
+                      className="btn big-btn ghost"
+                      type="button"
+                      onClick={startQuickPractice}
+                    >
+                      ⚡ Quick Practice
+                    </button>
+                  </div>
                 )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Lessons + quizzes + tests */}
+        {screen === 'lessons' && activeTutor && (
+          <LessonPlayer
+            tutor={activeTutor}
+            imageSrc={imageFor(activeTutor.id)}
+            autoSpeak={profile.autoSpeak !== false}
+            onEarnStar={() =>
+              onUpdate({
+                ...profile,
+                starsEarned: profile.starsEarned + 1,
+                progress: {
+                  ...profile.progress,
+                  [activeTutor.subject]: (profile.progress[activeTutor.subject] ?? 0) + 1,
+                },
+              })
+            }
+            onBack={() => setScreen('activity')}
+          />
+        )}
+
+        {/* Homework help (smart with API key) */}
+        {screen === 'homework' && activeTutor && (
+          <HomeworkHelp
+            tutor={activeTutor}
+            profile={profile}
+            onBack={() => setScreen('activity')}
+          />
+        )}
+
+        {/* Settings: OpenAI key for smart mode */}
+        {screen === 'settings' && (
+          <div className="center">
+            <div className="row between" style={{ marginBottom: 16 }}>
+              <h1 className="anime-title">⚙️ Settings</h1>
+              <button className="btn ghost" type="button" onClick={() => setScreen('activity')}>
+                ← Back
+              </button>
+            </div>
+
+            <div className="card">
+              <h2>🧠 Smart Homework Help (OpenAI)</h2>
+              <p className="muted">
+                Paste your OpenAI API key to let the tutor actually read uploaded
+                homework and explain it in simple steps at {profile.name}'s level.
+                The key is stored locally on this device only.
+              </p>
+              <div className="field" style={{ marginTop: 12 }}>
+                <label htmlFor="key">OpenAI API Key</label>
+                <input
+                  id="key"
+                  type="password"
+                  placeholder={profile.openAiKey ? '•••••• (saved)' : 'sk-...'}
+                  value={apiKeyInput}
+                  onChange={(e) => setApiKeyInput(e.target.value)}
+                />
+              </div>
+              <div className="row">
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    onUpdate({ ...profile, openAiKey: apiKeyInput.trim() });
+                    setApiKeyInput('');
+                  }}
+                >
+                  Save key
+                </button>
+                {profile.openAiKey && (
+                  <button
+                    className="btn ghost danger"
+                    type="button"
+                    onClick={() => onUpdate({ ...profile, openAiKey: undefined })}
+                  >
+                    Remove key
+                  </button>
+                )}
+                <span className={`pill`} style={{ marginLeft: 8 }}>
+                  {profile.openAiKey ? '🧠 Smart mode ON' : 'Coaching mode (no key)'}
+                </span>
+              </div>
+            </div>
+
+            <div className="card" style={{ marginTop: 16 }}>
+              <h2>🔊 Read aloud</h2>
+              <div className="toggle-row">
+                <span>Tutors talk out loud</span>
+                <button
+                  type="button"
+                  className={`chip ${profile.autoSpeak !== false ? 'on' : ''}`}
+                  onClick={() => onUpdate({ ...profile, autoSpeak: !(profile.autoSpeak !== false) })}
+                >
+                  {profile.autoSpeak !== false ? 'On' : 'Off'}
+                </button>
               </div>
             </div>
           </div>

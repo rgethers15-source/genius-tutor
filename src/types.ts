@@ -94,6 +94,11 @@ export interface Profile {
   musicVolume?: number;
   /** Optional caregiver-uploaded focus track (data URL). */
   customMusic?: string;
+  /**
+   * Optional OpenAI API key (stored locally only) that unlocks "smart mode"
+   * homework help — the tutor reads uploaded homework and explains it.
+   */
+  openAiKey?: string;
 }
 
 export interface AppData {
