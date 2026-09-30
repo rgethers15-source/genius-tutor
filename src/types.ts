@@ -115,6 +115,8 @@ export interface Profile {
   openAiKey?: string;
   /** Optional D-ID API key for talking-head video avatars (stored locally). */
   didKey?: string;
+  /** When true (and a D-ID key is set), tutors speak as talking-head video. */
+  videoMode?: boolean;
   /** Rich learning statistics for the parent dashboard. */
   stats?: LearnerStats;
   /** PIN that gates the grown-up parent dashboard (kept simple, local only). */

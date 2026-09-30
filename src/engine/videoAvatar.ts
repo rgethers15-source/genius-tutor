@@ -34,6 +34,29 @@ export const offlineVideoProvider: VideoAvatarProvider = {
   },
 };
 
+// Uploads a data-URL image to D-ID's /images endpoint and returns the
+// hosted URL D-ID can use as a talk source. Returns null on failure.
+async function uploadImage(imageDataUrl: string, auth: string): Promise<string | null> {
+  try {
+    // If it's already an http(s) URL, use it directly.
+    if (/^https?:\/\//i.test(imageDataUrl)) return imageDataUrl;
+
+    const blob = await (await fetch(imageDataUrl)).blob();
+    const form = new FormData();
+    form.append('image', blob, 'avatar.png');
+    const res = await fetch('https://api.d-id.com/images', {
+      method: 'POST',
+      headers: { Authorization: auth }, // do NOT set Content-Type; browser sets multipart boundary
+      body: form,
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.url ?? null;
+  } catch {
+    return null;
+  }
+}
+
 // --- D-ID provider ---
 export function didVideoProvider(apiKey: string): VideoAvatarProvider {
   const AUTH = `Basic ${apiKey.trim()}`;
@@ -43,8 +66,19 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
     },
     async speakVideo(imageDataUrl, text) {
       try {
-        // 1) Create a talk. D-ID accepts a source image URL; data URLs work
-        //    for many accounts, otherwise the caregiver hosts the image.
+        // 0) Upload the avatar image to D-ID so it becomes a hosted URL.
+        //    (D-ID's /talks source_url must be a reachable URL, not base64.)
+        const sourceUrl = await uploadImage(imageDataUrl, AUTH);
+        if (!sourceUrl) {
+          return {
+            ok: false,
+            smart: false,
+            error:
+              'Could not upload the avatar to D-ID. Use a realistic face image (a generated or photo avatar), not the emoji placeholder.',
+          };
+        }
+
+        // 1) Create a talk from the uploaded image.
         const createRes = await fetch('https://api.d-id.com/talks', {
           method: 'POST',
           headers: {
@@ -52,7 +86,7 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            source_url: imageDataUrl,
+            source_url: sourceUrl,
             script: {
               type: 'text',
               input: text,
@@ -61,7 +95,18 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
           }),
         });
         if (!createRes.ok) {
-          return { ok: false, smart: false, error: `D-ID create error ${createRes.status}` };
+          let detail = '';
+          try {
+            const err = await createRes.json();
+            detail = err?.description || err?.message || '';
+          } catch {
+            /* ignore */
+          }
+          return {
+            ok: false,
+            smart: false,
+            error: `D-ID could not make the video (${createRes.status}). ${detail}`.trim(),
+          };
         }
         const created = await createRes.json();
         const id = created?.id;

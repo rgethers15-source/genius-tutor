@@ -222,15 +222,25 @@ export function AnimeEnvironment({
     if (activeTutor && bubble) speak(bubble, activeTutor, 'speaking');
   }
 
-  async function speakOnVideo() {
-    if (!activeTutor || !bubble) return;
+  const [videoError, setVideoError] = useState('');
+
+  async function speakOnVideo(textOverride?: string) {
+    if (!activeTutor) return;
+    const line = textOverride ?? bubble;
+    if (!line) return;
     const img = imageFor(activeTutor.id);
-    if (!img) return;
+    if (!img) {
+      setVideoError('Pick or generate a realistic face avatar first (not the emoji).');
+      return;
+    }
     setVideoBusy(true);
+    setVideoError('');
     setVideoUrl(null);
-    const res = await getVideoAvatar().speakVideo(img, bubble);
+    const res = await getVideoAvatar().speakVideo(img, line);
     if (res.ok && res.videoUrl) {
       setVideoUrl(res.videoUrl);
+    } else {
+      setVideoError(res.error ?? 'Could not make the video.');
     }
     setVideoBusy(false);
   }
@@ -503,16 +513,31 @@ export function AnimeEnvironment({
 
             <div className="lesson-stage">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                <AnimatedAvatar
-                  imageSrc={imageFor(activeTutor.id)}
-                  mood={mood}
-                  accent={activeTutor.accent}
-                  size={400}
-                  fallbackGlyph={activeTutor.fallbackGlyph}
-                />
+                {videoUrl ? (
+                  <video
+                    src={videoUrl}
+                    autoPlay
+                    onEnded={() => setVideoUrl(null)}
+                    style={{ width: 400, borderRadius: 24, border: `3px solid ${activeTutor.accent}` }}
+                  />
+                ) : (
+                  <AnimatedAvatar
+                    imageSrc={imageFor(activeTutor.id)}
+                    mood={videoBusy ? 'thinking' : mood}
+                    accent={activeTutor.accent}
+                    size={400}
+                    fallbackGlyph={activeTutor.fallbackGlyph}
+                  />
+                )}
                 <strong style={{ fontSize: '1.3rem', color: activeTutor.accent }}>
                   {activeTutor.name}
+                  {videoBusy && <span className="faint"> — making video…</span>}
                 </strong>
+                {videoError && (
+                  <span className="faint" style={{ color: 'var(--danger)', maxWidth: 380, textAlign: 'center' }}>
+                    {videoError}
+                  </span>
+                )}
               </div>
 
               <div>
@@ -526,7 +551,7 @@ export function AnimeEnvironment({
                       className="read-btn"
                       type="button"
                       disabled={videoBusy}
-                      onClick={speakOnVideo}
+                      onClick={() => speakOnVideo()}
                     >
                       {videoBusy ? '🎬 Making video…' : '🎬 Speak on video'}
                     </button>
@@ -799,9 +824,24 @@ export function AnimeEnvironment({
                   </button>
                 )}
                 <span className="pill" style={{ marginLeft: 8 }}>
-                  {profile.didKey ? '🎬 Video mode ON' : 'Animated portrait (free)'}
+                  {profile.didKey ? '🎬 Key saved' : 'Animated portrait (free)'}
                 </span>
               </div>
+              {profile.didKey && (
+                <div className="toggle-row" style={{ marginTop: 12 }}>
+                  <span>
+                    Talking-head VIDEO when speaking (realistic mouth)
+                    <span className="faint"> — slower + costs per video</span>
+                  </span>
+                  <button
+                    type="button"
+                    className={`chip ${profile.videoMode ? 'on' : ''}`}
+                    onClick={() => onUpdate({ ...profile, videoMode: !profile.videoMode })}
+                  >
+                    {profile.videoMode ? 'On' : 'Off'}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="card" style={{ marginTop: 16 }}>
