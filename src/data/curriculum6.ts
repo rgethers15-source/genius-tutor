@@ -253,6 +253,223 @@ export const CURRICULUM_6: Unit[] = [
   },
 ];
 
+// ============================================================
+// Expanded content — more lessons across every subject.
+// Still simple language + tap-to-answer, pitched to ~3rd-grade reasoning.
+// ============================================================
+CURRICULUM_6.push(
+  // ---- MATH: more ----
+  {
+    id: 'm-ee',
+    subject: 'math',
+    name: 'Math: Expressions (NC.6.EE)',
+    lessons: [
+      {
+        id: 'm-ee-1',
+        subject: 'math',
+        standard: 'NC.6.EE.1',
+        topic: 'What is a variable?',
+        title: 'Letters that hold numbers',
+        steps: [
+          { say: 'Sometimes a letter stands for a number. We call it a variable.', visual: '🔤' },
+          { say: 'Like: x = 3. Here x is holding the number 3.' },
+          { say: 'So x + 2 means 3 + 2, which is 5!' },
+        ],
+        quiz: [
+          {
+            q: 'If x = 4, what is x + 1?',
+            choices: ['5', '4', '1'],
+            answer: '5',
+            hint: 'Put 4 where x is. Then add 1. 4 + 1 = ?',
+          },
+        ],
+      },
+      {
+        id: 'm-ee-2',
+        subject: 'math',
+        standard: 'NC.6.EE.2',
+        topic: 'Simple addition of tens',
+        title: 'Adding bigger numbers',
+        steps: [
+          { say: 'To add 20 + 30, first add the tens: 2 + 3 = 5.', visual: '🔢' },
+          { say: 'Then put the zero back on: 50!' },
+        ],
+        quiz: [
+          {
+            q: 'What is 40 + 20?',
+            choices: ['60', '42', '80'],
+            answer: '60',
+            hint: 'Add 4 + 2 = 6, then add the zero: 60.',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'm-g',
+    subject: 'math',
+    name: 'Math: Shapes (NC.6.G)',
+    lessons: [
+      {
+        id: 'm-g-1',
+        subject: 'math',
+        standard: 'NC.6.G.1',
+        topic: 'Area of a rectangle',
+        title: 'How much space?',
+        steps: [
+          { say: 'Area is how much space is inside a shape.', visual: '⬛' },
+          { say: 'For a rectangle: multiply the two sides.' },
+          { say: 'A box 2 across and 3 down = 2 × 3 = 6 squares!' },
+        ],
+        quiz: [
+          {
+            q: 'A rectangle is 5 across and 2 down. What is its area?',
+            choices: ['10', '7', '20'],
+            answer: '10',
+            hint: 'Multiply the sides: 5 × 2.',
+          },
+        ],
+      },
+    ],
+  },
+
+  // ---- READING: more ----
+  {
+    id: 'r-info',
+    subject: 'reading',
+    name: 'Reading: Facts (NC ELA)',
+    lessons: [
+      {
+        id: 'r-info-1',
+        subject: 'reading',
+        standard: 'RI.6.2',
+        topic: 'Fact vs. opinion',
+        title: 'True or just a feeling?',
+        steps: [
+          { say: 'A FACT is something true you can check.', visual: '✅' },
+          { say: 'An OPINION is what someone feels or likes.', visual: '💭' },
+          { say: '"The sky is blue" is a fact. "Blue is the best" is an opinion.' },
+        ],
+        quiz: [
+          {
+            q: 'Which one is a FACT?',
+            choices: ['Dogs have four legs.', 'Dogs are the best.', 'Dogs are cute.'],
+            answer: 'Dogs have four legs.',
+            hint: 'A fact is something you can count or check. Which can you check?',
+          },
+        ],
+      },
+    ],
+  },
+
+  // ---- WRITING: more ----
+  {
+    id: 'w-2',
+    subject: 'writing',
+    name: 'Writing: Capitals & Dots',
+    lessons: [
+      {
+        id: 'w-2-1',
+        subject: 'writing',
+        standard: 'L.6.2',
+        topic: 'Capital letters',
+        title: 'When to use big letters',
+        steps: [
+          { say: 'We start every sentence with a BIG letter.', visual: '🔠' },
+          { say: 'We also use big letters for names, like Madeline.' },
+          { say: 'Every sentence ends with a dot (.) — that is a period.' },
+        ],
+        quiz: [
+          {
+            q: 'Which sentence is written correctly?',
+            choices: ['The cat is soft.', 'the cat is soft', 'the Cat Is soft'],
+            answer: 'The cat is soft.',
+            hint: 'Big letter at the start, and a dot at the end.',
+          },
+        ],
+      },
+    ],
+  },
+
+  // ---- SCIENCE: more ----
+  {
+    id: 's-2',
+    subject: 'science',
+    name: 'Science: Earth & Sky',
+    lessons: [
+      {
+        id: 's-2-1',
+        subject: 'science',
+        standard: 'NC.6.E',
+        topic: 'Day and night',
+        title: 'Why do we have night?',
+        steps: [
+          { say: 'The Earth spins around like a slow top.', visual: '🌍' },
+          { say: 'When our side faces the sun, it is day. ☀️' },
+          { say: 'When our side turns away, it is night. 🌙' },
+        ],
+        quiz: [
+          {
+            q: 'What makes it become night?',
+            choices: ['Earth turns away from the sun', 'The sun breaks', 'The moon eats the sun'],
+            answer: 'Earth turns away from the sun',
+            hint: 'The Earth spins. Our side turns away from the sun.',
+          },
+        ],
+      },
+      {
+        id: 's-2-2',
+        subject: 'science',
+        standard: 'NC.6.P',
+        topic: 'Solid, liquid, gas',
+        title: 'Three kinds of stuff',
+        steps: [
+          { say: 'Ice is a SOLID — it holds its shape.', visual: '🧊' },
+          { say: 'Water is a LIQUID — it flows and pours.', visual: '💧' },
+          { say: 'Steam is a GAS — it floats in the air.', visual: '💨' },
+        ],
+        quiz: [
+          {
+            q: 'Which one is a liquid?',
+            choices: ['Water', 'Ice', 'A rock'],
+            answer: 'Water',
+            hint: 'A liquid can pour and flow. Which one pours?',
+          },
+        ],
+      },
+    ],
+  },
+
+  // ---- SOCIAL STUDIES: more ----
+  {
+    id: 'ss-2',
+    subject: 'socialStudies',
+    name: 'Social Studies: Maps & Money',
+    lessons: [
+      {
+        id: 'ss-2-1',
+        subject: 'socialStudies',
+        standard: 'NC.6.G',
+        topic: 'Reading a map',
+        title: 'Which way is which?',
+        steps: [
+          { say: 'On a map, up is North and down is South.', visual: '🧭' },
+          { say: 'Right is East, and left is West.' },
+          { say: 'Remember: Never (N) Eat (E) Soggy (S) Waffles (W)!' },
+        ],
+        quiz: [
+          {
+            q: 'On a map, which way is up?',
+            choices: ['North', 'South', 'West'],
+            answer: 'North',
+            hint: 'Up on a map is always North.',
+          },
+        ],
+      },
+    ],
+  }
+);
+
 export function unitsForSubject(subject: Subject): Unit[] {
   return CURRICULUM_6.filter((u) => u.subject === subject);
 }

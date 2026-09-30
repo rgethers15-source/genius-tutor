@@ -13,12 +13,16 @@ export function LessonPlayer({
   imageSrc,
   autoSpeak,
   onEarnStar,
+  onRecordAnswer,
+  onLessonComplete,
   onBack,
 }: {
   tutor: AnimeTutor;
   imageSrc?: string;
   autoSpeak: boolean;
   onEarnStar: () => void;
+  onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
+  onLessonComplete?: (lessonId: string, title: string) => void;
   onBack: () => void;
 }) {
   const lessons = allLessonsForSubject(tutor.subject);
@@ -80,6 +84,7 @@ export function LessonPlayer({
     if (!lesson || locked) return;
     const item = lesson.quiz[quizIdx];
     const correct = choice.trim().toLowerCase() === item.answer.trim().toLowerCase();
+    onRecordAnswer?.(correct, 'quiz');
     if (correct) {
       setLocked(true);
       onEarnStar();
@@ -91,6 +96,7 @@ export function LessonPlayer({
           setLocked(false);
           speak(lesson.quiz[next].q);
         } else {
+          onLessonComplete?.(lesson.id, lesson.title);
           setPhase('menu');
           speak('You finished the lesson! Amazing work. Pick another, or try a test!', 'happy');
         }
@@ -114,6 +120,7 @@ export function LessonPlayer({
     if (locked) return;
     const item = testItems[testIdx];
     const correct = choice.trim().toLowerCase() === item.answer.trim().toLowerCase();
+    onRecordAnswer?.(correct, 'test');
     setLocked(true);
     if (correct) {
       setTestScore((s) => s + 1);

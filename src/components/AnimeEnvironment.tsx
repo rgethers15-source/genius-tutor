@@ -21,6 +21,13 @@ import { LessonPlayer } from './LessonPlayer';
 import { HomeworkHelp } from './HomeworkHelp';
 import { TutorGallery } from './TutorGallery';
 import { activeImageFor } from '../data/gallery';
+import { recordAnswer, recordLessonComplete, recordHomework } from '../data/stats';
+import {
+  setVideoAvatar,
+  didVideoProvider,
+  offlineVideoProvider,
+  getVideoAvatar,
+} from '../engine/videoAvatar';
 import {
   setHomeworkAi,
   openAiHomeworkProvider,
@@ -51,6 +58,9 @@ export function AnimeEnvironment({
   const musicFileRef = useRef<HTMLInputElement | null>(null);
 
   const [apiKeyInput, setApiKeyInput] = useState('');
+  const [didKeyInput, setDidKeyInput] = useState('');
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoBusy, setVideoBusy] = useState(false);
 
   const room = getRoom(profile.activeRoomId);
   const roomImage = profile.roomImages?.[room.id];
@@ -68,6 +78,15 @@ export function AnimeEnvironment({
       setHomeworkAi(offlineHomeworkProvider);
     }
   }, [profile.openAiKey]);
+
+  // Activate talking-head video avatars when a D-ID key is present.
+  useEffect(() => {
+    if (profile.didKey && profile.didKey.trim().length > 10) {
+      setVideoAvatar(didVideoProvider(profile.didKey.trim()));
+    } else {
+      setVideoAvatar(offlineVideoProvider);
+    }
+  }, [profile.didKey]);
 
   // Focus music lifecycle — starts/stops with the profile preference.
   useEffect(() => {
@@ -150,6 +169,19 @@ export function AnimeEnvironment({
 
   function repeat() {
     if (activeTutor && bubble) speak(bubble, activeTutor, 'speaking');
+  }
+
+  async function speakOnVideo() {
+    if (!activeTutor || !bubble) return;
+    const img = imageFor(activeTutor.id);
+    if (!img) return;
+    setVideoBusy(true);
+    setVideoUrl(null);
+    const res = await getVideoAvatar().speakVideo(img, bubble);
+    if (res.ok && res.videoUrl) {
+      setVideoUrl(res.videoUrl);
+    }
+    setVideoBusy(false);
   }
 
   // --- Image upload (tutors + rooms) ---
@@ -383,7 +415,25 @@ export function AnimeEnvironment({
                   <button className="read-btn" type="button" onClick={repeat}>
                     🔊 Say it again
                   </button>
+                  {profile.didKey && imageFor(activeTutor.id) && (
+                    <button
+                      className="read-btn"
+                      type="button"
+                      disabled={videoBusy}
+                      onClick={speakOnVideo}
+                    >
+                      {videoBusy ? '🎬 Making video…' : '🎬 Speak on video'}
+                    </button>
+                  )}
                 </div>
+                {videoUrl && (
+                  <video
+                    src={videoUrl}
+                    controls
+                    autoPlay
+                    style={{ width: '100%', borderRadius: 14, marginTop: 12, border: '1px solid var(--border)' }}
+                  />
+                )}
 
                 {turn?.choices ? (
                   <div className="grid cols-3" style={{ marginTop: 20 }}>
@@ -454,15 +504,23 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             imageSrc={imageFor(activeTutor.id)}
             autoSpeak={profile.autoSpeak !== false}
-            onEarnStar={() =>
-              onUpdate({
-                ...profile,
-                starsEarned: profile.starsEarned + 1,
-                progress: {
-                  ...profile.progress,
-                  [activeTutor.subject]: (profile.progress[activeTutor.subject] ?? 0) + 1,
-                },
-              })
+            onEarnStar={() => { /* stars handled in onRecordAnswer to avoid double state writes */ }}
+            onRecordAnswer={(correct, kind) => {
+              let next = recordAnswer(profile, activeTutor.subject, correct, kind);
+              if (correct) {
+                next = {
+                  ...next,
+                  starsEarned: next.starsEarned + 1,
+                  progress: {
+                    ...next.progress,
+                    [activeTutor.subject]: (next.progress[activeTutor.subject] ?? 0) + 1,
+                  },
+                };
+              }
+              onUpdate(next);
+            }}
+            onLessonComplete={(id, title) =>
+              onUpdate(recordLessonComplete(profile, activeTutor.subject, id, title))
             }
             onBack={() => setScreen('activity')}
           />
@@ -474,6 +532,7 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             profile={profile}
             onBack={() => setScreen('activity')}
+            onUsed={() => onUpdate(recordHomework(profile, activeTutor.subject))}
           />
         )}
 
@@ -536,6 +595,50 @@ export function AnimeEnvironment({
                 )}
                 <span className={`pill`} style={{ marginLeft: 8 }}>
                   {profile.openAiKey ? '🧠 Smart mode ON' : 'Coaching mode (no key)'}
+                </span>
+              </div>
+            </div>
+
+            <div className="card" style={{ marginTop: 16 }}>
+              <h2>🎬 Talking-Head Video Avatars (D-ID)</h2>
+              <p className="muted">
+                Optional: paste a D-ID API key to make the tutor's face speak like a
+                real video (lifelike lip movement). This is a paid service with a
+                per-video cost. Without it, the tutor still talks with the free
+                animated portrait. Key stored locally only.
+              </p>
+              <div className="field" style={{ marginTop: 12 }}>
+                <label htmlFor="didkey">D-ID API Key</label>
+                <input
+                  id="didkey"
+                  type="password"
+                  placeholder={profile.didKey ? '•••••• (saved)' : 'base64 key from D-ID'}
+                  value={didKeyInput}
+                  onChange={(e) => setDidKeyInput(e.target.value)}
+                />
+              </div>
+              <div className="row">
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    onUpdate({ ...profile, didKey: didKeyInput.trim() });
+                    setDidKeyInput('');
+                  }}
+                >
+                  Save key
+                </button>
+                {profile.didKey && (
+                  <button
+                    className="btn ghost danger"
+                    type="button"
+                    onClick={() => onUpdate({ ...profile, didKey: undefined })}
+                  >
+                    Remove key
+                  </button>
+                )}
+                <span className="pill" style={{ marginLeft: 8 }}>
+                  {profile.didKey ? '🎬 Video mode ON' : 'Animated portrait (free)'}
                 </span>
               </div>
             </div>

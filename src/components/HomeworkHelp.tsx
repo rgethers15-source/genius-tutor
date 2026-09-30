@@ -15,10 +15,12 @@ export function HomeworkHelp({
   tutor,
   profile,
   onBack,
+  onUsed,
 }: {
   tutor: AnimeTutor;
   profile: Profile;
   onBack: () => void;
+  onUsed?: () => void;
 }) {
   const [image, setImage] = useState<string | undefined>();
   const [question, setQuestion] = useState('');
@@ -77,6 +79,7 @@ export function HomeworkHelp({
     setSmart(res.smart);
     speak(res.say);
     setBusy(false);
+    onUsed?.();
   }
 
   return (

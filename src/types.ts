@@ -109,6 +109,39 @@ export interface Profile {
    * homework help — the tutor reads uploaded homework and explains it.
    */
   openAiKey?: string;
+  /** Optional D-ID API key for talking-head video avatars (stored locally). */
+  didKey?: string;
+  /** Rich learning statistics for the parent dashboard. */
+  stats?: LearnerStats;
+  /** PIN that gates the grown-up parent dashboard (kept simple, local only). */
+  parentPin?: string;
+}
+
+/** Aggregate learning stats, per subject, for the parent dashboard. */
+export interface SubjectStats {
+  correct: number;
+  attempts: number;
+  lessonsCompleted: number;
+  /** Seconds spent (approx). */
+  timeSpent: number;
+}
+
+export interface ActivityEvent {
+  at: string; // ISO timestamp
+  subject: Subject;
+  kind: 'lesson' | 'quiz' | 'test' | 'homework';
+  detail: string;
+}
+
+export interface LearnerStats {
+  bySubject: Partial<Record<Subject, SubjectStats>>;
+  /** Completed lesson ids. */
+  completedLessons: string[];
+  /** Rolling recent activity (most recent last), capped in code. */
+  recent: ActivityEvent[];
+  lastActive?: string;
+  /** Total minutes across sessions (approx). */
+  totalMinutes: number;
 }
 
 export interface AppData {

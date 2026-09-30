@@ -5,8 +5,9 @@ import { ProfilePicker } from './components/ProfilePicker';
 import { SetupWizard } from './components/SetupWizard';
 import { Dashboard } from './components/Dashboard';
 import { AnimeEnvironment } from './components/AnimeEnvironment';
+import { ParentDashboard } from './components/ParentDashboard';
 
-type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime';
+type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'parent';
 
 export function App() {
   const [data, setData] = useState<AppData>({ profiles: [], version: 1 });
@@ -71,6 +72,11 @@ export function App() {
           <span className="logo">🎓</span> Genius Tutor
         </div>
         <div className="row">
+          {active && view !== 'parent' && (
+            <button className="btn ghost small" type="button" onClick={() => setView('parent')}>
+              📊 Parent
+            </button>
+          )}
           {active && (
             <button className="btn ghost small" type="button" onClick={toggleNight}>
               {active.nightMode ? '☀️ Day mode' : '🌙 Night mode'}
@@ -108,6 +114,14 @@ export function App() {
               handleUpdate({ ...active, animeEnvironment: true });
               setView('anime');
             }}
+          />
+        )}
+
+        {view === 'parent' && active && (
+          <ParentDashboard
+            profile={active}
+            onUpdate={handleUpdate}
+            onExit={() => setView(active.animeEnvironment ? 'anime' : 'dashboard')}
           />
         )}
       </div>
