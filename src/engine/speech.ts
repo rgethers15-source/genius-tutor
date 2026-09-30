@@ -153,6 +153,72 @@ export function openAiSpeechProvider(apiKey: string): SpeechProvider {
   };
 }
 
+// ============================================================
+// ElevenLabs Text-to-Speech — the most natural human voices.
+// Uses the caregiver's ElevenLabs key. Falls back to Web Speech on error.
+// ============================================================
+
+// A few good default ElevenLabs public voice IDs (male-leaning for the
+// chosen anime tutors). preferredVoice may override with a specific ID.
+const ELEVEN_MALE = 'TxGEqnHWrfWFTfGW9XjX'; // "Josh" - warm young male
+const ELEVEN_FEMALE = 'EXAVITQu4vr4xnSDxMaL'; // "Sarah" - soft female
+
+export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
+  let currentAudio: HTMLAudioElement | null = null;
+
+  function voiceId(cfg: VoiceConfig): string {
+    if (cfg.preferredVoice && cfg.preferredVoice.length >= 15) return cfg.preferredVoice;
+    return cfg.gender === 'female' ? ELEVEN_FEMALE : ELEVEN_MALE;
+  }
+
+  return {
+    isSupported() {
+      return apiKey.trim().length > 10;
+    },
+    stop() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+    },
+    speak(text, opts) {
+      this.stop();
+      opts.onStart?.();
+      fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId(opts.voice)}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': apiKey.trim(),
+          'Content-Type': 'application/json',
+          Accept: 'audio/mpeg',
+        },
+        body: JSON.stringify({
+          text,
+          model_id: 'eleven_turbo_v2_5',
+          voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+        }),
+      })
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`ElevenLabs ${res.status}`);
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          currentAudio = audio;
+          audio.onended = () => {
+            URL.revokeObjectURL(url);
+            currentAudio = null;
+            opts.onEnd?.();
+          };
+          audio.ontimeupdate = () => opts.onBoundary?.();
+          await audio.play();
+        })
+        .catch(() => {
+          // Fall back to the built-in voice so speech still happens.
+          webSpeechProvider.speak(text, opts);
+        });
+    },
+  };
+}
+
 let active: SpeechProvider = webSpeechProvider;
 export function getSpeech(): SpeechProvider {
   return active;

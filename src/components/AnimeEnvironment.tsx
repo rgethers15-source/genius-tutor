@@ -3,7 +3,14 @@ import type { Profile } from '../types';
 import { ANIME_TUTORS, type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
 import { AnimatedAvatar, type AvatarMood } from './AnimatedAvatar';
-import { getSpeech, warmUpVoices, setSpeech, openAiSpeechProvider, webSpeechProvider } from '../engine/speech';
+import {
+  getSpeech,
+  warmUpVoices,
+  setSpeech,
+  openAiSpeechProvider,
+  elevenLabsSpeechProvider,
+  webSpeechProvider,
+} from '../engine/speech';
 import {
   nextQuestion,
   checkAnswer,
@@ -64,6 +71,7 @@ export function AnimeEnvironment({
 
   const [apiKeyInput, setApiKeyInput] = useState('');
   const [didKeyInput, setDidKeyInput] = useState('');
+  const [elevenKeyInput, setElevenKeyInput] = useState('');
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoBusy, setVideoBusy] = useState(false);
   const [update, setUpdate] = useState<UpdateStatus | null>(null);
@@ -89,21 +97,28 @@ export function AnimeEnvironment({
     return () => getSpeech().stop();
   }, []);
 
-  // Activate smart Homework Help + natural human voice when a key is present.
+  // Smart Homework Help uses OpenAI when its key is present.
   useEffect(() => {
     if (profile.openAiKey && profile.openAiKey.trim().length > 10) {
       setHomeworkAi(openAiHomeworkProvider(profile.openAiKey.trim()));
-      // Use natural OpenAI voices unless the caregiver turned them off.
-      if (profile.humanVoice !== false) {
-        setSpeech(openAiSpeechProvider(profile.openAiKey.trim()));
-      } else {
-        setSpeech(webSpeechProvider);
-      }
     } else {
       setHomeworkAi(offlineHomeworkProvider);
+    }
+  }, [profile.openAiKey]);
+
+  // Voice priority: ElevenLabs (most natural) > OpenAI TTS > built-in.
+  useEffect(() => {
+    const useHuman = profile.humanVoice !== false;
+    const eleven = profile.elevenLabsKey?.trim();
+    const openai = profile.openAiKey?.trim();
+    if (useHuman && eleven && eleven.length > 10) {
+      setSpeech(elevenLabsSpeechProvider(eleven));
+    } else if (useHuman && openai && openai.length > 10) {
+      setSpeech(openAiSpeechProvider(openai));
+    } else {
       setSpeech(webSpeechProvider);
     }
-  }, [profile.openAiKey, profile.humanVoice]);
+  }, [profile.elevenLabsKey, profile.openAiKey, profile.humanVoice]);
 
   // Activate talking-head video avatars when a D-ID key is present.
   useEffect(() => {
@@ -753,6 +768,53 @@ export function AnimeEnvironment({
             </div>
 
             <div className="card" style={{ marginTop: 16 }}>
+              <h2>🗣️ Best Voices (ElevenLabs)</h2>
+              <p className="muted">
+                Optional: paste your ElevenLabs API key for the most natural,
+                human-sounding tutor voices. If set, it's used first (before OpenAI).
+                Key stored locally only.
+              </p>
+              <div className="field" style={{ marginTop: 12 }}>
+                <label htmlFor="elevenkey">ElevenLabs API Key</label>
+                <input
+                  id="elevenkey"
+                  type="password"
+                  placeholder={profile.elevenLabsKey ? '•••••• (saved)' : 'your ElevenLabs key'}
+                  value={elevenKeyInput}
+                  onChange={(e) => setElevenKeyInput(e.target.value)}
+                />
+              </div>
+              <div className="row">
+                <button
+                  className="btn"
+                  type="button"
+                  onClick={() => {
+                    onUpdate({ ...profile, elevenLabsKey: elevenKeyInput.trim() });
+                    setElevenKeyInput('');
+                  }}
+                >
+                  Save key
+                </button>
+                {profile.elevenLabsKey && (
+                  <button
+                    className="btn ghost danger"
+                    type="button"
+                    onClick={() => onUpdate({ ...profile, elevenLabsKey: undefined })}
+                  >
+                    Remove key
+                  </button>
+                )}
+                <span className="pill" style={{ marginLeft: 8 }}>
+                  {profile.elevenLabsKey
+                    ? '🗣️ ElevenLabs voices ON'
+                    : profile.openAiKey
+                      ? 'Using OpenAI voice'
+                      : 'Using built-in voice'}
+                </span>
+              </div>
+            </div>
+
+            <div className="card" style={{ marginTop: 16 }}>
               <h2>🔊 Read aloud</h2>
               <div className="toggle-row">
                 <span>Tutors talk out loud</span>
@@ -764,24 +826,30 @@ export function AnimeEnvironment({
                   {profile.autoSpeak !== false ? 'On' : 'Off'}
                 </button>
               </div>
-              <div className="toggle-row">
-                <span>
-                  Natural human voice (uses OpenAI)
-                  {!profile.openAiKey && <span className="faint"> — needs OpenAI key</span>}
-                </span>
-                <button
-                  type="button"
-                  className={`chip ${profile.humanVoice !== false && profile.openAiKey ? 'on' : ''}`}
-                  disabled={!profile.openAiKey}
-                  onClick={() => onUpdate({ ...profile, humanVoice: !(profile.humanVoice !== false) })}
-                >
-                  {profile.humanVoice !== false ? 'On' : 'Off'}
-                </button>
-              </div>
-              <p className="faint" style={{ marginTop: 8 }}>
-                With your OpenAI key, tutors use a real human-sounding voice. Without it,
-                they use the computer's built-in (more robotic) voice.
-              </p>
+              {(() => {
+                const hasVoiceKey = !!(profile.elevenLabsKey || profile.openAiKey);
+                return (
+                  <>
+                    <div className="toggle-row">
+                      <span>
+                        Natural human voice
+                        {!hasVoiceKey && <span className="faint"> — needs ElevenLabs or OpenAI key</span>}
+                      </span>
+                      <button
+                        type="button"
+                        className={`chip ${profile.humanVoice !== false && hasVoiceKey ? 'on' : ''}`}
+                        disabled={!hasVoiceKey}
+                        onClick={() => onUpdate({ ...profile, humanVoice: !(profile.humanVoice !== false) })}
+                      >
+                        {profile.humanVoice !== false ? 'On' : 'Off'}
+                      </button>
+                    </div>
+                    <p className="faint" style={{ marginTop: 8 }}>
+                      Voice quality order: ElevenLabs (best) → OpenAI → built-in (robotic).
+                    </p>
+                  </>
+                );
+              })()}
             </div>
 
             <div className="card" style={{ marginTop: 16 }}>

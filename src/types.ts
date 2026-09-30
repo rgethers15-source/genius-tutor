@@ -91,8 +91,10 @@ export interface Profile {
   reasoningLevel?: GradeLevel;
   /** True to read all tutor speech aloud automatically. */
   autoSpeak?: boolean;
-  /** Use natural OpenAI human voices (default on when a key is set). */
+  /** Use natural human voices (default on when a voice key is set). */
   humanVoice?: boolean;
+  /** Optional ElevenLabs API key — top-tier natural voices (local only). */
+  elevenLabsKey?: string;
   /**
    * Uploaded study-room background images, keyed by room id (data URLs).
    * Rooms are the immersive spaces tutors teach in.
