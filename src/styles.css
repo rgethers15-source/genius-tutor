@@ -197,12 +197,12 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
   background: var(--accent-soft);
 }
 
-/* Gentle breathing/floating idle motion */
+/* Very subtle breathing (no more obvious bouncing) */
 @keyframes avatarIdle {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-6px) scale(1.012); }
+  50% { transform: translateY(-2px) scale(1.004); }
 }
-.avatar-idle { animation: avatarIdle 4.2s ease-in-out infinite; }
+.avatar-idle { animation: avatarIdle 5.5s ease-in-out infinite; }
 
 @keyframes avatarCheer {
   0%, 100% { transform: translateY(0) rotate(-2deg); }
@@ -224,15 +224,18 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 }
 .avatar-blink.on { opacity: 0.6; }
 
-/* Mouth lip-sync overlay (lower-center) */
+/* Mouth lip-sync overlay (lower-center) — darker "open mouth" shadow that
+   opens/closes over the picture's mouth area while speaking. Positioned for
+   a typical head-and-shoulders portrait. */
 .avatar-mouth {
   position: absolute;
-  left: 42%; right: 42%; top: 66%;
-  height: 8%;
-  border-radius: 50%;
-  background: rgba(60, 20, 20, 0.5);
-  filter: blur(3px);
-  transition: opacity 0.05s linear, transform 0.05s linear;
+  left: 44%; right: 44%; top: 70%;
+  height: 5%;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  background: radial-gradient(ellipse at center, rgba(40,10,10,0.75), rgba(40,10,10,0.15) 80%, transparent);
+  filter: blur(2px);
+  transform-origin: top center;
+  transition: opacity 0.04s linear, transform 0.04s linear;
   pointer-events: none;
 }
 
@@ -287,8 +290,8 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 /* Big, calm, ADHD/dyslexia-friendly lesson layout */
 .lesson-stage {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 28px;
+  grid-template-columns: 420px 1fr;
+  gap: 32px;
   align-items: start;
 }
 .tutor-speech {
@@ -500,3 +503,16 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
   .scene-stars, .scene-planet, .scene-orb, .scene-rain, .scene-glow,
   .scene-aurora, .scene-grid { animation: none; }
 }
+
+/* Listening indicator bars (mic active) */
+.listening-bar { display: flex; gap: 6px; align-items: flex-end; height: 30px; }
+.listening-bar span {
+  width: 7px; border-radius: 4px; background: var(--accent);
+  animation: listenPulse 1s ease-in-out infinite;
+}
+.listening-bar span:nth-child(1) { height: 12px; animation-delay: 0s; }
+.listening-bar span:nth-child(2) { height: 26px; animation-delay: 0.15s; }
+.listening-bar span:nth-child(3) { height: 18px; animation-delay: 0.3s; }
+.listening-bar span:nth-child(4) { height: 28px; animation-delay: 0.45s; }
+.listening-bar span:nth-child(5) { height: 14px; animation-delay: 0.6s; }
+@keyframes listenPulse { 0%,100%{transform:scaleY(0.4);} 50%{transform:scaleY(1.1);} }

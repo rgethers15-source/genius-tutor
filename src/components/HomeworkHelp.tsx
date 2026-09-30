@@ -127,7 +127,7 @@ export function HomeworkHelp({
             imageSrc={activeImageFor(profile, tutor.id)}
             mood={mood}
             accent={tutor.accent}
-            size={240}
+            size={380}
             fallbackGlyph={tutor.fallbackGlyph}
           />
           {smart && <span className="pill" style={{ background: `${tutor.accent}22`, color: tutor.accent }}>🧠 Smart mode on</span>}

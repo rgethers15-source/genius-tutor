@@ -1,5 +1,6 @@
 import type { Subject } from '../types';
 import type { VoiceConfig } from '../engine/speech';
+import type { SceneKind } from './rooms';
 
 // ============================================================
 // Madeline's anime tutor roster.
@@ -24,10 +25,16 @@ export interface AnimeTutor {
   accent: string;
   /** Emoji fallback shown until an image is uploaded. */
   fallbackGlyph: string;
+  /** This tutor's own themed background scene shown during teaching. */
+  scene: SceneKind;
 }
 
 // Note: voice rates are kept a touch slower than default for easier
 // listening (helps dyslexia/ADHD). All male voices per the chosen art.
+// Distinct ElevenLabs voice IDs per tutor — warm, natural young-male voices
+// (not "nerdy"). preferredVoice holds the ElevenLabs voice ID; the ElevenLabs
+// provider uses it directly. OpenAI/Web fall back to gender heuristics.
+// IDs are ElevenLabs public/pre-made voices.
 export const ANIME_TUTORS: AnimeTutor[] = [
   {
     id: 'tutor-kaito',
@@ -35,9 +42,11 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'reading',
     tagline: 'Your calm reading guide',
     greeting: "Hi Madeline! I'm Kaito. Let's read together. I will help you with every word. You've got this!",
-    voice: { rate: 0.9, pitch: 1.0, gender: 'male', preferredVoice: 'Daniel' },
+    // "Liam" — warm, youthful, articulate male
+    voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'TX3LPaxmHKxFdv7VOQHJ' },
     accent: '#e8a04b',
     fallbackGlyph: '📖',
+    scene: 'aurora',
   },
   {
     id: 'tutor-ren',
@@ -45,9 +54,11 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'math',
     tagline: 'Your friendly math buddy',
     greeting: "Hey Madeline! I'm Ren. Math is like a puzzle, and we solve it one small step at a time. Ready?",
-    voice: { rate: 0.92, pitch: 0.95, gender: 'male', preferredVoice: 'Alex' },
+    // "Josh" — deep, warm, confident young male (cool, not nerdy)
+    voice: { rate: 0.95, pitch: 1.0, gender: 'male', preferredVoice: 'TxGEqnHWrfWFTfGW9XjX' },
     accent: '#d98a5a',
     fallbackGlyph: '🔢',
+    scene: 'cyber-grid',
   },
   {
     id: 'tutor-sora',
@@ -55,9 +66,11 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'science',
     tagline: 'Your curious science explorer',
     greeting: "Hello Madeline! I'm Sora. Science is full of cool surprises. Let's discover something amazing!",
-    voice: { rate: 0.95, pitch: 1.05, gender: 'male', preferredVoice: 'Oliver' },
+    // "Adam" — smooth, deep, friendly male
+    voice: { rate: 0.97, pitch: 1.0, gender: 'male', preferredVoice: 'pNInz6obpgDQGcFmaJgB' },
     accent: '#e39a6f',
     fallbackGlyph: '🔬',
+    scene: 'galaxy',
   },
   {
     id: 'tutor-akira',
@@ -65,9 +78,11 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'writing',
     tagline: 'Your gentle writing coach',
     greeting: "Hi Madeline! I'm Akira. Your ideas are wonderful. Let's turn them into words, one at a time.",
-    voice: { rate: 0.9, pitch: 1.0, gender: 'male', preferredVoice: 'Thomas' },
+    // "Antoni" — warm, well-rounded young male
+    voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'ErXwobaYiN019PkySvjV' },
     accent: '#cf8752',
     fallbackGlyph: '✏️',
+    scene: 'neon-city',
   },
   {
     id: 'tutor-haru',
@@ -75,9 +90,11 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'socialStudies',
     tagline: 'Your storytelling history friend',
     greeting: "Hey Madeline! I'm Haru. History is full of great stories. Let me tell you one and we'll explore it!",
-    voice: { rate: 0.9, pitch: 0.98, gender: 'male', preferredVoice: 'George' },
+    // "Sam" — relaxed, natural young male
+    voice: { rate: 0.93, pitch: 1.0, gender: 'male', preferredVoice: 'yoZ06aMxZJJ28mfd3POQ' },
     accent: '#e0925c',
     fallbackGlyph: '🌍',
+    scene: 'galaxy',
   },
 ];
 

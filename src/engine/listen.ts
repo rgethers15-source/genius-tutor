@@ -40,6 +40,8 @@ export function listenOnce(opts: {
   onResult: (r: ListenResult) => void;
   onError?: (msg: string) => void;
   onEnd?: () => void;
+  /** Max time to keep listening (ms). Gives time to say a full sentence. */
+  maxMs?: number;
 }): void {
   const w = window as SR;
   const Ctor = w.SpeechRecognition || w.webkitSpeechRecognition;
@@ -51,24 +53,60 @@ export function listenOnce(opts: {
   const rec = new Ctor();
   current = rec;
   rec.lang = 'en-US';
-  rec.interimResults = false;
+  rec.interimResults = true; // keep capturing while she speaks
   rec.maxAlternatives = 3;
-  rec.continuous = false;
+  rec.continuous = true; // don't cut off at the first pause
+
+  let finalText = '';
+  let delivered = false;
+  const maxMs = opts.maxMs ?? 12000; // ~12s to say the sentence
+
+  // Hard stop after maxMs so it doesn't listen forever.
+  const hardStop = window.setTimeout(() => {
+    try {
+      rec.stop();
+    } catch {
+      /* noop */
+    }
+  }, maxMs);
 
   rec.onresult = (e: any) => {
-    const res = e.results?.[0]?.[0];
-    if (res) {
-      opts.onResult({ transcript: res.transcript ?? '', confidence: res.confidence ?? 0 });
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) finalText += r[0].transcript + ' ';
+      else interim += r[0].transcript;
+    }
+    // If we have a solid final chunk, deliver and stop.
+    if (finalText.trim().length > 0) {
+      // brief grace so she can finish, then stop
+      // (handled by hardStop / onend)
+    }
+    // expose interim via result callback with low confidence for live feel
+    if (interim && !finalText) {
+      opts.onResult({ transcript: interim, confidence: 0 });
     }
   };
-  rec.onerror = (e: any) => opts.onError?.(e?.error ?? 'mic error');
+  rec.onerror = (e: any) => {
+    if (e?.error !== 'no-speech' && e?.error !== 'aborted') {
+      opts.onError?.(e?.error ?? 'mic error');
+    }
+  };
   rec.onend = () => {
+    window.clearTimeout(hardStop);
     current = null;
+    if (!delivered) {
+      delivered = true;
+      const text = finalText.trim();
+      if (text) opts.onResult({ transcript: text, confidence: 1 });
+      else opts.onError?.('no-speech');
+    }
     opts.onEnd?.();
   };
   try {
     rec.start();
   } catch {
+    window.clearTimeout(hardStop);
     opts.onError?.('Could not start the microphone.');
   }
 }

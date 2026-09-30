@@ -291,8 +291,17 @@ export function AnimeEnvironment({
           : room.gradient,
       }}
     >
-      {/* Animated cyber-fantasy scene (only when no custom room photo) */}
-      {!roomImage && <RoomScene scene={room.scene} />}
+      {/* Animated scene: use the active tutor's own scene while teaching,
+          else the selected room's scene. Hidden if a custom room photo is set. */}
+      {!roomImage && (
+        <RoomScene
+          scene={
+            activeTutor && screen !== 'roster' && screen !== 'settings'
+              ? activeTutor.scene
+              : room.scene
+          }
+        />
+      )}
 
       <input
         ref={fileInputRef}
@@ -498,7 +507,7 @@ export function AnimeEnvironment({
                   imageSrc={imageFor(activeTutor.id)}
                   mood={mood}
                   accent={activeTutor.accent}
-                  size={280}
+                  size={400}
                   fallbackGlyph={activeTutor.fallbackGlyph}
                 />
                 <strong style={{ fontSize: '1.3rem', color: activeTutor.accent }}>

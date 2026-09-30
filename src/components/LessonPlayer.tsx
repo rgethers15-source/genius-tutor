@@ -203,7 +203,7 @@ export function LessonPlayer({
       {phase === 'menu' ? (
         <div>
           <p className="muted" style={{ fontSize: '1.1rem' }}>
-            Pick a lesson to learn, or take a fun test!
+            📗 <strong>NC 6th-Grade {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
           </p>
           <div className="grid cols-2" style={{ marginTop: 16 }}>
             {lessons.map((l) => (
@@ -245,7 +245,7 @@ export function LessonPlayer({
               imageSrc={imageSrc}
               mood={mood}
               accent={tutor.accent}
-              size={240}
+              size={380}
               fallbackGlyph={tutor.fallbackGlyph}
             />
             {phase === 'test' && (

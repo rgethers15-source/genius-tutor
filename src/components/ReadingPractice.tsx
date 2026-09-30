@@ -88,8 +88,11 @@ export function ReadingPractice({
     setListening(true);
     setMood('thinking');
     listenOnce({
+      maxMs: 12000,
       onResult: (r) => {
         setHeard(r.transcript);
+        // Interim results have confidence 0 — just show them, don't grade yet.
+        if (r.confidence === 0) return;
         const ok = spokenMatches(target, r.transcript);
         if (ok) {
           onEarnStar();
@@ -162,7 +165,7 @@ export function ReadingPractice({
               imageSrc={activeImageFor(profile, tutor.id)}
               mood={mood}
               accent={tutor.accent}
-              size={240}
+              size={380}
               fallbackGlyph={tutor.fallbackGlyph}
             />
           </div>
@@ -181,13 +184,18 @@ export function ReadingPractice({
                 className="btn big-btn"
                 type="button"
                 disabled={listening}
-                style={{ marginTop: 16, background: tutor.accent, opacity: listening ? 0.6 : 1 }}
+                style={{ marginTop: 16, background: tutor.accent, opacity: listening ? 0.75 : 1 }}
                 onClick={startListening}
               >
-                {listening ? '🎤 Listening…' : '🎤 Tap to read it'}
+                {listening ? '🎤 Listening… take your time' : '🎤 Tap to read it'}
               </button>
             )}
 
+            {listening && (
+              <div className="listening-bar" aria-hidden style={{ marginTop: 12 }}>
+                <span /><span /><span /><span /><span />
+              </div>
+            )}
             {heard && <p className="faint" style={{ marginTop: 10 }}>I heard: "{heard}"</p>}
             <div className="tutor-speech dyslexia" style={{ marginTop: 14 }}>
               {bubble || '…'}
