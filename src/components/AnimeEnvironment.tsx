@@ -223,6 +223,7 @@ export function AnimeEnvironment({
   }
 
   const [videoError, setVideoError] = useState('');
+  const [videoDebug, setVideoDebug] = useState<string[]>([]);
 
   async function speakOnVideo(textOverride?: string) {
     if (!activeTutor) return;
@@ -235,8 +236,10 @@ export function AnimeEnvironment({
     }
     setVideoBusy(true);
     setVideoError('');
+    setVideoDebug([]);
     setVideoUrl(null);
     const res = await getVideoAvatar().speakVideo(img, line);
+    setVideoDebug(res.debug ?? []);
     if (res.ok && res.videoUrl) {
       setVideoUrl(res.videoUrl);
     } else {
@@ -517,7 +520,12 @@ export function AnimeEnvironment({
                   <video
                     src={videoUrl}
                     autoPlay
+                    controls
+                    playsInline
                     onEnded={() => setVideoUrl(null)}
+                    onError={() =>
+                      setVideoError('The video was created but failed to play. Tap the link below to open it.')
+                    }
                     style={{ width: 400, borderRadius: 24, border: `3px solid ${activeTutor.accent}` }}
                   />
                 ) : (
@@ -533,10 +541,25 @@ export function AnimeEnvironment({
                   {activeTutor.name}
                   {videoBusy && <span className="faint"> — making video…</span>}
                 </strong>
+                {videoUrl && (
+                  <a className="read-btn" href={videoUrl} target="_blank" rel="noreferrer">
+                    ▶️ Open video
+                  </a>
+                )}
                 {videoError && (
                   <span className="faint" style={{ color: 'var(--danger)', maxWidth: 380, textAlign: 'center' }}>
                     {videoError}
                   </span>
+                )}
+                {videoDebug.length > 0 && (
+                  <details style={{ maxWidth: 380, fontSize: '0.78rem' }}>
+                    <summary className="faint" style={{ cursor: 'pointer' }}>Video details (for troubleshooting)</summary>
+                    <ul style={{ margin: '6px 0', paddingLeft: 18 }}>
+                      {videoDebug.map((d, i) => (
+                        <li key={i} className="faint">{d}</li>
+                      ))}
+                    </ul>
+                  </details>
                 )}
               </div>
 

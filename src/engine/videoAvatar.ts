@@ -16,6 +16,8 @@ export interface VideoResult {
   error?: string;
   /** True if this came from the real video service. */
   smart: boolean;
+  /** Step-by-step debug log so we can see exactly what happened. */
+  debug?: string[];
 }
 
 export interface VideoAvatarProvider {
@@ -79,28 +81,29 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
       return apiKey.trim().length > 10;
     },
     async speakVideo(imageDataUrl, text) {
+      const debug: string[] = [];
       try {
         // 0) Upload the avatar image to D-ID so it becomes a hosted URL.
-        //    (D-ID's /talks source_url must be a reachable URL, not base64.)
         lastUploadError = '';
+        debug.push('Uploading avatar image to D-ID…');
         const sourceUrl = await uploadImage(imageDataUrl, AUTH);
         if (!sourceUrl) {
           return {
             ok: false,
             smart: false,
+            debug,
             error:
               lastUploadError ||
-              'Could not upload the avatar to D-ID. Use a realistic face image (a generated or photo avatar), not the emoji placeholder.',
+              'Could not upload the avatar. Use a realistic face image (generated or photo), not the emoji placeholder.',
           };
         }
+        debug.push(`Image hosted: ${sourceUrl.slice(0, 60)}…`);
 
         // 1) Create a talk from the uploaded image.
+        debug.push('Creating talk…');
         const createRes = await fetch('https://api.d-id.com/talks', {
           method: 'POST',
-          headers: {
-            Authorization: AUTH,
-            'Content-Type': 'application/json',
-          },
+          headers: { Authorization: AUTH, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             source_url: sourceUrl,
             script: {
@@ -114,40 +117,66 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
           let detail = '';
           try {
             const err = await createRes.json();
-            detail = err?.description || err?.message || '';
+            detail = err?.description || err?.message || JSON.stringify(err);
           } catch {
             /* ignore */
           }
           return {
             ok: false,
             smart: false,
-            error: `D-ID could not make the video (${createRes.status}). ${detail}`.trim(),
+            debug,
+            error: `D-ID create failed (${createRes.status}). ${detail}`.trim(),
           };
         }
         const created = await createRes.json();
         const id = created?.id;
-        if (!id) return { ok: false, smart: false, error: 'D-ID: no talk id returned.' };
+        if (!id) return { ok: false, smart: false, debug, error: 'D-ID: no talk id returned.' };
+        debug.push(`Talk id: ${id}. Waiting for video…`);
 
-        // 2) Poll until the video is ready (short clips finish quickly).
-        for (let i = 0; i < 20; i++) {
+        // 2) Poll until ready (up to ~45s).
+        for (let i = 0; i < 30; i++) {
           await new Promise((r) => setTimeout(r, 1500));
           const statusRes = await fetch(`https://api.d-id.com/talks/${id}`, {
             headers: { Authorization: AUTH },
           });
-          if (!statusRes.ok) continue;
+          if (!statusRes.ok) {
+            debug.push(`Poll ${i + 1}: status check ${statusRes.status}`);
+            continue;
+          }
           const status = await statusRes.json();
+          debug.push(`Poll ${i + 1}: ${status?.status ?? 'unknown'}`);
           if (status?.status === 'done' && status?.result_url) {
-            return { ok: true, smart: true, videoUrl: status.result_url };
+            // Fetch the finished video as a blob so it plays reliably in
+            // Electron regardless of signed-URL / CSP quirks.
+            try {
+              const vidRes = await fetch(status.result_url, { headers: { Authorization: AUTH } });
+              if (vidRes.ok) {
+                const blob = await vidRes.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                debug.push('Video ready (loaded as blob).');
+                return { ok: true, smart: true, videoUrl: blobUrl, debug };
+              }
+            } catch {
+              /* fall back to direct URL below */
+            }
+            debug.push('Video ready (direct URL).');
+            return { ok: true, smart: true, videoUrl: status.result_url, debug };
           }
           if (status?.status === 'error') {
-            return { ok: false, smart: false, error: 'D-ID processing error.' };
+            return {
+              ok: false,
+              smart: false,
+              debug,
+              error: `D-ID processing error: ${status?.error?.description ?? 'unknown'}`,
+            };
           }
         }
-        return { ok: false, smart: false, error: 'D-ID timed out. Try again.' };
+        return { ok: false, smart: false, debug, error: 'D-ID timed out after ~45s. Try again.' };
       } catch (e) {
         return {
           ok: false,
           smart: false,
+          debug,
           error: e instanceof Error ? e.message : 'Network error reaching D-ID.',
         };
       }
