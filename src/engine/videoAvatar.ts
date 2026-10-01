@@ -49,17 +49,31 @@ async function uploadImage(imageDataUrl: string, auth: string): Promise<string |
       headers: { Authorization: auth }, // do NOT set Content-Type; browser sets multipart boundary
       body: form,
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      // Surface auth problems specifically — the most common failure.
+      lastUploadError =
+        res.status === 401
+          ? 'D-ID rejected the key (401). In the app it must be the full API_USER:API_PASSWORD from the D-ID Studio.'
+          : `D-ID image upload failed (${res.status}).`;
+      return null;
+    }
     const data = await res.json();
     return data?.url ?? null;
   } catch {
+    lastUploadError = 'Could not reach D-ID to upload the image.';
     return null;
   }
 }
 
+let lastUploadError = '';
+
 // --- D-ID provider ---
 export function didVideoProvider(apiKey: string): VideoAvatarProvider {
-  const AUTH = `Basic ${apiKey.trim()}`;
+  // D-ID keys are "API_USER:API_PASSWORD" and sent as `Basic <key>` RAW
+  // (per D-ID docs) — NOT standard base64 Basic auth. Normalize common
+  // paste mistakes: strip an accidental leading "Basic ".
+  const raw = apiKey.trim().replace(/^Basic\s+/i, '');
+  const AUTH = `Basic ${raw}`;
   return {
     isAvailable() {
       return apiKey.trim().length > 10;
@@ -68,12 +82,14 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
       try {
         // 0) Upload the avatar image to D-ID so it becomes a hosted URL.
         //    (D-ID's /talks source_url must be a reachable URL, not base64.)
+        lastUploadError = '';
         const sourceUrl = await uploadImage(imageDataUrl, AUTH);
         if (!sourceUrl) {
           return {
             ok: false,
             smart: false,
             error:
+              lastUploadError ||
               'Could not upload the avatar to D-ID. Use a realistic face image (a generated or photo avatar), not the emoji placeholder.',
           };
         }
