@@ -564,17 +564,31 @@ export function AnimeEnvironment({
               </div>
 
               <div>
+                {profile.didKey && !imageFor(activeTutor.id) && (
+                  <div className="card" style={{ marginBottom: 12, borderColor: 'var(--accent)' }}>
+                    🎬 <strong>Video is On</strong> — but {activeTutor.name} has no face yet.
+                    Tap <em>🖼️ Change Avatar</em> and Generate/Upload a realistic photo to see the talking video.
+                  </div>
+                )}
                 <div className="tutor-speech dyslexia">{bubble || '…'}</div>
                 <div className="row" style={{ marginTop: 12 }}>
                   <button className="read-btn" type="button" onClick={repeat}>
                     🔊 Say it again
                   </button>
-                  {profile.didKey && imageFor(activeTutor.id) && (
+                  {profile.didKey && (
                     <button
                       className="read-btn"
                       type="button"
                       disabled={videoBusy}
-                      onClick={() => speakOnVideo()}
+                      onClick={() => {
+                        if (!imageFor(activeTutor.id)) {
+                          setVideoError(
+                            `${activeTutor.name} needs a face picture first. Tap "🖼️ Change Avatar" below, then Generate or Upload a realistic photo.`
+                          );
+                          return;
+                        }
+                        speakOnVideo();
+                      }}
                     >
                       {videoBusy ? '🎬 Making video…' : '🎬 Speak on video'}
                     </button>
