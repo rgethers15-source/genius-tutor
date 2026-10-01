@@ -2,7 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import type { AnimeTutor } from '../data/animeTutors';
 import type { Lesson, QuizItem } from '../data/curriculum6';
 import { allLessonsForSubject, buildTest } from '../data/curriculum6';
-import { AnimatedAvatar, type AvatarMood } from './AnimatedAvatar';
+import { type AvatarMood } from './AnimatedAvatar';
+import { TutorStage } from './TutorStage';
 import { getSpeech } from '../engine/speech';
 import { pickCheer, pickGentle } from '../engine/tutorBrain';
 
@@ -12,6 +13,7 @@ export function LessonPlayer({
   tutor,
   imageSrc,
   autoSpeak,
+  videoEnabled = false,
   onEarnStar,
   onRecordAnswer,
   onLessonComplete,
@@ -21,6 +23,7 @@ export function LessonPlayer({
   tutor: AnimeTutor;
   imageSrc?: string;
   autoSpeak: boolean;
+  videoEnabled?: boolean;
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
   onLessonComplete?: (lessonId: string, title: string) => void;
@@ -241,12 +244,13 @@ export function LessonPlayer({
       ) : (
         <div className="lesson-stage">
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <AnimatedAvatar
+            <TutorStage
+              tutor={tutor}
               imageSrc={imageSrc}
               mood={mood}
-              accent={tutor.accent}
+              line={bubble}
               size={380}
-              fallbackGlyph={tutor.fallbackGlyph}
+              videoEnabled={videoEnabled}
             />
             {phase === 'test' && (
               <div className="faint">

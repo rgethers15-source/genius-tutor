@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Profile } from '../types';
 import { ANIME_TUTORS, type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
-import { AnimatedAvatar, type AvatarMood } from './AnimatedAvatar';
+import { type AvatarMood } from './AnimatedAvatar';
 import {
   getSpeech,
   warmUpVoices,
@@ -19,6 +19,7 @@ import {
 import { fileToDataUrl } from '../data/image';
 import { STUDY_ROOMS, getRoom } from '../data/rooms';
 import { RoomScene } from './RoomScene';
+import { TutorStage } from './TutorStage';
 import {
   startFocusMusic,
   stopFocusMusic,
@@ -529,12 +530,13 @@ export function AnimeEnvironment({
                     style={{ width: 400, borderRadius: 24, border: `3px solid ${activeTutor.accent}` }}
                   />
                 ) : (
-                  <AnimatedAvatar
+                  <TutorStage
+                    tutor={activeTutor}
                     imageSrc={imageFor(activeTutor.id)}
                     mood={videoBusy ? 'thinking' : mood}
-                    accent={activeTutor.accent}
+                    line={bubble}
                     size={400}
-                    fallbackGlyph={activeTutor.fallbackGlyph}
+                    videoEnabled={!!profile.didKey && !!profile.videoMode}
                   />
                 )}
                 <strong style={{ fontSize: '1.3rem', color: activeTutor.accent }}>
@@ -690,6 +692,7 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             imageSrc={imageFor(activeTutor.id)}
             autoSpeak={profile.autoSpeak !== false}
+            videoEnabled={!!profile.didKey && !!profile.videoMode}
             onEarnStar={() => { /* stars handled in onRecordAnswer to avoid double state writes */ }}
             onRecordAnswer={(correct, kind) => {
               let next = recordAnswer(profile, activeTutor.subject, correct, kind);

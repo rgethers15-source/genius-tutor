@@ -27,6 +27,8 @@ export interface AnimeTutor {
   fallbackGlyph: string;
   /** This tutor's own themed background scene shown during teaching. */
   scene: SceneKind;
+  /** D-ID video voice (Microsoft Neural) — distinct, natural young-male. */
+  videoVoiceId: string;
 }
 
 // Note: voice rates are kept a touch slower than default for easier
@@ -47,6 +49,7 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     accent: '#e8a04b',
     fallbackGlyph: '📖',
     scene: 'aurora',
+    videoVoiceId: 'en-US-AndrewMultilingualNeural',
   },
   {
     id: 'tutor-ren',
@@ -59,6 +62,7 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     accent: '#d98a5a',
     fallbackGlyph: '🔢',
     scene: 'cyber-grid',
+    videoVoiceId: 'en-US-BrandonMultilingualNeural',
   },
   {
     id: 'tutor-sora',
@@ -71,6 +75,7 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     accent: '#e39a6f',
     fallbackGlyph: '🔬',
     scene: 'galaxy',
+    videoVoiceId: 'en-US-BrianMultilingualNeural',
   },
   {
     id: 'tutor-akira',
@@ -83,6 +88,7 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     accent: '#cf8752',
     fallbackGlyph: '✏️',
     scene: 'neon-city',
+    videoVoiceId: 'en-US-TonyNeural',
   },
   {
     id: 'tutor-haru',
@@ -95,6 +101,7 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     accent: '#e0925c',
     fallbackGlyph: '🌍',
     scene: 'galaxy',
+    videoVoiceId: 'en-US-JasonNeural',
   },
 ];
 

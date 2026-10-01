@@ -106,14 +106,14 @@ const BANK: Record<Subject, QA[]> = {
   ],
 };
 
-const CHEERS = [
+export const CHEERS = [
   'Yes! You did it! I am so proud of you! 🌟',
   'That is right! Your brain is getting stronger! 💪',
   'Amazing job, Madeline! High five! ✋',
   'Woohoo! You are a superstar! ⭐',
 ];
 
-const GENTLE = [
+export const GENTLE = [
   'Almost! That is okay. Mistakes help us learn. Try again — you can do it!',
   'Good try! Let me give you a hint. We will get it together!',
   "That's a great guess. Let's look one more time — I believe in you!",

@@ -10,6 +10,8 @@ import {
 } from '../data/gallery';
 import { fileToDataUrl } from '../data/image';
 import { generateAvatar, STYLE_PRESETS } from '../engine/imageGen';
+import { prerecordTutor, collectTutorLines, type PrerecordProgress } from '../engine/prerecord';
+import { cacheAvailable } from '../data/videoCache';
 
 export function TutorGallery({
   tutor,
@@ -30,7 +32,48 @@ export function TutorGallery({
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
+  // Pre-record state
+  const [preBusy, setPreBusy] = useState(false);
+  const [preProgress, setPreProgress] = useState<PrerecordProgress | null>(null);
+  const [preDone, setPreDone] = useState<string | null>(null);
+  const cancelRef = useRef(false);
+
   const hasKey = !!profile.openAiKey && profile.openAiKey.trim().length > 10;
+  const hasDid = !!profile.didKey && profile.didKey.trim().length > 10;
+  const totalLines = collectTutorLines(tutor).length;
+
+  async function startPrerecord() {
+    const img = active;
+    if (!img) {
+      setPreDone('Pick a face picture first (tap one above).');
+      return;
+    }
+    if (!cacheAvailable()) {
+      setPreDone('Video caching only works in the installed desktop app.');
+      return;
+    }
+    cancelRef.current = false;
+    setPreBusy(true);
+    setPreDone(null);
+    const result = await prerecordTutor(
+      tutor,
+      img,
+      { provider: 'microsoft', voiceId: tutor.videoVoiceId },
+      (p) => setPreProgress({ ...p }),
+      () => cancelRef.current
+    );
+    setPreBusy(false);
+    setPreProgress(null);
+    if (result.error) {
+      setPreDone(`Stopped: ${result.error}`);
+    } else {
+      setPreDone(
+        `Done! ${result.done} lines ready (${result.skipped} already saved${
+          result.failed ? `, ${result.failed} failed` : ''
+        }). Lessons will now play instantly as video. 🎬`
+      );
+    }
+  }
 
   async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -114,6 +157,57 @@ export function TutorGallery({
           </div>
         ))}
       </div>
+
+      {/* Pre-record lessons as video */}
+      {hasDid && (
+        <div className="card" style={{ marginTop: 22, borderColor: tutor.accent }}>
+          <h2>🎬 Pre-record {tutor.name}'s lessons as video</h2>
+          <p className="muted">
+            Generate talking-head videos for all of {tutor.name}'s lesson lines, questions,
+            and responses once. After that, lessons play <strong>instantly as realistic video</strong> —
+            like real-time — with no waiting or extra cost. (~{totalLines} short clips; uses D-ID credits once.)
+          </p>
+          {!active && (
+            <p className="faint">Pick or generate a realistic face picture above first.</p>
+          )}
+          {preProgress ? (
+            <div style={{ marginTop: 10 }}>
+              <div className="muted">
+                Recording {preProgress.done} / {preProgress.total}…
+              </div>
+              <div style={{ height: 12, borderRadius: 999, background: 'var(--bg-raised)', overflow: 'hidden', marginTop: 6 }}>
+                <div
+                  style={{
+                    width: `${Math.round((preProgress.done / Math.max(1, preProgress.total)) * 100)}%`,
+                    height: '100%',
+                    background: tutor.accent,
+                    transition: 'width 0.3s ease',
+                  }}
+                />
+              </div>
+              <div className="faint" style={{ marginTop: 6, fontSize: '0.8rem' }}>
+                “{preProgress.current.slice(0, 50)}…”
+              </div>
+              <button className="btn ghost small" type="button" style={{ marginTop: 10 }} onClick={() => (cancelRef.current = true)}>
+                Stop
+              </button>
+            </div>
+          ) : (
+            <div className="row" style={{ marginTop: 10 }}>
+              <button
+                className="btn"
+                type="button"
+                disabled={preBusy || !active}
+                style={{ background: tutor.accent, opacity: preBusy || !active ? 0.6 : 1 }}
+                onClick={startPrerecord}
+              >
+                {preBusy ? 'Recording…' : `🎬 Pre-record all lessons`}
+              </button>
+            </div>
+          )}
+          {preDone && <p className="muted" style={{ marginTop: 10 }}>{preDone}</p>}
+        </div>
+      )}
 
       {/* Create / upload controls */}
       <div className="card" style={{ marginTop: 22 }}>

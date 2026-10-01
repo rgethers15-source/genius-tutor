@@ -1,5 +1,5 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
-import { fileURLToPath } from 'node:url';
+import { app, BrowserWindow, ipcMain, protocol, net } from 'electron';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -13,6 +13,39 @@ const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist');
 // --- Local data storage (per-user, on-device only) ---
 const DATA_DIR = app.getPath('userData');
 const DATA_FILE = path.join(DATA_DIR, 'genius-tutor-data.json');
+const VIDEO_DIR = path.join(DATA_DIR, 'videos');
+
+function safeName(key: string): string {
+  // Keep cache filenames filesystem-safe.
+  return key.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 120) + '.mp4';
+}
+
+// Save a cached talking-head video. `bytes` is a Uint8Array (ArrayBuffer).
+function saveVideo(key: string, bytes: Uint8Array): string | null {
+  try {
+    fs.mkdirSync(VIDEO_DIR, { recursive: true });
+    const file = path.join(VIDEO_DIR, safeName(key));
+    fs.writeFileSync(file, bytes);
+    return `gtvideo://${encodeURIComponent(safeName(key))}`;
+  } catch (err) {
+    console.error('Failed to save video:', err);
+    return null;
+  }
+}
+
+function getVideo(key: string): string | null {
+  const file = path.join(VIDEO_DIR, safeName(key));
+  return fs.existsSync(file) ? `gtvideo://${encodeURIComponent(safeName(key))}` : null;
+}
+
+function listVideoKeys(): string[] {
+  try {
+    if (!fs.existsSync(VIDEO_DIR)) return [];
+    return fs.readdirSync(VIDEO_DIR).map((f) => f.replace(/\.mp4$/, ''));
+  } catch {
+    return [];
+  }
+}
 
 function readData(): unknown {
   try {
@@ -63,8 +96,29 @@ function createWindow() {
 // --- IPC handlers ---
 ipcMain.handle('data:load', () => readData());
 ipcMain.handle('data:save', (_evt, data: unknown) => writeData(data));
+ipcMain.handle('video:save', (_evt, key: string, bytes: ArrayBuffer) =>
+  saveVideo(key, new Uint8Array(bytes))
+);
+ipcMain.handle('video:get', (_evt, key: string) => getVideo(key));
+ipcMain.handle('video:list', () => listVideoKeys());
 
-app.whenReady().then(createWindow);
+// Register the custom scheme as privileged BEFORE app ready so <video> can play it.
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'gtvideo', privileges: { secure: true, supportFetchAPI: true, stream: true, bypassCSP: false } },
+]);
+
+app.whenReady().then(() => {
+  // Serve cached videos from the gtvideo:// scheme.
+  protocol.handle('gtvideo', (request) => {
+    const name = decodeURIComponent(request.url.replace('gtvideo://', ''));
+    const file = path.join(VIDEO_DIR, name);
+    if (!fs.existsSync(file)) {
+      return new Response('Not found', { status: 404 });
+    }
+    return net.fetch(pathToFileURL(file).toString());
+  });
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

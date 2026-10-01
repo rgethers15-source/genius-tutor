@@ -13,6 +13,8 @@ export interface VideoResult {
   ok: boolean;
   /** URL to the generated talking-head video (mp4). */
   videoUrl?: string;
+  /** The raw mp4 blob, so the caller can cache it to disk. */
+  blob?: Blob;
   error?: string;
   /** True if this came from the real video service. */
   smart: boolean;
@@ -20,10 +22,17 @@ export interface VideoResult {
   debug?: string[];
 }
 
+/** Voice selection for the talking-head video. */
+export interface VideoVoice {
+  /** 'microsoft' (built into D-ID) or 'elevenlabs' (needs D-ID import). */
+  provider: 'microsoft' | 'elevenlabs';
+  voiceId: string;
+}
+
 export interface VideoAvatarProvider {
   isAvailable(): boolean;
   /** Create a talking video of `imageDataUrl` saying `text`. */
-  speakVideo(imageDataUrl: string, text: string): Promise<VideoResult>;
+  speakVideo(imageDataUrl: string, text: string, voice?: VideoVoice): Promise<VideoResult>;
 }
 
 // --- Offline fallback: signals "use portrait animation instead" ---
@@ -31,7 +40,7 @@ export const offlineVideoProvider: VideoAvatarProvider = {
   isAvailable() {
     return false;
   },
-  async speakVideo() {
+  async speakVideo(): Promise<VideoResult> {
     return { ok: false, smart: false, error: 'Video avatars need a D-ID key.' };
   },
 };
@@ -80,8 +89,14 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
     isAvailable() {
       return apiKey.trim().length > 10;
     },
-    async speakVideo(imageDataUrl, text) {
+    async speakVideo(imageDataUrl, text, voice): Promise<VideoResult> {
       const debug: string[] = [];
+      // Default to a warm, natural Microsoft voice (better than "Guy").
+      // Caller can pass an ElevenLabs voice (requires D-ID import on Pro+).
+      const scriptProvider =
+        voice?.provider === 'elevenlabs'
+          ? { type: 'elevenlabs', voice_id: voice.voiceId }
+          : { type: 'microsoft', voice_id: voice?.voiceId || 'en-US-DavisNeural' };
       try {
         // 0) Upload the avatar image to D-ID so it becomes a hosted URL.
         lastUploadError = '';
@@ -109,7 +124,7 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
             script: {
               type: 'text',
               input: text,
-              provider: { type: 'microsoft', voice_id: 'en-US-GuyNeural' },
+              provider: scriptProvider,
             },
           }),
         });
@@ -149,12 +164,12 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
             // Fetch the finished video as a blob so it plays reliably in
             // Electron regardless of signed-URL / CSP quirks.
             try {
-              const vidRes = await fetch(status.result_url, { headers: { Authorization: AUTH } });
+              const vidRes = await fetch(status.result_url);
               if (vidRes.ok) {
                 const blob = await vidRes.blob();
                 const blobUrl = URL.createObjectURL(blob);
                 debug.push('Video ready (loaded as blob).');
-                return { ok: true, smart: true, videoUrl: blobUrl, debug };
+                return { ok: true, smart: true, videoUrl: blobUrl, blob, debug };
               }
             } catch {
               /* fall back to direct URL below */
