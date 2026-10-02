@@ -12,6 +12,7 @@ import { fileToDataUrl } from '../data/image';
 import { generateAvatar, STYLE_PRESETS } from '../engine/imageGen';
 import { prerecordTutor, collectTutorLines, type PrerecordProgress } from '../engine/prerecord';
 import { cacheAvailable } from '../data/videoCache';
+import { APP_VERSION } from '../version';
 
 export function TutorGallery({
   tutor,
@@ -170,6 +171,12 @@ export function TutorGallery({
           {!active && (
             <p className="faint">Pick or generate a realistic face picture above first.</p>
           )}
+          {!cacheAvailable() && (
+            <p style={{ color: 'var(--danger)' }}>
+              ⚠️ Video saving isn't available in this build. Make sure you're on v0.12.0+
+              (⚙️ Settings shows the version). If you are, let me know and I'll fix it.
+            </p>
+          )}
           {preProgress ? (
             <div style={{ marginTop: 10 }}>
               <div className="muted">
@@ -206,6 +213,9 @@ export function TutorGallery({
             </div>
           )}
           {preDone && <p className="muted" style={{ marginTop: 10 }}>{preDone}</p>}
+          <p className="faint" style={{ marginTop: 8, fontSize: '0.75rem' }}>
+            v{APP_VERSION} · video saving: {cacheAvailable() ? '✅ ready' : '❌ unavailable'}
+          </p>
         </div>
       )}
 
