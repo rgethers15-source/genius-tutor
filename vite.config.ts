@@ -12,10 +12,20 @@ export default defineConfig({
         entry: 'electron/main.ts',
       },
       {
-        // Preload script
+        // Preload script — force CommonJS (.cjs) so Electron loads it
+        // reliably in the packaged app (ESM preloads can fail silently).
         entry: 'electron/preload.ts',
         onstart(options) {
           options.reload();
+        },
+        vite: {
+          build: {
+            lib: {
+              entry: 'electron/preload.ts',
+              formats: ['cjs'],
+              fileName: () => 'preload.cjs',
+            },
+          },
         },
       },
     ]),

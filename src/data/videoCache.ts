@@ -68,5 +68,13 @@ export async function cachedCount(): Promise<number> {
 }
 
 export function cacheAvailable(): boolean {
-  return !!bridge()?.saveVideo;
+  return typeof bridge()?.saveVideo === 'function';
+}
+
+/** Diagnostic: which bridge functions are actually present at runtime. */
+export function bridgeDiagnostic(): string {
+  const b = bridge();
+  if (!b) return 'no bridge (window.geniusTutor missing)';
+  const keys = Object.keys(b as object);
+  return `bridge keys: [${keys.join(', ')}]`;
 }

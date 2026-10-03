@@ -80,7 +80,7 @@ function createWindow() {
     backgroundColor: '#1a1512',
     title: 'Genius Tutor',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
     },

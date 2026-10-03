@@ -11,7 +11,7 @@ import {
 import { fileToDataUrl } from '../data/image';
 import { generateAvatar, STYLE_PRESETS } from '../engine/imageGen';
 import { prerecordTutor, collectTutorLines, type PrerecordProgress } from '../engine/prerecord';
-import { cacheAvailable } from '../data/videoCache';
+import { cacheAvailable, bridgeDiagnostic } from '../data/videoCache';
 import { APP_VERSION } from '../version';
 
 export function TutorGallery({
@@ -215,6 +215,7 @@ export function TutorGallery({
           {preDone && <p className="muted" style={{ marginTop: 10 }}>{preDone}</p>}
           <p className="faint" style={{ marginTop: 8, fontSize: '0.75rem' }}>
             v{APP_VERSION} · video saving: {cacheAvailable() ? '✅ ready' : '❌ unavailable'}
+            {!cacheAvailable() && ` · ${bridgeDiagnostic()}`}
           </p>
         </div>
       )}
