@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Profile } from '../types';
-import { ANIME_TUTORS, type AnimeTutor } from '../data/animeTutors';
+import { ANIME_TUTORS, effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
 import { type AvatarMood } from './AnimatedAvatar';
 import {
@@ -164,7 +164,7 @@ export function AnimeEnvironment({
         return;
       }
       getSpeech().speak(text, {
-        voice: tutor.voice,
+        voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
         onStart: () => setMood(nextMood),
         onEnd: () =>
           setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
@@ -693,6 +693,7 @@ export function AnimeEnvironment({
             imageSrc={imageFor(activeTutor.id)}
             autoSpeak={profile.autoSpeak !== false}
             videoEnabled={!!profile.didKey && !!profile.videoMode}
+            voiceOverride={profile.tutorVoices?.[activeTutor.id]}
             onEarnStar={() => { /* stars handled in onRecordAnswer to avoid double state writes */ }}
             onRecordAnswer={(correct, kind) => {
               let next = recordAnswer(profile, activeTutor.subject, correct, kind);
@@ -871,7 +872,7 @@ export function AnimeEnvironment({
                 <div className="toggle-row" style={{ marginTop: 12 }}>
                   <span>
                     Talking-head VIDEO when speaking (realistic mouth)
-                    <span className="faint"> — slower + costs per video</span>
+                    <span className="faint"> — needs a PAID D-ID API plan; lessons still work with the voice + avatar if off</span>
                   </span>
                   <button
                     type="button"
@@ -928,6 +929,44 @@ export function AnimeEnvironment({
                       ? 'Using OpenAI voice'
                       : 'Using built-in voice'}
                 </span>
+              </div>
+
+              {/* Per-tutor voice override */}
+              <div style={{ marginTop: 16, borderTop: '1px solid var(--border)', paddingTop: 14 }}>
+                <strong>🎚️ Each tutor's voice (optional)</strong>
+                <p className="faint" style={{ margin: '4px 0 10px' }}>
+                  The tutors use warm African American male voices by default. To use a
+                  specific voice, add it to your ElevenLabs account, copy its Voice ID,
+                  and paste it here. Tap ▶️ to hear it.
+                </p>
+                {ANIME_TUTORS.map((t) => (
+                  <div key={t.id} className="row" style={{ marginBottom: 8, gap: 8 }}>
+                    <span style={{ width: 70, color: t.accent, fontWeight: 700 }}>{t.name}</span>
+                    <input
+                      type="text"
+                      placeholder={`ElevenLabs voice ID (default set)`}
+                      defaultValue={profile.tutorVoices?.[t.id] ?? ''}
+                      onBlur={(e) =>
+                        onUpdate({
+                          ...profile,
+                          tutorVoices: { ...(profile.tutorVoices ?? {}), [t.id]: e.target.value.trim() },
+                        })
+                      }
+                      style={{ flex: 1 }}
+                    />
+                    <button
+                      className="btn ghost small"
+                      type="button"
+                      onClick={() =>
+                        getSpeech().speak(`Hi Madeline, I'm ${t.name}. This is my voice.`, {
+                          voice: effectiveVoice(t, profile.tutorVoices?.[t.id]),
+                        })
+                      }
+                    >
+                      ▶️
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
 

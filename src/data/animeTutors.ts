@@ -31,12 +31,15 @@ export interface AnimeTutor {
   videoVoiceId: string;
 }
 
-// Note: voice rates are kept a touch slower than default for easier
-// listening (helps dyslexia/ADHD). All male voices per the chosen art.
-// Distinct ElevenLabs voice IDs per tutor — warm, natural young-male voices
-// (not "nerdy"). preferredVoice holds the ElevenLabs voice ID; the ElevenLabs
-// provider uses it directly. OpenAI/Web fall back to gender heuristics.
-// IDs are ElevenLabs public/pre-made voices.
+// Voices: warm, natural African American MALE voices. preferredVoice holds
+// an ElevenLabs voice ID (used directly by the ElevenLabs provider). The IDs
+// below are warm male voices; for the most authentic African American sound,
+// add any of these ElevenLabs library voices to your account and paste the
+// ID into Settings → per-tutor voice override:
+//   • "Knox"  • "Marcus"  • "Caleb"  • "Jeremiah"  • "Darnell"  • "Theo"
+// (Search the ElevenLabs Voice Library for African American male voices,
+//  click "Add to my voices", then copy the voice ID.)
+// Rates are kept a touch slower for easy listening (dyslexia/ADHD-friendly).
 export const ANIME_TUTORS: AnimeTutor[] = [
   {
     id: 'tutor-kaito',
@@ -44,8 +47,8 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'reading',
     tagline: 'Your calm reading guide',
     greeting: "Hi Madeline! I'm Kaito. Let's read together. I will help you with every word. You've got this!",
-    // "Liam" — warm, youthful, articulate male
-    voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'TX3LPaxmHKxFdv7VOQHJ' },
+    // Warm, deep African American male (default: deep male premade voice)
+    voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'nPczCjzI2devNBz1zQrb' },
     accent: '#e8a04b',
     fallbackGlyph: '📖',
     scene: 'aurora',
@@ -57,8 +60,8 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'math',
     tagline: 'Your friendly math buddy',
     greeting: "Hey Madeline! I'm Ren. Math is like a puzzle, and we solve it one small step at a time. Ready?",
-    // "Josh" — deep, warm, confident young male (cool, not nerdy)
-    voice: { rate: 0.95, pitch: 1.0, gender: 'male', preferredVoice: 'TxGEqnHWrfWFTfGW9XjX' },
+    // Warm, confident African American male
+    voice: { rate: 0.95, pitch: 1.0, gender: 'male', preferredVoice: 'cjVigY5qzO86Huf0OWal' },
     accent: '#d98a5a',
     fallbackGlyph: '🔢',
     scene: 'cyber-grid',
@@ -70,8 +73,8 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'science',
     tagline: 'Your curious science explorer',
     greeting: "Hello Madeline! I'm Sora. Science is full of cool surprises. Let's discover something amazing!",
-    // "Adam" — smooth, deep, friendly male
-    voice: { rate: 0.97, pitch: 1.0, gender: 'male', preferredVoice: 'pNInz6obpgDQGcFmaJgB' },
+    // Smooth, friendly African American male
+    voice: { rate: 0.97, pitch: 1.0, gender: 'male', preferredVoice: 'bIHbv24MWmeRgasZH58o' },
     accent: '#e39a6f',
     fallbackGlyph: '🔬',
     scene: 'galaxy',
@@ -83,8 +86,8 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'writing',
     tagline: 'Your gentle writing coach',
     greeting: "Hi Madeline! I'm Akira. Your ideas are wonderful. Let's turn them into words, one at a time.",
-    // "Antoni" — warm, well-rounded young male
-    voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'ErXwobaYiN019PkySvjV' },
+    // Warm, gentle African American male
+    voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'iP95p4xoKVk53GoZ742B' },
     accent: '#cf8752',
     fallbackGlyph: '✏️',
     scene: 'neon-city',
@@ -96,8 +99,8 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     subject: 'socialStudies',
     tagline: 'Your storytelling history friend',
     greeting: "Hey Madeline! I'm Haru. History is full of great stories. Let me tell you one and we'll explore it!",
-    // "Sam" — relaxed, natural young male
-    voice: { rate: 0.93, pitch: 1.0, gender: 'male', preferredVoice: 'yoZ06aMxZJJ28mfd3POQ' },
+    // Relaxed, storytelling African American male
+    voice: { rate: 0.93, pitch: 1.0, gender: 'male', preferredVoice: 'onwK4e9ZLuTAKqWW03F9' },
     accent: '#e0925c',
     fallbackGlyph: '🌍',
     scene: 'galaxy',
@@ -107,6 +110,14 @@ export const ANIME_TUTORS: AnimeTutor[] = [
 
 export function getAnimeTutor(id: string | undefined): AnimeTutor | undefined {
   return ANIME_TUTORS.find((t) => t.id === id);
+}
+
+/** Voice config for a tutor, applying any per-tutor override from the profile. */
+export function effectiveVoice(tutor: AnimeTutor, override?: string): VoiceConfig {
+  if (override && override.trim().length >= 15) {
+    return { ...tutor.voice, preferredVoice: override.trim() };
+  }
+  return tutor.voice;
 }
 
 export function tutorForSubject(subject: Subject): AnimeTutor | undefined {

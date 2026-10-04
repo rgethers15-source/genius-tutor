@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import type { AnimeTutor } from '../data/animeTutors';
+import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import type { Lesson, QuizItem } from '../data/curriculum6';
 import { allLessonsForSubject, buildTest } from '../data/curriculum6';
 import { type AvatarMood } from './AnimatedAvatar';
@@ -14,6 +14,7 @@ export function LessonPlayer({
   imageSrc,
   autoSpeak,
   videoEnabled = false,
+  voiceOverride,
   onEarnStar,
   onRecordAnswer,
   onLessonComplete,
@@ -24,6 +25,7 @@ export function LessonPlayer({
   imageSrc?: string;
   autoSpeak: boolean;
   videoEnabled?: boolean;
+  voiceOverride?: string;
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
   onLessonComplete?: (lessonId: string, title: string) => void;
@@ -78,12 +80,12 @@ export function LessonPlayer({
         return;
       }
       getSpeech().speak(text, {
-        voice: tutor.voice,
+        voice: effectiveVoice(tutor, voiceOverride),
         onStart: () => setMood(nextMood),
         onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [autoSpeak, tutor.voice]
+    [autoSpeak, tutor, voiceOverride]
   );
 
   useEffect(() => () => getSpeech().stop(), []);

@@ -95,6 +95,8 @@ export interface Profile {
   humanVoice?: boolean;
   /** Optional ElevenLabs API key — top-tier natural voices (local only). */
   elevenLabsKey?: string;
+  /** Per-tutor ElevenLabs voice-ID overrides, keyed by tutor id. */
+  tutorVoices?: Record<string, string>;
   /**
    * Uploaded study-room background images, keyed by room id (data URLs).
    * Rooms are the immersive spaces tutors teach in.

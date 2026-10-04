@@ -1,6 +1,6 @@
 // Single source of truth for the app version shown in the UI.
 // Keep in sync with package.json on each release.
-export const APP_VERSION = '0.12.3';
+export const APP_VERSION = '0.13.0';
 export const RELEASES_URL =
   'https://github.com/rgethers15-source/genius-tutor/releases';
 export const LATEST_RELEASE_API =

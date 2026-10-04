@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { AnimeTutor } from '../data/animeTutors';
+import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import type { Profile } from '../types';
 import { AnimatedAvatar, type AvatarMood } from './AnimatedAvatar';
 import { getSpeech } from '../engine/speech';
@@ -38,7 +38,7 @@ export function HomeworkHelp({
         return;
       }
       getSpeech().speak(text, {
-        voice: tutor.voice,
+        voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
         onStart: () => setMood(nextMood),
         onEnd: () => setMood('idle'),
       });
