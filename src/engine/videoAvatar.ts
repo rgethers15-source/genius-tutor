@@ -136,12 +136,18 @@ export function didVideoProvider(apiKey: string): VideoAvatarProvider {
           } catch {
             /* ignore */
           }
-          return {
-            ok: false,
-            smart: false,
-            debug,
-            error: `D-ID create failed (${createRes.status}). ${detail}`.trim(),
-          };
+          let friendly = `D-ID create failed (${createRes.status}). ${detail}`.trim();
+          if (createRes.status === 403) {
+            friendly =
+              'D-ID said 403 Forbidden — your D-ID plan does not allow API video creation, or API credits are used up. ' +
+              'Log in at studio.d-id.com → Account settings and check that your plan includes API access and has credits. ' +
+              'Talking-head videos need a D-ID API plan.';
+          } else if (createRes.status === 402) {
+            friendly = 'D-ID said 402 — out of credits. Add credits in your D-ID account to make videos.';
+          } else if (createRes.status === 401) {
+            friendly = 'D-ID said 401 — the API key is wrong. Re-paste the full API_USER:API_PASSWORD in Settings.';
+          }
+          return { ok: false, smart: false, debug, error: friendly };
         }
         const created = await createRes.json();
         const id = created?.id;
