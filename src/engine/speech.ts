@@ -181,23 +181,31 @@ export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
         currentAudio = null;
       }
     },
-    speak(text, opts) {
+    async speak(text, opts) {
       this.stop();
       opts.onStart?.();
-      fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId(opts.voice)}`, {
-        method: 'POST',
-        headers: {
-          'xi-api-key': apiKey.trim(),
-          'Content-Type': 'application/json',
-          Accept: 'audio/mpeg',
-        },
-        body: JSON.stringify({
-          text,
-          model_id: 'eleven_turbo_v2_5',
-          voice_settings: { stability: 0.5, similarity_boost: 0.75 },
-        }),
-      })
-        .then(async (res) => {
+
+      const fallbackId = opts.voice.gender === 'female' ? ELEVEN_FEMALE : ELEVEN_MALE;
+      const requested = voiceId(opts.voice);
+      // Try the requested voice first; if it fails (e.g. not on this account),
+      // retry with a known-good default voice so it STAYS human — never robotic.
+      const tryIds = requested === fallbackId ? [requested] : [requested, fallbackId];
+
+      for (const id of tryIds) {
+        try {
+          const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${id}`, {
+            method: 'POST',
+            headers: {
+              'xi-api-key': apiKey.trim(),
+              'Content-Type': 'application/json',
+              Accept: 'audio/mpeg',
+            },
+            body: JSON.stringify({
+              text,
+              model_id: 'eleven_multilingual_v2',
+              voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.3 },
+            }),
+          });
           if (!res.ok) throw new Error(`ElevenLabs ${res.status}`);
           const blob = await res.blob();
           const url = URL.createObjectURL(blob);
@@ -210,11 +218,13 @@ export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
           };
           audio.ontimeupdate = () => opts.onBoundary?.();
           await audio.play();
-        })
-        .catch(() => {
-          // Fall back to the built-in voice so speech still happens.
-          webSpeechProvider.speak(text, opts);
-        });
+          return; // success — stop trying
+        } catch {
+          // try next id
+        }
+      }
+      // All ElevenLabs attempts failed — fall back to the built-in voice.
+      webSpeechProvider.speak(text, opts);
     },
   };
 }
