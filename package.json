@@ -1,6 +1,6 @@
 {
   "name": "genius-tutor",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "A warm, adaptive educational tutor for children (K-12) with avatar guides and accessibility support.",
   "main": "dist-electron/main.js",
   "author": "Genius Tutor",
