@@ -20,6 +20,7 @@ import { fileToDataUrl } from '../data/image';
 import { STUDY_ROOMS, getRoom } from '../data/rooms';
 import { RoomScene } from './RoomScene';
 import { TutorStage } from './TutorStage';
+import { getCachedVideo } from '../data/videoCache';
 import {
   startFocusMusic,
   stopFocusMusic,
@@ -159,18 +160,38 @@ export function AnimeEnvironment({
   const speak = useCallback(
     (text: string, tutor: AnimeTutor, nextMood: AvatarMood = 'speaking') => {
       setBubble(text);
+      // Stop any TTS already playing so voices never overlap.
+      getSpeech().stop();
       if (profile.autoSpeak === false) {
         setMood(nextMood === 'speaking' ? 'idle' : nextMood);
+        return;
+      }
+      // If a talking-head VIDEO will play for this exact line, the video
+      // carries its own audio — so DON'T also speak via TTS (prevents the
+      // double-voice bug). Only speak via TTS when there's no cached video.
+      const videoOn = !!profile.didKey && !!profile.videoMode;
+      if (videoOn) {
+        getCachedVideo(tutor.id, text).then((url) => {
+          if (url) {
+            // Video (with its own voice) will play; stay silent on TTS.
+            setMood(nextMood);
+            return;
+          }
+          getSpeech().speak(text, {
+            voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
+            onStart: () => setMood(nextMood),
+            onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
+          });
+        });
         return;
       }
       getSpeech().speak(text, {
         voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
         onStart: () => setMood(nextMood),
-        onEnd: () =>
-          setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
+        onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [profile.autoSpeak]
+    [profile.autoSpeak, profile.didKey, profile.videoMode, profile.tutorVoices]
   );
 
   function openTutor(tutor: AnimeTutor) {
@@ -235,6 +256,7 @@ export function AnimeEnvironment({
       setVideoError('Pick or generate a realistic face avatar first (not the emoji).');
       return;
     }
+    getSpeech().stop(); // ensure TTS isn't also playing — video has its own audio
     setVideoBusy(true);
     setVideoError('');
     setVideoDebug([]);

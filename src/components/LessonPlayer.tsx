@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import type { Lesson, QuizItem } from '../data/curriculum6';
 import { allLessonsForSubject, buildTest } from '../data/curriculum6';
+import { getCachedVideo } from '../data/videoCache';
 import { type AvatarMood } from './AnimatedAvatar';
 import { TutorStage } from './TutorStage';
 import { getSpeech } from '../engine/speech';
@@ -75,8 +76,25 @@ export function LessonPlayer({
   const speak = useCallback(
     (text: string, nextMood: AvatarMood = 'speaking') => {
       setBubble(text);
+      getSpeech().stop(); // never overlap voices
       if (!autoSpeak) {
         setMood(nextMood === 'speaking' ? 'idle' : nextMood);
+        return;
+      }
+      // If a cached talking-head video will play for this line, let the
+      // video's own audio speak — skip TTS to avoid two voices at once.
+      if (videoEnabled) {
+        getCachedVideo(tutor.id, text).then((url) => {
+          if (url) {
+            setMood(nextMood);
+            return;
+          }
+          getSpeech().speak(text, {
+            voice: effectiveVoice(tutor, voiceOverride),
+            onStart: () => setMood(nextMood),
+            onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
+          });
+        });
         return;
       }
       getSpeech().speak(text, {
@@ -85,7 +103,7 @@ export function LessonPlayer({
         onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [autoSpeak, tutor, voiceOverride]
+    [autoSpeak, tutor, voiceOverride, videoEnabled]
   );
 
   useEffect(() => () => getSpeech().stop(), []);
