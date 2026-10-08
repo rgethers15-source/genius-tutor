@@ -261,7 +261,11 @@ export function AnimeEnvironment({
     setVideoError('');
     setVideoDebug([]);
     setVideoUrl(null);
-    const res = await getVideoAvatar().speakVideo(img, line);
+    const voiceId = profile.tutorVideoVoices?.[activeTutor.id] || activeTutor.videoVoiceId;
+    const res = await getVideoAvatar().speakVideo(img, line, {
+      provider: 'microsoft',
+      voiceId,
+    });
     setVideoDebug(res.debug ?? []);
     if (res.ok && res.videoUrl) {
       setVideoUrl(res.videoUrl);

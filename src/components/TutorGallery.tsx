@@ -12,6 +12,7 @@ import { fileToDataUrl } from '../data/image';
 import { generateAvatar, STYLE_PRESETS } from '../engine/imageGen';
 import { prerecordTutor, collectTutorLines, type PrerecordProgress } from '../engine/prerecord';
 import { cacheAvailable, bridgeDiagnostic } from '../data/videoCache';
+import { VIDEO_VOICE_OPTIONS } from '../data/videoVoices';
 import { APP_VERSION } from '../version';
 
 export function TutorGallery({
@@ -56,10 +57,11 @@ export function TutorGallery({
     cancelRef.current = false;
     setPreBusy(true);
     setPreDone(null);
+    const chosenVoice = profile.tutorVideoVoices?.[tutor.id] || tutor.videoVoiceId;
     const result = await prerecordTutor(
       tutor,
       img,
-      { provider: 'microsoft', voiceId: tutor.videoVoiceId },
+      { provider: 'microsoft', voiceId: chosenVoice },
       (p) => setPreProgress({ ...p }),
       () => cancelRef.current
     );
@@ -171,6 +173,33 @@ export function TutorGallery({
           {!active && (
             <p className="faint">Pick or generate a realistic face picture above first.</p>
           )}
+
+          {/* Pick the tutor's VIDEO voice (baked into pre-recorded clips) */}
+          <div className="field" style={{ marginTop: 12, maxWidth: 420 }}>
+            <label htmlFor={`vv-${tutor.id}`}>🎙️ {tutor.name}'s video voice</label>
+            <select
+              id={`vv-${tutor.id}`}
+              value={profile.tutorVideoVoices?.[tutor.id] ?? tutor.videoVoiceId}
+              onChange={(e) =>
+                onUpdate({
+                  ...profile,
+                  tutorVideoVoices: {
+                    ...(profile.tutorVideoVoices ?? {}),
+                    [tutor.id]: e.target.value,
+                  },
+                })
+              }
+            >
+              {VIDEO_VOICE_OPTIONS.map((v) => (
+                <option key={v.id} value={v.id}>{v.label}</option>
+              ))}
+            </select>
+            <p className="faint" style={{ marginTop: 6, fontSize: '0.78rem' }}>
+              Choose the voice BEFORE pre-recording. To change the voice later,
+              pick a new one and pre-record again (it overwrites the old clips).
+            </p>
+          </div>
+
           {!cacheAvailable() && (
             <p style={{ color: 'var(--danger)' }}>
               ⚠️ Video saving isn't available in this build. Make sure you're on v0.12.0+

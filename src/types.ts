@@ -97,6 +97,8 @@ export interface Profile {
   elevenLabsKey?: string;
   /** Per-tutor ElevenLabs voice-ID overrides, keyed by tutor id. */
   tutorVoices?: Record<string, string>;
+  /** Per-tutor D-ID VIDEO voice-ID overrides, keyed by tutor id. */
+  tutorVideoVoices?: Record<string, string>;
   /**
    * Uploaded study-room background images, keyed by room id (data URLs).
    * Rooms are the immersive spaces tutors teach in.
