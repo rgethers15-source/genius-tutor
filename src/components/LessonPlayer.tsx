@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import type { Lesson, QuizItem } from '../data/curriculum6';
 import { allLessonsForSubject, buildTest } from '../data/curriculum6';
+import { allLessons1ForSubject } from '../data/curriculum1';
 import { getCachedVideo } from '../data/videoCache';
 import { type AvatarMood } from './AnimatedAvatar';
 import { TutorStage } from './TutorStage';
@@ -16,6 +17,7 @@ export function LessonPlayer({
   autoSpeak,
   videoEnabled = false,
   voiceOverride,
+  gradeBand = '6',
   onEarnStar,
   onRecordAnswer,
   onLessonComplete,
@@ -27,6 +29,8 @@ export function LessonPlayer({
   autoSpeak: boolean;
   videoEnabled?: boolean;
   voiceOverride?: string;
+  /** '1' uses the 1st-grade curriculum; otherwise 6th-grade. */
+  gradeBand?: '1' | '6';
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
   onLessonComplete?: (lessonId: string, title: string) => void;
@@ -34,7 +38,10 @@ export function LessonPlayer({
   onGenerateQuestions?: (count: number) => Promise<QuizItem[]>;
   onBack: () => void;
 }) {
-  const lessons = allLessonsForSubject(tutor.subject);
+  const lessons =
+    gradeBand === '1'
+      ? allLessons1ForSubject(tutor.subject)
+      : allLessonsForSubject(tutor.subject);
   const [phase, setPhase] = useState<Phase>('menu');
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [stepIdx, setStepIdx] = useState(0);
@@ -159,7 +166,11 @@ export function LessonPlayer({
 
   // ---- Test (scored, gentle) ----
   function startTest() {
-    const items = buildTest(tutor.subject, 5);
+    const pool = lessons.flatMap((l) => l.quiz);
+    const items = (pool.length
+      ? [...pool].sort(() => Math.random() - 0.5)
+      : buildTest(tutor.subject, 5)
+    ).slice(0, 5);
     setTestItems(items);
     setTestIdx(0);
     setTestScore(0);
@@ -226,7 +237,7 @@ export function LessonPlayer({
       {phase === 'menu' ? (
         <div>
           <p className="muted" style={{ fontSize: '1.1rem' }}>
-            📗 <strong>NC 6th-Grade {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
+            📗 <strong>NC {gradeBand === '1' ? '1st' : '6th'}-Grade {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject === 'africanHeritage' ? 'African Heritage' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
           </p>
           <div className="grid cols-2" style={{ marginTop: 16 }}>
             {lessons.map((l) => (

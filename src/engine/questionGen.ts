@@ -19,6 +19,8 @@ const SUBJECT_TOPICS: Record<Subject, string> = {
   socialStudies: 'NC 6th-grade social studies (community, maps/directions, government, geography, history)',
   art: 'elementary art concepts (colors, shapes, mixing, patterns)',
   music: 'elementary music concepts (rhythm, tempo, beat, instruments)',
+  speech: 'phonics and speech sounds (letter sounds, blending, rhyming, clear pronunciation)',
+  africanHeritage: 'African heritage and culture for kids (countries, famous Black leaders and inventors, Kente cloth, Kwanzaa, music, positive identity)',
 };
 
 export async function generateQuestions(

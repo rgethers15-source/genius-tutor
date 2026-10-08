@@ -8,7 +8,7 @@
 // backdrop per room to override the animated scene.
 // ============================================================
 
-export type SceneKind = 'neon-city' | 'galaxy' | 'aurora' | 'cyber-grid';
+export type SceneKind = 'neon-city' | 'galaxy' | 'aurora' | 'cyber-grid' | 'princess';
 
 export interface StudyRoom {
   id: string;

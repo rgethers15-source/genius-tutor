@@ -24,6 +24,8 @@ export const SUBJECTS: { value: Subject; label: string; icon: string }[] = [
   { value: 'socialStudies', label: 'Social Studies', icon: '🌍' },
   { value: 'art', label: 'Art', icon: '🎨' },
   { value: 'music', label: 'Music', icon: '🎵' },
+  { value: 'speech', label: 'Speech', icon: '🗣️' },
+  { value: 'africanHeritage', label: 'African Heritage', icon: '👑' },
 ];
 
 /** Suggest a grade from age (typical US mapping); caregiver can override. */

@@ -5,9 +5,10 @@ import { ProfilePicker } from './components/ProfilePicker';
 import { SetupWizard } from './components/SetupWizard';
 import { Dashboard } from './components/Dashboard';
 import { AnimeEnvironment } from './components/AnimeEnvironment';
+import { PrincessEnvironment } from './components/PrincessEnvironment';
 import { ParentDashboard } from './components/ParentDashboard';
 
-type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'parent';
+type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'princess' | 'parent';
 
 export function App() {
   const [data, setData] = useState<AppData>({ profiles: [], version: 1 });
@@ -56,8 +57,8 @@ export function App() {
 
   function openProfile(p: Profile) {
     setActiveId(p.id);
-    // Learners with the immersive anime environment go straight into it.
-    setView(p.animeEnvironment ? 'anime' : 'dashboard');
+    // Route to the right immersive environment.
+    setView(p.princessEnvironment ? 'princess' : p.animeEnvironment ? 'anime' : 'dashboard');
   }
 
   function toggleNight() {
@@ -85,7 +86,7 @@ export function App() {
         </div>
       </div>
 
-      {view !== 'anime' && (
+      {view !== 'anime' && view !== 'princess' && (
       <div className="content">
         {view === 'loading' && <div className="center muted">Loading…</div>}
 
@@ -114,6 +115,10 @@ export function App() {
               handleUpdate({ ...active, animeEnvironment: true });
               setView('anime');
             }}
+            onEnterPrincess={() => {
+              handleUpdate({ ...active, princessEnvironment: true });
+              setView('princess');
+            }}
           />
         )}
 
@@ -121,7 +126,7 @@ export function App() {
           <ParentDashboard
             profile={active}
             onUpdate={handleUpdate}
-            onExit={() => setView(active.animeEnvironment ? 'anime' : 'dashboard')}
+            onExit={() => setView(active.princessEnvironment ? 'princess' : active.animeEnvironment ? 'anime' : 'dashboard')}
           />
         )}
       </div>
@@ -129,6 +134,14 @@ export function App() {
 
       {view === 'anime' && active && (
         <AnimeEnvironment
+          profile={active}
+          onExit={() => setView('picker')}
+          onUpdate={handleUpdate}
+        />
+      )}
+
+      {view === 'princess' && active && (
+        <PrincessEnvironment
           profile={active}
           onExit={() => setView('picker')}
           onUpdate={handleUpdate}

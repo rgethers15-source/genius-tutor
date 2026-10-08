@@ -105,6 +105,16 @@ const BANK: Record<Subject, Record<Band, { title: string; prompt: string; kineti
     middle: [{ title: 'Make an Instrument', prompt: 'Build a shaker from a jar and rice, then keep a steady beat.', kinetic: true }],
     upper: [{ title: 'Compose a Hook', prompt: 'Tap a 4-beat rhythm and hum a melody over it. Record it!', kinetic: true }],
   },
+  speech: {
+    early: [{ title: 'Sound Hunt', prompt: 'Say the "sss" sound, then hop to 3 things that start with it!', kinetic: true }],
+    middle: [{ title: 'Say It Clear', prompt: 'Say a tricky word slowly, clap each part, then say it fast.', kinetic: true }],
+    upper: [{ title: 'Story Out Loud', prompt: 'Read a sentence out loud with a big clear voice. Stand tall!', kinetic: true }],
+  },
+  africanHeritage: {
+    early: [{ title: 'Kente Colors', prompt: 'Color a pattern like Kente cloth, then dance to a drum beat!', kinetic: true }],
+    middle: [{ title: 'Great Leaders', prompt: 'Act out being a brave leader from African history. Strike a pose!', kinetic: true }],
+    upper: [{ title: 'Map of Africa', prompt: 'Point to Africa on a map, then march to a country and name it.', kinetic: true }],
+  },
 };
 
 /** Default offline provider: transparent, rule-based, always kinetic-first. */

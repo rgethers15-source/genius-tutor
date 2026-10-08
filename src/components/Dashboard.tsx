@@ -9,11 +9,13 @@ export function Dashboard({
   onExit,
   onUpdate,
   onEnterAnime,
+  onEnterPrincess,
 }: {
   profile: Profile;
   onExit: () => void;
   onUpdate: (p: Profile) => void;
   onEnterAnime?: () => void;
+  onEnterPrincess?: () => void;
 }) {
   const avatar = getAvatar(profile.avatarId);
   const grade = GRADE_LEVELS.find((g) => g.value === profile.plan.gradeLevel);
@@ -72,6 +74,16 @@ export function Dashboard({
               title="Immersive anime study rooms with talking tutors"
             >
               ✨ Anime Academy
+            </button>
+          )}
+          {onEnterPrincess && (
+            <button
+              className="btn small"
+              type="button"
+              onClick={onEnterPrincess}
+              title="Black Girl Magic Princess diamond wonderland"
+            >
+              👑 Princess Academy
             </button>
           )}
           <button className="btn ghost small" type="button" onClick={onExit}>

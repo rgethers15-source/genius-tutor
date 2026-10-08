@@ -516,3 +516,85 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .listening-bar span:nth-child(4) { height: 28px; animation-delay: 0.45s; }
 .listening-bar span:nth-child(5) { height: 14px; animation-delay: 0.6s; }
 @keyframes listenPulse { 0%,100%{transform:scaleY(0.4);} 50%{transform:scaleY(1.1);} }
+
+/* ============================================================
+   Princess diamond-wonderland scene (McKenzie)
+   Warm magical palette — gold, rose, amber (no harsh brights)
+   ============================================================ */
+.scene-castle {
+  position: absolute; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: 60%; height: 46%;
+  background:
+    linear-gradient(180deg, transparent, #2a1726 92%),
+    radial-gradient(ellipse at 50% 100%, #4a2d3e, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 120%, #000 55%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 50% 120%, #000 55%, transparent 72%);
+  opacity: 0.8;
+}
+.scene-sparkles {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 15% 25%, #ffe9b0 50%, transparent),
+    radial-gradient(2px 2px at 70% 40%, #ffd9e0 50%, transparent),
+    radial-gradient(3px 3px at 40% 60%, #ffe9b0 50%, transparent),
+    radial-gradient(2px 2px at 85% 70%, #ffd9e0 50%, transparent),
+    radial-gradient(2px 2px at 25% 80%, #ffe4c4 50%, transparent);
+  background-size: 500px 500px;
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+.scene-glow-pink { top: -60px; right: -40px; background: #b85a7a; }
+.scene-glow-gold { bottom: -80px; left: -40px; background: #c98a3d; }
+.scene-diamonds {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.scene-diamonds span {
+  position: absolute; font-size: 1.8rem; opacity: 0.85;
+  animation: floaty 7s ease-in-out infinite;
+}
+.scene-diamonds span:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.scene-diamonds span:nth-child(2) { left: 80%; top: 15%; animation-delay: 1s; }
+.scene-diamonds span:nth-child(3) { left: 50%; top: 10%; font-size: 2.4rem; animation-delay: 0.5s; }
+.scene-diamonds span:nth-child(4) { left: 25%; top: 55%; animation-delay: 1.5s; }
+.scene-diamonds span:nth-child(5) { left: 70%; top: 60%; animation-delay: 0.8s; }
+.scene-diamonds span:nth-child(6) { left: 90%; top: 45%; animation-delay: 2s; }
+
+/* Princess environment title shimmer */
+.princess-title {
+  background: linear-gradient(90deg, #e8a04b, #e39a6f, #d98a5a, #e8a04b);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-weight: 900; animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+
+/* Big friendly tiles for a 1st grader */
+.kid-tile {
+  text-align: center; padding: 22px 14px; cursor: pointer;
+  border-radius: 20px; border: 2px solid var(--border);
+  background: var(--bg-card); transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.kid-tile:hover { transform: translateY(-4px) scale(1.02); border-color: var(--accent); }
+.kid-tile .kid-emoji { font-size: 3rem; display: block; margin-bottom: 8px; }
+.kid-tile .kid-label { font-size: 1.3rem; font-weight: 800; }
+
+/* Big tap buttons for little hands */
+.kid-btn {
+  font-size: 1.6rem; font-weight: 800; padding: 20px 28px;
+  border-radius: 20px; border: none; cursor: pointer;
+  background: var(--accent); color: #201509; min-width: 90px;
+}
+.kid-btn:hover { filter: brightness(1.08); }
+.kid-btn.big-letter { font-size: 3rem; min-width: 110px; }
+
+/* Montessori tray */
+.tray {
+  display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+  padding: 20px; background: var(--bg-raised); border-radius: 18px;
+  border: 2px dashed var(--border); min-height: 120px;
+}
+.tray-item {
+  font-size: 2.4rem; cursor: grab; user-select: none;
+  padding: 8px 12px; border-radius: 14px; background: var(--bg-card);
+  border: 2px solid var(--border);
+}
+.tray-item.correct { border-color: var(--success); }

@@ -39,6 +39,18 @@ export function RoomScene({ scene }: { scene: SceneKind }) {
           <div className="scene-glow scene-glow-a" />
         </>
       )}
+      {scene === 'princess' && (
+        <>
+          <div className="scene-stars" />
+          <div className="scene-castle" />
+          <div className="scene-sparkles" />
+          <div className="scene-glow scene-glow-pink" />
+          <div className="scene-glow scene-glow-gold" />
+          <div className="scene-diamonds">
+            <span>💎</span><span>✨</span><span>👑</span><span>💎</span><span>⭐</span><span>✨</span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

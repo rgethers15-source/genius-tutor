@@ -104,6 +104,22 @@ const BANK: Record<Subject, QA[]> = {
       hint: 'Tempo means speed. Slow music = slow tempo.',
     },
   ],
+  speech: [
+    {
+      say: 'What sound does the letter S make?',
+      choices: ['sss', 'buh', 'mmm'],
+      answer: 'sss',
+      hint: 'Think of a snake: sssss!',
+    },
+  ],
+  africanHeritage: [
+    {
+      say: 'Kente cloth with bright colors comes from which continent?',
+      choices: ['Africa', 'Antarctica', 'Europe'],
+      answer: 'Africa',
+      hint: 'It is a big, beautiful continent where many of our ancestors came from.',
+    },
+  ],
 };
 
 export const CHEERS = [

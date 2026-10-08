@@ -27,7 +27,9 @@ export type Subject =
   | 'science'
   | 'socialStudies'
   | 'art'
-  | 'music';
+  | 'music'
+  | 'speech'
+  | 'africanHeritage';
 
 export type LearningStyle = 'kinetic' | 'visual' | 'auditory' | 'reading';
 
@@ -68,6 +70,8 @@ export interface Profile {
   starsEarned: number;
   /** Turns on the immersive anime learning environment for this learner. */
   animeEnvironment?: boolean;
+  /** Turns on the Black Girl Magic Princess environment (McKenzie). */
+  princessEnvironment?: boolean;
   /**
    * LEGACY: single uploaded tutor portrait, keyed by anime tutor id.
    * Kept for backward compatibility; migrated into `tutorGallery`.
