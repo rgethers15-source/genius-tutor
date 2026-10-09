@@ -622,3 +622,17 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .princess-world .avatar-blink, .princess-world .avatar-mouth { display:none; }
 .quiet-kingdom .avatar-waves { display:none; }
 .princess-world .center { max-width:1050px; }
+.audio-controls { position:relative; }
+.audio-panel { position:absolute; right:0; top:100%; width:310px; z-index:100; box-shadow:0 14px 45px #0008; }
+.audio-panel label { display:block; margin:12px 0; }
+.audio-panel input[type=range] { display:block; width:100%; }
+.jurassic-world { background:linear-gradient(160deg,#152b27,#2c4541); }
+.jurassic-world .center { background:#142a27ed; border:1px solid #769683; border-radius:22px; padding:28px; }
+.expedition-title { color:#e7d5a0; }
+.explorer-portal { background:linear-gradient(140deg,#3c5144,#20352f); border-radius:18px; min-height:180px; }
+.expedition-shell { max-width:1100px; margin:auto; background:#142a27ed; padding:24px; border-radius:24px; }
+.expedition-viewport { height:480px; overflow:hidden; border-radius:18px; border:2px solid #708b77; margin-bottom:14px; }
+.expedition-viewport canvas { display:block; width:100%;height:100%; }
+.expedition-viewport canvas:focus { outline:3px solid #edd5a0;outline-offset:-3px; }
+.jurassic-world .avatar-blink,.jurassic-world .avatar-mouth { display:none; }
+@media(max-width:1000px){.jurassic-world .grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr));}}

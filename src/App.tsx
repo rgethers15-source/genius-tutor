@@ -1,3 +1,8 @@
+import { JurassicEnvironment } from './components/JurassicEnvironment';
+import { mandelaProfile } from './data/mandelaProfile';
+import { AudioControls } from './components/AudioControls';
+import { configureEffects, playEffect, quietEffects } from './engine/soundEffects';
+import { startFocusMusic, stopFocusMusic, setVolume, duckMusic, setCustomTrack } from './engine/focusMusic';
 import { useEffect, useState } from 'react';
 import type { AppData, Profile } from './types';
 import { loadData, saveData, upsertProfile, removeProfile } from './data/store';
@@ -9,7 +14,7 @@ import { AnimeEnvironment } from './components/AnimeEnvironment';
 import { PrincessEnvironment } from './components/PrincessEnvironment';
 import { ParentDashboard } from './components/ParentDashboard';
 
-type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'princess' | 'parent';
+type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'princess' | 'parent' | 'jurassic';
 
 export function App() {
   const [data, setData] = useState<AppData>({ profiles: [], version: 1 });
@@ -24,6 +29,31 @@ export function App() {
       setData(d);
       setView(d.profiles.length === 0 ? 'setup' : 'picker');
     });
+  }, []);
+
+  useEffect(() => { configureEffects(active?.soundEffects !== false, active?.effectsVolume ?? 0.25); }, [active?.soundEffects, active?.effectsVolume]);
+  useEffect(() => {
+    if (active?.princessEnvironment && !active?.jurassicEnvironment) return;
+    setCustomTrack(active?.customMusic ?? null);
+    if (active?.focusMusic) startFocusMusic(active.musicVolume ?? 0.18); else stopFocusMusic();
+    return stopFocusMusic;
+  }, [active?.id, active?.focusMusic, active?.customMusic]);
+  useEffect(() => { setVolume(active?.musicVolume ?? 0.18); }, [active?.musicVolume]);
+  useEffect(() => {
+    const activity = { speaking: false, listening: false };
+    const sync = () => { const busy = activity.speaking || activity.listening; duckMusic(busy); quietEffects(busy); };
+    const speech = (e: Event) => { activity.speaking = !!(e as CustomEvent).detail; sync(); };
+    const listening = (e: Event) => { activity.listening = !!(e as CustomEvent).detail; sync(); };
+    const click = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest('button, [role="button"], .clickable, .kid-tile, select')) void playEffect('tap');
+    };
+    document.addEventListener('click', click);
+    window.addEventListener('gt-speaking', speech); window.addEventListener('gt-listening', listening);
+    return () => {
+      document.removeEventListener('click', click);
+      window.removeEventListener('gt-speaking', speech); window.removeEventListener('gt-listening', listening);
+      duckMusic(false); quietEffects(false);
+    };
   }, []);
 
   // Apply accessibility + theme to <html> based on the active profile.
@@ -47,6 +77,7 @@ export function App() {
   }
 
   function handleUpdate(profile: Profile) {
+    if (profile.starsEarned > (active?.starsEarned ?? 0)) void playEffect('reward');
     syncKeysToDevice(profile); // share API keys across all profiles (device-level)
     persist(upsertProfile(data, profile));
   }
@@ -58,9 +89,10 @@ export function App() {
   }
 
   function openProfile(p: Profile) {
+    void playEffect('welcome');
     setActiveId(p.id);
     // Route to the right immersive environment.
-    setView(p.princessEnvironment ? 'princess' : p.animeEnvironment ? 'anime' : 'dashboard');
+    setView(p.jurassicEnvironment ? 'jurassic' : p.princessEnvironment ? 'princess' : p.animeEnvironment ? 'anime' : 'dashboard');
   }
 
   function toggleNight() {
@@ -75,6 +107,7 @@ export function App() {
           <span className="logo">🎓</span> Genius Tutor
         </div>
         <div className="row">
+          {active && <AudioControls profile={active} onUpdate={handleUpdate} />}
           {active && view !== 'parent' && (
             <button className="btn ghost small" type="button" onClick={() => setView('parent')}>
               📊 Parent
@@ -88,7 +121,7 @@ export function App() {
         </div>
       </div>
 
-      {view !== 'anime' && view !== 'princess' && (
+      {view !== 'anime' && view !== 'princess' && view !== 'jurassic' && (
       <div className="content">
         {view === 'loading' && <div className="center muted">Loading…</div>}
 
@@ -97,6 +130,7 @@ export function App() {
             data={data}
             onOpen={openProfile}
             onAdd={() => setView('setup')}
+            onAddMandela={() => { const p = mandelaProfile(); handleComplete(p); setView('jurassic'); }}
             onDelete={handleDelete}
           />
         )}
@@ -128,12 +162,13 @@ export function App() {
           <ParentDashboard
             profile={active}
             onUpdate={handleUpdate}
-            onExit={() => setView(active.princessEnvironment ? 'princess' : active.animeEnvironment ? 'anime' : 'dashboard')}
+            onExit={() => setView(active.jurassicEnvironment ? 'jurassic' : active.princessEnvironment ? 'princess' : active.animeEnvironment ? 'anime' : 'dashboard')}
           />
         )}
       </div>
       )}
 
+      {view === 'jurassic' && active && <JurassicEnvironment profile={active} onUpdate={handleUpdate} onExit={() => setView('picker')} />}
       {view === 'anime' && active && (
         <AnimeEnvironment
           profile={active}

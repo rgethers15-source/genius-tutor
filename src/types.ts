@@ -72,6 +72,8 @@ export interface Profile {
   animeEnvironment?: boolean;
   /** Turns on the Black Girl Magic Princess environment (McKenzie). */
   princessEnvironment?: boolean;
+  jurassicEnvironment?: boolean;
+  jurassicZombies?: boolean;
   /**
    * LEGACY: single uploaded tutor portrait, keyed by anime tutor id.
    * Kept for backward compatibility; migrated into `tutorGallery`.
@@ -116,6 +118,8 @@ export interface Profile {
   activeRoomId?: string;
   /** Play calm lofi focus music in the study room. */
   focusMusic?: boolean;
+  soundEffects?: boolean;
+  effectsVolume?: number;
   /** Focus-music volume 0..1. */
   musicVolume?: number;
   /** Optional caregiver-uploaded focus track (data URL). */

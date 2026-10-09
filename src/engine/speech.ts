@@ -273,11 +273,25 @@ export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
 }
 
 let active: SpeechProvider = webSpeechProvider;
-export function getSpeech(): SpeechProvider {
-  return active;
+function notifySpeech(on: boolean) {
+  if (typeof window !== 'undefined' && window.dispatchEvent) window.dispatchEvent(new CustomEvent('gt-speaking', { detail: on }));
 }
+let speechSession = 0;
+const controlledSpeech: SpeechProvider = {
+  isSupported: () => active.isSupported(),
+  stop() { speechSession++; active.stop(); notifySpeech(false); },
+  speak(text, opts) {
+    const session = ++speechSession;
+    notifySpeech(true);
+    active.speak(text, { ...opts,
+      onError: message => { if (session !== speechSession) return; notifySpeech(false); opts.onError?.(message); },
+      onEnd: () => { if (session !== speechSession) return; notifySpeech(false); opts.onEnd?.(); },
+    });
+  },
+};
+export function getSpeech(): SpeechProvider { return controlledSpeech; }
 export function setSpeech(p: SpeechProvider) {
-  active.stop();
+  controlledSpeech.stop();
   active = p;
 }
 
