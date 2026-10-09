@@ -57,6 +57,48 @@ function buildPrompt(userPrompt: string): string {
 /**
  * Generate one avatar image. Returns a data URL (base64) on success.
  */
+// Try one model. Returns {ok,dataUrl} or {ok:false,error, status}.
+async function tryModel(
+  apiKey: string,
+  model: 'gpt-image-1' | 'dall-e-3',
+  prompt: string
+): Promise<GenerateResult & { status?: number }> {
+  const body: Record<string, unknown> = {
+    model,
+    prompt: buildPrompt(prompt),
+    n: 1,
+    size: '1024x1024',
+  };
+  // dall-e-3 returns a URL by default; ask gpt-image-1 for b64.
+  if (model === 'dall-e-3') body.response_format = 'b64_json';
+
+  const res = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey.trim()}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    let msg = `OpenAI error ${res.status}`;
+    try {
+      const err = await res.json();
+      if (err?.error?.message) msg = err.error.message;
+    } catch {
+      /* keep default */
+    }
+    return { ok: false, error: msg, status: res.status };
+  }
+
+  const data = await res.json();
+  const item = data?.data?.[0];
+  if (item?.b64_json) return { ok: true, dataUrl: `data:image/png;base64,${item.b64_json}` };
+  if (item?.url) return { ok: true, dataUrl: item.url };
+  return { ok: false, error: 'No image returned by OpenAI.' };
+}
+
 export async function generateAvatar(
   apiKey: string,
   prompt: string
@@ -65,45 +107,31 @@ export async function generateAvatar(
     return { ok: false, error: 'No valid OpenAI API key. Add one in Settings.' };
   }
   try {
-    const res = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey.trim()}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-image-1',
-        prompt: buildPrompt(prompt),
-        n: 1,
-        size: '1024x1024',
-      }),
-    });
+    // 1) Try gpt-image-1 (best quality). It requires a VERIFIED OpenAI org.
+    const first = await tryModel(apiKey, 'gpt-image-1', prompt);
+    if (first.ok) return first;
 
-    if (!res.ok) {
-      let msg = `OpenAI error ${res.status}`;
-      try {
-        const err = await res.json();
-        if (err?.error?.message) msg = err.error.message;
-      } catch {
-        /* keep default */
-      }
-      return { ok: false, error: msg };
+    // 2) If gpt-image-1 is blocked (verification/403/model access), fall back
+    //    to dall-e-3, which works on most accounts without verification.
+    const needsFallback =
+      first.status === 403 ||
+      first.status === 404 ||
+      /verif|not have access|must be verified|model/i.test(first.error ?? '');
+    if (needsFallback) {
+      const second = await tryModel(apiKey, 'dall-e-3', prompt);
+      if (second.ok) return second;
+      return {
+        ok: false,
+        error:
+          second.error ||
+          'Image generation failed. Your OpenAI account may need billing enabled.',
+      };
     }
-
-    const data = await res.json();
-    const item = data?.data?.[0];
-    // gpt-image-1 returns b64_json by default.
-    if (item?.b64_json) {
-      return { ok: true, dataUrl: `data:image/png;base64,${item.b64_json}` };
-    }
-    if (item?.url) {
-      return { ok: true, dataUrl: item.url };
-    }
-    return { ok: false, error: 'No image returned by OpenAI.' };
+    return first;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     const friendly = /failed to fetch|networkerror|load failed/i.test(msg)
-      ? 'Could not reach OpenAI. Check your internet connection, and make sure your OpenAI account has image generation and billing enabled.'
+      ? 'Could not reach OpenAI. Check your internet, and make sure billing/image generation is enabled on your OpenAI account.'
       : msg;
     return { ok: false, error: friendly };
   }

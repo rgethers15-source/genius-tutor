@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AppData, Profile } from './types';
 import { loadData, saveData, upsertProfile, removeProfile } from './data/store';
+import { syncKeysToDevice } from './data/keys';
 import { ProfilePicker } from './components/ProfilePicker';
 import { SetupWizard } from './components/SetupWizard';
 import { Dashboard } from './components/Dashboard';
@@ -46,6 +47,7 @@ export function App() {
   }
 
   function handleUpdate(profile: Profile) {
+    syncKeysToDevice(profile); // share API keys across all profiles (device-level)
     persist(upsertProfile(data, profile));
   }
 

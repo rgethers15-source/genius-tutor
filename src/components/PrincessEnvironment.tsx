@@ -12,6 +12,7 @@ import { LessonPlayer } from './LessonPlayer';
 import { TutorGallery } from './TutorGallery';
 import { KidActivities, type KidMode } from './KidActivities';
 import { recordAnswer, recordLessonComplete } from '../data/stats';
+import { elevenKeyFor, openAiKeyFor } from '../data/keys';
 import {
   startFocusMusic, stopFocusMusic, setVolume, nextTrack, currentTitle, onTrackChange,
 } from '../engine/focusMusic';
@@ -42,8 +43,8 @@ export function PrincessEnvironment({
   // Voice provider priority (same as anime env).
   useEffect(() => {
     const useHuman = profile.humanVoice !== false;
-    const eleven = profile.elevenLabsKey?.trim();
-    const openai = profile.openAiKey?.trim();
+    const eleven = elevenKeyFor(profile);
+    const openai = openAiKeyFor(profile);
     if (useHuman && eleven && eleven.length > 10) setSpeech(elevenLabsSpeechProvider(eleven));
     else if (useHuman && openai && openai.length > 10) setSpeech(openAiSpeechProvider(openai));
     else setSpeech(webSpeechProvider);

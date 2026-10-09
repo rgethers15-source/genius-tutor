@@ -13,6 +13,7 @@ import { generateAvatar, STYLE_PRESETS } from '../engine/imageGen';
 import { prerecordTutor, collectTutorLines, type PrerecordProgress } from '../engine/prerecord';
 import { cacheAvailable, bridgeDiagnostic } from '../data/videoCache';
 import { VIDEO_VOICE_OPTIONS } from '../data/videoVoices';
+import { hasOpenAi, hasDid as hasDidKey, openAiKeyFor } from '../data/keys';
 import { APP_VERSION } from '../version';
 
 export function TutorGallery({
@@ -40,8 +41,8 @@ export function TutorGallery({
   const [preDone, setPreDone] = useState<string | null>(null);
   const cancelRef = useRef(false);
 
-  const hasKey = !!profile.openAiKey && profile.openAiKey.trim().length > 10;
-  const hasDid = !!profile.didKey && profile.didKey.trim().length > 10;
+  const hasKey = hasOpenAi(profile);
+  const hasDid = hasDidKey(profile);
   const totalLines = collectTutorLines(tutor).length;
 
   async function startPrerecord() {
@@ -94,7 +95,7 @@ export function TutorGallery({
     }
     setBusy(true);
     setStatus('Creating an anime avatar… this can take ~15 seconds. 🎨');
-    const res = await generateAvatar(profile.openAiKey!, prompt);
+    const res = await generateAvatar(openAiKeyFor(profile)!, prompt);
     if (res.ok && res.dataUrl) {
       onUpdate(addToGallery(profile, tutor.id, res.dataUrl));
       setStatus('New avatar created and added to the gallery! 🌟');
