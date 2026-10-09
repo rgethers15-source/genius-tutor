@@ -110,3 +110,42 @@ test('male voice selection does not match the word female', () => {
   webSpeechProvider.speak('hello', { voice: { ...voice, gender: 'male' } });
   assert.equal(fallback[0].voice.name, 'English Male');
 });
+
+test('OpenAI reading requests carry articulation instructions and calm pacing', async () => {
+  const p = openAiSpeechProvider('test-key-long-enough');
+  p.speak('a', { voice: { ...voice, rate: 0.85 }, purpose: 'reading',
+    pronunciation: { ipa: 'æ', example: 'apple', cue: '' } });
+  const payload = JSON.parse(requests[0].options.body);
+  assert.match(payload.instructions, /isolated phoneme \/æ\//);
+  assert.match(payload.instructions, /Do not add an uh/);
+  assert.equal(payload.speed, 0.85);
+  p.stop(); requests[0].resolve(response()); await flush();
+});
+
+test('ElevenLabs isolated sounds use a model supporting phoneme markup', async () => {
+  const p = elevenLabsSpeechProvider('test-key-long-enough');
+  p.speak('t', { voice, purpose: 'reading', pronunciation: { ipa: 't', example: 'top', cue: '' } });
+  const payload = JSON.parse(requests[0].options.body);
+  assert.equal(payload.model_id, 'eleven_flash_v2');
+  assert.equal(payload.text, '<phoneme alphabet="ipa" ph="t">t</phoneme>');
+  assert.equal(payload.voice_settings.style, 0);
+  p.stop(); requests[0].resolve(response()); await flush();
+});
+
+test('reading service failure reports an error instead of robotic fallback', async () => {
+  const p = openAiSpeechProvider('test-key-long-enough');
+  let error = ''; let ends = 0;
+  p.speak('cat', { voice, purpose: 'reading', onError: message => error = message, onEnd: () => ends++ });
+  requests[0].resolve({ ok: false, status: 401 }); await flush();
+  assert.equal(fallback.length, 0);
+  assert.match(error, /Natural voice audio is unavailable/);
+  assert.equal(ends, 1);
+  p.stop();
+});
+
+test('system voice refuses pronunciation demonstrations with clear setup feedback', () => {
+  let error = '';
+  webSpeechProvider.speak('cat', { voice, purpose: 'reading', onError: message => error = message });
+  assert.equal(fallback.length, 0);
+  assert.match(error, /key in Settings/);
+});

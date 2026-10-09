@@ -58,6 +58,8 @@ export function LessonPlayer({
   const [testScore, setTestScore] = useState(0);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [voiceError, setVoiceError] = useState('');
+  const readingVoice = tutor.subject === 'reading' || tutor.subject === 'speech';
 
   async function startAiPractice() {
     if (!onGenerateQuestions) return;
@@ -85,6 +87,7 @@ export function LessonPlayer({
   const speak = useCallback(
     (text: string, nextMood: AvatarMood = 'speaking') => {
       const request = ++speechRequest.current;
+      setVoiceError('');
       setBubble(text);
       getSpeech().stop(); // never overlap voices
       if (!autoSpeak) {
@@ -93,7 +96,7 @@ export function LessonPlayer({
       }
       // If a cached talking-head video will play for this line, let the
       // video's own audio speak — skip TTS to avoid two voices at once.
-      if (videoEnabled) {
+      if (videoEnabled && !readingVoice) {
         getCachedVideo(tutor.id, text).then((url) => {
           if (request !== speechRequest.current) return;
           if (url) {
@@ -101,7 +104,9 @@ export function LessonPlayer({
             return;
           }
           getSpeech().speak(text, {
-            voice: effectiveVoice(tutor, voiceOverride),
+            voice: { ...effectiveVoice(tutor, voiceOverride), ...(readingVoice ? { rate: 0.85 } : {}) },
+            purpose: readingVoice ? 'reading' : undefined,
+            onError: setVoiceError,
             onStart: () => setMood(nextMood),
             onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
           });
@@ -109,12 +114,14 @@ export function LessonPlayer({
         return;
       }
       getSpeech().speak(text, {
-        voice: effectiveVoice(tutor, voiceOverride),
+        voice: { ...effectiveVoice(tutor, voiceOverride), ...(readingVoice ? { rate: 0.85 } : {}) },
+            purpose: readingVoice ? 'reading' : undefined,
+            onError: setVoiceError,
         onStart: () => setMood(nextMood),
         onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [autoSpeak, tutor, voiceOverride, videoEnabled]
+    [autoSpeak, tutor, voiceOverride, videoEnabled, readingVoice]
   );
 
   useEffect(() => () => {
@@ -242,6 +249,7 @@ export function LessonPlayer({
         </button>
       </div>
 
+      {voiceError && <p role="alert" className="muted">{voiceError}</p>}
       {phase === 'menu' ? (
         <div>
           <p className="muted" style={{ fontSize: '1.1rem' }}>
@@ -289,7 +297,7 @@ export function LessonPlayer({
               mood={mood}
               line={bubble}
               size={380}
-              videoEnabled={videoEnabled && autoSpeak}
+              videoEnabled={videoEnabled && autoSpeak && !readingVoice}
             />
             {phase === 'test' && (
               <div className="faint">

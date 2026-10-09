@@ -42,6 +42,7 @@ export function ReadingPractice({
   const [bubble, setBubble] = useState('');
   const [listening, setListening] = useState(false);
   const [heard, setHeard] = useState('');
+  const [voiceError, setVoiceError] = useState('');
 
   const list = mode === 'words' ? WORDS : SENTENCES;
   const target = list[idx] ?? '';
@@ -49,17 +50,20 @@ export function ReadingPractice({
   const speak = useCallback(
     (text: string, m: AvatarMood = 'speaking') => {
       setBubble(text);
+      setVoiceError('');
       if (profile.autoSpeak === false) {
         setMood(m === 'speaking' ? 'idle' : m);
         return;
       }
       getSpeech().speak(text, {
-        voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
+        voice: { ...effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]), rate: 0.85 },
+        purpose: 'reading',
+        onError: setVoiceError,
         onStart: () => setMood(m),
         onEnd: () => setMood((c) => (c === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [profile.autoSpeak, tutor.voice]
+    [profile.autoSpeak, profile.tutorVoices, tutor]
   );
 
   useEffect(() => () => {
@@ -79,11 +83,18 @@ export function ReadingPractice({
   }
 
   function sayTarget() {
-    speak(target, 'speaking');
+    getSpeech().speak(target, {
+      voice: { ...effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]), rate: 0.85 },
+      purpose: 'reading',
+      onStart: () => { setVoiceError(''); setMood('speaking'); },
+      onError: setVoiceError,
+      onEnd: () => setMood('idle'),
+    });
   }
 
   function startListening() {
     if (!supported) return;
+    getSpeech().stop();
     setHeard('');
     setListening(true);
     setMood('thinking');
@@ -136,6 +147,7 @@ export function ReadingPractice({
         </button>
       </div>
 
+      {voiceError && <p role="alert" className="muted">{voiceError}</p>}
       {!supported && (
         <div className="card" style={{ marginBottom: 16, borderColor: 'var(--accent)' }}>
           <strong>ℹ️ Microphone not available here.</strong>

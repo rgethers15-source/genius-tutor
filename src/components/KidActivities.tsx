@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import type { Profile } from '../types';
 import { TutorStage } from './TutorStage';
 import { type AvatarMood } from './AnimatedAvatar';
+import { soundForLetter, type PronunciationTarget } from '../engine/pronunciation';
 import { getSpeech } from '../engine/speech';
 import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import { activeImageFor } from '../data/gallery';
 import { isListeningSupported, listenOnce, stopListening, spokenMatches } from '../engine/listen';
-import { pickCheer, pickGentle } from '../engine/tutorBrain';
 import {
   LETTER_SOUNDS, BLEND_WORDS, SIGHT_WORDS, EASY_SENTENCES,
 } from '../data/learnToRead';
@@ -28,19 +28,28 @@ export function KidActivities({
 }) {
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [bubble, setBubble] = useState('');
+  const [voiceError, setVoiceError] = useState('');
+  const lastSound = useRef<PronunciationTarget | undefined>(undefined);
+  const isReading = mode === 'learnRead' || mode === 'phonics';
 
   const speak = useCallback(
-    (text: string, m: AvatarMood = 'speaking') => {
+    (text: string, m: AvatarMood = 'speaking', pronunciation?: PronunciationTarget) => {
+      lastSound.current = pronunciation;
+      setVoiceError('');
       setBubble(text);
       getSpeech().stop();
-      if (profile.autoSpeak === false) { setMood(m === 'speaking' ? 'idle' : m); return; }
+      if (profile.autoSpeak === false && !isReading) { setMood(m === 'speaking' ? 'idle' : m); return; }
       getSpeech().speak(text, {
-        voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
+        voice: { ...effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
+          ...(isReading ? { rate: 0.85 } : {}) },
+        purpose: isReading ? 'reading' : undefined,
+        pronunciation,
+        onError: setVoiceError,
         onStart: () => setMood(m),
         onEnd: () => setMood((c) => (c === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [profile.autoSpeak, profile.tutorVoices, tutor]
+    [profile.autoSpeak, profile.tutorVoices, tutor, isReading]
   );
 
   useEffect(() => () => { getSpeech().stop(); stopListening(); }, []);
@@ -62,14 +71,15 @@ export function KidActivities({
       <div className="lesson-stage">
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
           <TutorStage tutor={tutor} imageSrc={img} mood={mood} line={bubble} size={320}
-            videoEnabled={!!profile.didKey && !!profile.videoMode} />
+            videoEnabled={false} />
           <strong style={{ color: tutor.accent }}>{tutor.name}</strong>
         </div>
         <div>
           <div className="tutor-speech dyslexia">{bubble || '…'}</div>
           <div className="row" style={{ marginTop: 10 }}>
-            <button className="read-btn" type="button" onClick={() => bubble && speak(bubble)}>🔊 Say it again</button>
+            <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, 'speaking', lastSound.current)}>🔊 Say it again</button>
           </div>
+          {voiceError && <p role="alert" className="muted">{voiceError}</p>}
           <div style={{ marginTop: 18 }}>
             {mode === 'learnRead' && <LearnToRead speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />}
             {mode === 'phonics' && <Phonics speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />}
@@ -82,7 +92,7 @@ export function KidActivities({
   );
 }
 
-type SubProps = { speak: (t: string, m?: AvatarMood) => void; onEarnStar: () => void; accent: string };
+type SubProps = { speak: (t: string, m?: AvatarMood, sound?: PronunciationTarget) => void; onEarnStar: () => void; accent: string };
 
 // ---------------- Learn to Read ----------------
 function LearnToRead({ speak, onEarnStar, accent }: SubProps) {
@@ -105,7 +115,7 @@ function LearnToRead({ speak, onEarnStar, accent }: SubProps) {
         <div className="grid cols-4" style={{ gap: 10 }}>
           {LETTER_SOUNDS.map((ls) => (
             <button key={ls.letter} className="kid-btn big-letter" style={{ background: accent }}
-              onClick={() => speak(`${ls.letter} says ${ls.sound}, like ${ls.example}. ${ls.emoji}`)}>
+              onClick={() => speak(ls.letter.toLowerCase(), 'speaking', soundForLetter(ls.letter))}>
               {ls.letter}
             </button>
           ))}
@@ -117,7 +127,7 @@ function LearnToRead({ speak, onEarnStar, accent }: SubProps) {
           <div style={{ fontSize: '4rem' }}>{BLEND_WORDS[i].emoji}</div>
           <div className="row" style={{ justifyContent: 'center', gap: 10, margin: '12px 0' }}>
             {BLEND_WORDS[i].parts.map((p, idx) => (
-              <button key={idx} className="kid-btn" style={{ background: accent }} onClick={() => speak(p)}>{p}</button>
+              <button key={idx} className="kid-btn" style={{ background: accent }} onClick={() => speak(p, 'speaking', soundForLetter(p))}>{p}</button>
             ))}
           </div>
           <button className="btn big-btn" style={{ background: accent }} onClick={() => { speak(`Blend it: ${BLEND_WORDS[i].word}! Great job!`, 'cheer'); onEarnStar(); }}>
@@ -159,21 +169,23 @@ function Phonics({ speak, onEarnStar, accent }: SubProps) {
   const [heard, setHeard] = useState('');
   const target = LETTER_SOUNDS[i];
 
-  useEffect(() => { speak("Let's practice sounds! Tap the letter to hear it, then say it into the mic."); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { speak("Let's practice sounds! Tap the letter to hear its sound. Repeat it, then practice the example word with the mic."); /* eslint-disable-next-line */ }, []);
 
   function listen() {
     if (!supported) return;
+    getSpeech().stop();
     setHeard(''); setListening(true);
     listenOnce({
       maxMs: 10000,
       onResult: (r) => {
         setHeard(r.transcript);
         if (r.confidence === 0) return;
-        // Accept if they said the sound OR the example word OR the letter.
-        if (spokenMatches(target.sound, r.transcript) || spokenMatches(target.example, r.transcript) || spokenMatches(target.letter, r.transcript)) {
-          onEarnStar(); speak(pickCheer(), 'cheer');
+        // Transcription cannot assess an isolated phoneme. Never treat a
+        // spoken letter name as proof that the child produced its sound.
+        if (spokenMatches(target.example, r.transcript)) {
+          onEarnStar(); speak(`I heard ${target.example}. Thank you for practicing!`, 'happy');
         } else {
-          speak(`${pickGentle()} ${target.letter} says ${target.sound}. Try again!`, 'thinking');
+          speak('Thank you for practicing! The microphone checks words, not individual sounds. Listen to the sound again and try it with me.');
         }
       },
       onError: () => speak("I didn't hear it. Tap the mic and try again!"),
@@ -184,13 +196,15 @@ function Phonics({ speak, onEarnStar, accent }: SubProps) {
   return (
     <div style={{ textAlign: 'center' }}>
       <button className="kid-btn big-letter" style={{ background: accent, marginBottom: 12 }}
-        onClick={() => speak(`${target.letter} says ${target.sound}, like ${target.example}.`)}>
+        onClick={() => speak(target.letter.toLowerCase(), 'speaking', soundForLetter(target.letter))}>
         {target.letter} {target.emoji}
       </button>
+      <p className="dyslexia">{soundForLetter(target.letter)?.cue} The sound starts “{target.example}”.</p>
+      <p className="faint">Listen and repeat the sound. The microphone can check the example word, but cannot grade the sound itself.</p>
       <div>
         {supported ? (
           <button className="btn big-btn" style={{ background: accent, opacity: listening ? 0.7 : 1 }} disabled={listening} onClick={listen}>
-            {listening ? '🎤 Listening… say it!' : '🎤 Tap and say the sound'}
+            {listening ? '🎤 Listening… say the word!' : `🎤 Practice the word: ${target.example}`}
           </button>
         ) : (
           <p className="faint">Mic not available here — tap the letter to hear the sound and say it back.</p>
@@ -199,7 +213,7 @@ function Phonics({ speak, onEarnStar, accent }: SubProps) {
       {listening && <div className="listening-bar" style={{ justifyContent: 'center', marginTop: 10 }}><span /><span /><span /><span /><span /></div>}
       {heard && <p className="faint" style={{ marginTop: 8 }}>I heard: "{heard}"</p>}
       <div style={{ marginTop: 12 }}>
-        <button className="btn ghost" onClick={() => { setI((i + 1) % LETTER_SOUNDS.length); setHeard(''); }}>Next sound →</button>
+        <button className="btn ghost" onClick={() => { stopListening(); getSpeech().stop(); setListening(false); setI((i + 1) % LETTER_SOUNDS.length); setHeard(''); }}>Next sound →</button>
       </div>
     </div>
   );
