@@ -97,6 +97,10 @@ export interface Profile {
   autoSpeak?: boolean;
   /** Use natural human voices (default on when a voice key is set). */
   humanVoice?: boolean;
+  princessVoiceProvider?: 'auto' | 'openai' | 'elevenlabs';
+  princessVoiceRate?: number;
+  princessOpenAiVoices?: Record<string, string>;
+  princessReducedMotion?: boolean;
   /** Optional ElevenLabs API key — top-tier natural voices (local only). */
   elevenLabsKey?: string;
   /** Per-tutor ElevenLabs voice-ID overrides, keyed by tutor id. */

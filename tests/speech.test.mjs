@@ -149,3 +149,17 @@ test('system voice refuses pronunciation demonstrations with clear setup feedbac
   assert.equal(fallback.length, 0);
   assert.match(error, /key in Settings/);
 });
+
+test('storybook direction supports the selected princess voice while retaining phonics precision', async () => {
+  const p = openAiSpeechProvider('test-key-long-enough', 'Bright youthful adult storybook voice.');
+  p.speak('Welcome', { voice: { ...voice, preferredVoice: 'coral' }, purpose: 'reading' });
+  const body = JSON.parse(requests[0].options.body);
+  assert.equal(body.voice, 'coral');
+  assert.match(body.instructions, /storybook/);
+  p.stop(); requests[0].resolve(response()); await flush();
+  p.speak('p', { voice, purpose: 'reading', pronunciation: { ipa: 'p', example: 'pig', cue: '' } });
+  const phonics = JSON.parse(requests[1].options.body);
+  assert.match(phonics.instructions, /ONLY the isolated phoneme/);
+  assert.doesNotMatch(phonics.instructions, /storybook/);
+  p.stop(); requests[1].resolve(response()); await flush();
+});

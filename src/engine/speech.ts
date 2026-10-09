@@ -192,11 +192,11 @@ function remoteSpeechProvider(
   };
 }
 
-export function openAiSpeechProvider(apiKey: string): SpeechProvider {
+export function openAiSpeechProvider(apiKey: string, direction?: string): SpeechProvider {
   return remoteSpeechProvider(apiKey, async (text, opts, signal) => {
     const cfg = opts.voice;
     const preferred = cfg.preferredVoice?.toLowerCase();
-    const voice = preferred && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(preferred)
+    const voice = preferred && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral'].includes(preferred)
       ? preferred : cfg.gender === 'female' ? 'nova' : 'onyx';
     const res = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
@@ -207,7 +207,7 @@ export function openAiSpeechProvider(apiKey: string): SpeechProvider {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini-tts', voice, input: text,
-        ...(opts.purpose === 'reading' ? { instructions: opts.pronunciation ? soundInstructions(opts.pronunciation) : READING_INSTRUCTIONS } : {}),
+        ...(opts.purpose === 'reading' ? { instructions: opts.pronunciation ? soundInstructions(opts.pronunciation) : `${direction ?? ""} ${READING_INSTRUCTIONS}` } : direction ? { instructions: direction } : {}),
         speed: Math.min(4, Math.max(0.25, cfg.rate)),
       }),
     });
