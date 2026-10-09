@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Profile } from '../types';
+import { princessPortrait } from '../data/princessPortraits';
 import { PRINCESS_TUTORS } from '../data/princessTutors';
-import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
+import { type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
 import { TutorStage } from './TutorStage';
-import { RoomScene } from './RoomScene';
+import { EnchantedKingdom } from './EnchantedKingdom';
+import { PrincessSettings, PRINCESS_DIRECTION } from './PrincessSettings';
 import { type AvatarMood } from './AnimatedAvatar';
 import { getSpeech, warmUpVoices, setSpeech, elevenLabsSpeechProvider, openAiSpeechProvider, webSpeechProvider } from '../engine/speech';
 import { activeImageFor } from '../data/gallery';
@@ -17,7 +19,7 @@ import {
   startFocusMusic, stopFocusMusic, setVolume, nextTrack, currentTitle, onTrackChange,
 } from '../engine/focusMusic';
 
-type Screen = 'home' | 'tutor' | 'lessons' | 'kid' | 'gallery';
+type Screen = 'home' | 'tutor' | 'lessons' | 'kid' | 'gallery' | 'settings';
 
 export function PrincessEnvironment({
   profile,
@@ -33,6 +35,7 @@ export function PrincessEnvironment({
   const [kidMode, setKidMode] = useState<KidMode>('learnRead');
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [bubble, setBubble] = useState('');
+  const [voiceError, setVoiceError] = useState('');
   const [nowPlaying, setNowPlaying] = useState(currentTitle());
 
   useEffect(() => {
@@ -40,15 +43,22 @@ export function PrincessEnvironment({
     return () => getSpeech().stop();
   }, []);
 
+  const elevenAvailable = !!elevenKeyFor(profile);
+  const useEleven = profile.princessVoiceProvider === 'elevenlabs' ||
+    ((profile.princessVoiceProvider ?? 'auto') === 'auto' && elevenAvailable);
+  const tutors = PRINCESS_TUTORS.map(t => ({ ...t, voice: { ...t.voice, rate: profile.princessVoiceRate ?? 0.95,
+    preferredVoice: useEleven ? profile.tutorVoices?.[t.id] || t.voice.preferredVoice : profile.princessOpenAiVoices?.[t.id] ?? 'shimmer' } }));
+  const selectedTutor = tutor ? tutors.find(t => t.id === tutor.id)! : null;
+
   // Voice provider priority (same as anime env).
   useEffect(() => {
     const useHuman = profile.humanVoice !== false;
     const eleven = elevenKeyFor(profile);
     const openai = openAiKeyFor(profile);
-    if (useHuman && eleven && eleven.length > 10) setSpeech(elevenLabsSpeechProvider(eleven));
-    else if (useHuman && openai && openai.length > 10) setSpeech(openAiSpeechProvider(openai));
+    if (useHuman && useEleven && eleven && eleven.length > 10) setSpeech(elevenLabsSpeechProvider(eleven));
+    else if (useHuman && profile.princessVoiceProvider !== 'elevenlabs' && openai && openai.length > 10) setSpeech(openAiSpeechProvider(openai, PRINCESS_DIRECTION));
     else setSpeech(webSpeechProvider);
-  }, [profile.elevenLabsKey, profile.openAiKey, profile.humanVoice]);
+  }, [profile.elevenLabsKey, profile.openAiKey, profile.humanVoice, profile.princessVoiceProvider, useEleven]);
 
   // Focus music.
   useEffect(() => {
@@ -62,16 +72,19 @@ export function PrincessEnvironment({
 
   const speak = useCallback(
     (text: string, t: AnimeTutor, m: AvatarMood = 'speaking') => {
+      setVoiceError('');
       setBubble(text);
       getSpeech().stop();
       if (profile.autoSpeak === false) { setMood(m === 'speaking' ? 'idle' : m); return; }
       getSpeech().speak(text, {
-        voice: effectiveVoice(t, profile.tutorVoices?.[t.id]),
-        onStart: () => setMood(m),
+        voice: t.voice,
+        purpose: 'reading',
+        onError: setVoiceError,
+        onStart: () => setMood('speaking'),
         onEnd: () => setMood((c) => (c === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [profile.autoSpeak, profile.tutorVoices]
+    [profile.autoSpeak]
   );
 
   function openTutor(t: AnimeTutor) {
@@ -86,16 +99,17 @@ export function PrincessEnvironment({
       starsEarned: profile.starsEarned + 1,
     });
 
-  const img = (t: AnimeTutor) => activeImageFor(profile, t.id);
+  const img = (t: AnimeTutor) => activeImageFor(profile, t.id) || princessPortrait(PRINCESS_TUTORS.findIndex(p => p.id === t.id));
 
   return (
-    <div className="anime-env" style={{ position: 'relative', minHeight: '100%' }}>
-      <RoomScene scene="princess" />
+    <div className={`anime-env princess-world ${profile.princessReducedMotion ? "quiet-kingdom" : ""}`} style={{ position: 'relative', minHeight: '100%' }}>
+      <EnchantedKingdom />
 
       {/* Simple top bar */}
       <div className="room-bar">
         <span className="room-now">💎 {profile.name}'s Diamond Wonderland</span>
         <div className="room-music">
+          <button className="chip small" onClick={() => { getSpeech().stop(); setScreen('settings'); }}>⚙️ Settings</button>
           <button type="button" className={`chip small ${profile.focusMusic ? 'on' : ''}`}
             onClick={() => onUpdate({ ...profile, focusMusic: !profile.focusMusic })}>
             {profile.focusMusic ? '🎵 Music On' : '🔇 Music Off'}
@@ -110,6 +124,8 @@ export function PrincessEnvironment({
       </div>
 
       <div className="content">
+        {voiceError && <p className="card" role="alert">{voiceError}</p>}
+        {screen === 'settings' && <PrincessSettings profile={profile} onUpdate={onUpdate} onBack={() => setScreen('home')} />}
         {/* ---------------- HOME: pick a princess ---------------- */}
         {screen === 'home' && (
           <div className="center">
@@ -123,11 +139,11 @@ export function PrincessEnvironment({
               Tap a princess to start learning, beautiful! 💎
             </p>
             <div className="grid cols-4" style={{ marginTop: 20 }}>
-              {PRINCESS_TUTORS.map((t) => {
+              {tutors.map((t) => {
                 const label = SUBJECTS.find((s) => s.value === t.subject)?.label ?? t.subject;
                 const im = img(t);
                 return (
-                  <div key={t.id} className="kid-tile" style={{ borderColor: `${t.accent}66` }} onClick={() => openTutor(t)}>
+                  <div key={t.id} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openTutor(t); } }} className="kid-tile princess-portal" style={{ borderColor: `${t.accent}66` }} onClick={() => openTutor(t)}>
                     {im ? (
                       <img src={im} alt={t.name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 14, marginBottom: 8 }} />
                     ) : (
@@ -140,7 +156,7 @@ export function PrincessEnvironment({
               })}
             </div>
             <p className="faint" style={{ marginTop: 16 }}>
-              💡 Grown-ups: tap a princess, then "👗 Change Picture" to add or AI-generate her Disney/Pixar-style look.
+              Your royal adventure begins here. Choose a princess and explore!
             </p>
           </div>
         )}
@@ -154,14 +170,14 @@ export function PrincessEnvironment({
             </div>
             <div className="lesson-stage">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                <TutorStage tutor={tutor} imageSrc={img(tutor)} mood={mood} line={bubble} size={360}
-                  videoEnabled={!!profile.didKey && !!profile.videoMode} />
+                <TutorStage tutor={selectedTutor!} imageSrc={img(tutor)} mood={mood} line={bubble} size={360}
+                  videoEnabled={false} />
                 <strong style={{ color: tutor.accent, fontSize: '1.3rem' }}>{tutor.name}</strong>
               </div>
               <div>
                 <div className="tutor-speech dyslexia">{bubble || '…'}</div>
                 <div className="row" style={{ marginTop: 10 }}>
-                  <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, tutor)}>🔊 Say it again</button>
+                  <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, selectedTutor!)}>🔊 Say it again</button>
                 </div>
                 <div className="grid cols-2" style={{ marginTop: 16, gap: 12 }}>
                   <button className="kid-btn" style={{ background: tutor.accent }} onClick={() => { getSpeech().stop(); setScreen('lessons'); }}>📚 Lessons & Test</button>
@@ -179,11 +195,11 @@ export function PrincessEnvironment({
         {/* ---------------- LESSONS (1st grade) ---------------- */}
         {screen === 'lessons' && tutor && (
           <LessonPlayer
-            tutor={tutor}
+            tutor={selectedTutor!}
             imageSrc={img(tutor)}
             autoSpeak={profile.autoSpeak !== false}
             videoEnabled={!!profile.didKey && !!profile.videoMode}
-            voiceOverride={profile.tutorVoices?.[tutor.id]}
+            voiceOverride={selectedTutor?.voice.preferredVoice}
             gradeBand="1"
             onEarnStar={() => earnStar(tutor.subject)}
             onRecordAnswer={(correct, kind) => onUpdate(recordAnswer(profile, tutor.subject, correct, kind))}
@@ -196,8 +212,8 @@ export function PrincessEnvironment({
         {screen === 'kid' && tutor && (
           <KidActivities
             mode={kidMode}
-            tutor={tutor}
-            profile={profile}
+            tutor={selectedTutor!}
+            profile={{ ...profile, activeTutorImage: { ...profile.activeTutorImage, [tutor.id]: img(tutor)! }, tutorVoices: { ...profile.tutorVoices, [tutor.id]: selectedTutor!.voice.preferredVoice! } }}
             onEarnStar={() => earnStar(tutor.subject)}
             onBack={() => setScreen('tutor')}
           />
@@ -206,7 +222,7 @@ export function PrincessEnvironment({
         {/* ---------------- GALLERY ---------------- */}
         {screen === 'gallery' && tutor && (
           <TutorGallery
-            tutor={tutor}
+            tutor={selectedTutor!}
             profile={profile}
             onUpdate={onUpdate}
             onBack={() => setScreen('home')}

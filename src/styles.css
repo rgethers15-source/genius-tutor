@@ -598,3 +598,27 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
   border: 2px solid var(--border);
 }
 .tray-item.correct { border-color: var(--success); }
+
+/* Original enchanted academy, with calm scenery and accessible portals. */
+.enchanted-kingdom { position:fixed; inset:0; pointer-events:none; z-index:0; }
+.enchanted-kingdom svg { width:100%; height:100%; }
+.princess-world .content, .princess-world .room-bar { position:relative; z-index:1; }
+.princess-world .center { background:rgba(35,25,48,.86); padding:28px; border-radius:30px; border:1px solid #d4b59c66; box-shadow:0 24px 70px #1c143b66; }
+.princess-world .princess-title { color:#ffe1ad; text-shadow:0 2px 12px #b57cb955; }
+.princess-portal { background:linear-gradient(145deg,#493354,#30243e); border:1px solid #c49da4; border-radius:24px; transition:transform .25s,box-shadow .25s; min-height:180px; }
+.princess-portal:hover, .princess-portal:focus-visible { transform:translateY(-6px); box-shadow:0 12px 30px #e3b88033; outline:3px solid #ffe2ab; }
+.princess-world .kid-label { color:#ffe1b5 !important; }
+.princess-world .avatar-stage { border-radius:48% 48% 28% 28%; border:6px solid #e9c898; box-shadow:0 0 0 10px #ad819b44,0 15px 45px #170e2d88 !important; }
+.princess-settings label { display:block; margin:16px 0; }
+.princess-settings input:not([type=checkbox]), .princess-settings select { display:block; width:100%; margin-top:8px; padding:12px; border-radius:12px; background:#2e213d; color:#fff0db; border:1px solid #bfa092; }
+.princess-settings .row input, .princess-settings .row select { width:40%; }
+.kingdom-clouds { animation:kingdom-drift 24s ease-in-out infinite alternate; }
+.kingdom-firefly { animation:kingdom-glimmer 5s ease-in-out infinite; }
+@keyframes kingdom-drift { to { transform:translateX(60px); } }
+@keyframes kingdom-glimmer { 50% { opacity:.2; transform:translateY(-8px); } }
+.quiet-kingdom *, .quiet-kingdom *::before, .quiet-kingdom *::after { animation:none !important; transition:none !important; }
+@media(prefers-reduced-motion:reduce) { .princess-world *, .princess-world *::before, .princess-world *::after { animation:none !important; transition:none !important; } }
+@media(max-width:1000px) { .princess-world .grid.cols-4 { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+.princess-world .avatar-blink, .princess-world .avatar-mouth { display:none; }
+.quiet-kingdom .avatar-waves { display:none; }
+.princess-world .center { max-width:1050px; }
