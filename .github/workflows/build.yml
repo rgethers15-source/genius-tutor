@@ -9,6 +9,7 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+  pull_request:
   workflow_dispatch: # lets you trigger a build manually from the Actions tab
 
 jobs:
@@ -41,6 +42,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check types and voice lifecycle
+        run: npm run typecheck && npm test
+
       - name: Build installer
         run: ${{ matrix.build_cmd }}
         env:
@@ -52,7 +56,7 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: ${{ matrix.artifact_path }}
-          if-no-files-found: warn
+          if-no-files-found: error
 
   # When a version tag (v*) is pushed, collect both installers into a Release.
   release:

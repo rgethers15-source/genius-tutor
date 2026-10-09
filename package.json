@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "electron:preview": "vite build && electron .",
     "dist:win": "vite build && electron-builder --win --publish never",
-    "dist:mac": "vite build && electron-builder --mac --publish never"
+    "dist:mac": "vite build && electron-builder --mac --publish never",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

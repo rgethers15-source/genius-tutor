@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import type { Lesson, QuizItem } from '../data/curriculum6';
 import { allLessonsForSubject, buildTest } from '../data/curriculum6';
@@ -49,6 +49,8 @@ export function LessonPlayer({
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [bubble, setBubble] = useState('');
   const [locked, setLocked] = useState(false);
+  const speechRequest = useRef(0);
+  const advanceTimer = useRef<number | undefined>(undefined);
 
   // Test state
   const [testItems, setTestItems] = useState<QuizItem[]>([]);
@@ -82,6 +84,7 @@ export function LessonPlayer({
 
   const speak = useCallback(
     (text: string, nextMood: AvatarMood = 'speaking') => {
+      const request = ++speechRequest.current;
       setBubble(text);
       getSpeech().stop(); // never overlap voices
       if (!autoSpeak) {
@@ -92,6 +95,7 @@ export function LessonPlayer({
       // video's own audio speak — skip TTS to avoid two voices at once.
       if (videoEnabled) {
         getCachedVideo(tutor.id, text).then((url) => {
+          if (request !== speechRequest.current) return;
           if (url) {
             setMood(nextMood);
             return;
@@ -113,7 +117,11 @@ export function LessonPlayer({
     [autoSpeak, tutor, voiceOverride, videoEnabled]
   );
 
-  useEffect(() => () => getSpeech().stop(), []);
+  useEffect(() => () => {
+    speechRequest.current++;
+    window.clearTimeout(advanceTimer.current);
+    getSpeech().stop();
+  }, []);
 
   // ---- Teaching ----
   function startLesson(l: Lesson) {
@@ -147,7 +155,7 @@ export function LessonPlayer({
       setLocked(true);
       onEarnStar();
       speak(pickCheer(), 'cheer');
-      window.setTimeout(() => {
+      advanceTimer.current = window.setTimeout(() => {
         const next = quizIdx + 1;
         if (next < lesson.quiz.length) {
           setQuizIdx(next);
@@ -191,7 +199,7 @@ export function LessonPlayer({
     } else {
       speak(`Good try! The answer was ${item.answer}. You are learning!`, 'thinking');
     }
-    window.setTimeout(() => {
+    advanceTimer.current = window.setTimeout(() => {
       const next = testIdx + 1;
       if (next < testItems.length) {
         setTestIdx(next);
@@ -281,7 +289,7 @@ export function LessonPlayer({
               mood={mood}
               line={bubble}
               size={380}
-              videoEnabled={videoEnabled}
+              videoEnabled={videoEnabled && autoSpeak}
             />
             {phase === 'test' && (
               <div className="faint">
