@@ -1,3 +1,5 @@
+import { READING_INSTRUCTIONS, soundInstructions, phonemeMarkup, type PronunciationTarget } from './pronunciation.ts';
+
 // ============================================================
 // Speech engine — gives the tutors a real voice.
 //
@@ -21,6 +23,10 @@ export interface VoiceConfig {
 
 export interface SpeakOptions {
   voice: VoiceConfig;
+  /** Reading demonstrations must not silently fall back to robotic speech. */
+  purpose?: 'reading';
+  pronunciation?: PronunciationTarget;
+  onError?: (message: string) => void;
   /** Fires as each word starts — used to drive mouth lip-sync. */
   onBoundary?: () => void;
   onStart?: () => void;
@@ -70,11 +76,17 @@ export const webSpeechProvider: SpeechProvider = {
   speak(text, opts) {
     if (!this.isSupported()) {
       // Gracefully no-op with lifecycle callbacks so UI still advances.
-      opts.onStart?.();
+      if (opts.purpose === 'reading') opts.onError?.('Natural pronunciation audio needs an ElevenLabs or OpenAI key in Settings.');
+      else opts.onStart?.();
       opts.onEnd?.();
       return;
     }
     window.speechSynthesis.cancel();
+    if (opts.purpose === 'reading') {
+      opts.onError?.('Natural pronunciation audio needs an ElevenLabs or OpenAI key in Settings.');
+      opts.onEnd?.();
+      return;
+    }
     const u = new SpeechSynthesisUtterance(text);
     const v = pickVoice(opts.voice);
     if (v) u.voice = v;
@@ -98,7 +110,7 @@ export const webSpeechProvider: SpeechProvider = {
 /** One owner for pending requests, playback, and object URLs. */
 function remoteSpeechProvider(
   apiKey: string,
-  load: (text: string, voice: VoiceConfig, signal: AbortSignal) => Promise<Blob>
+  load: (text: string, opts: SpeakOptions, signal: AbortSignal) => Promise<Blob>
 ): SpeechProvider {
   let generation = 0;
   let pending: AbortController | null = null;
@@ -139,7 +151,7 @@ function remoteSpeechProvider(
       // Prevent a stalled service from holding the tutor indefinitely.
       const timeout = setTimeout(() => controller.abort(), 30000);
       try {
-        const blob = await load(text, opts.voice, controller.signal);
+        const blob = await load(text, opts, controller.signal);
         if (request !== generation) return;
         clearTimeout(timeout);
         pending = null;
@@ -154,7 +166,10 @@ function remoteSpeechProvider(
           opts.onEnd?.();
         };
         player.onended = finish;
-        player.onerror = finish;
+        player.onerror = () => {
+          if (request === generation) opts.onError?.('The natural voice audio could not play. Please try again.');
+          finish();
+        };
         player.ontimeupdate = () => {
           if (request === generation) opts.onBoundary?.();
         };
@@ -163,7 +178,12 @@ function remoteSpeechProvider(
       } catch {
         if (request !== generation) return;
         releaseAudio();
-        webSpeechProvider.speak(text, opts);
+        if (opts.purpose === 'reading') {
+          opts.onError?.('Natural voice audio is unavailable. Check your voice key, credits, and connection in Settings, then try again.');
+          opts.onEnd?.();
+        } else {
+          webSpeechProvider.speak(text, opts);
+        }
       } finally {
         clearTimeout(timeout);
         if (request === generation) pending = null;
@@ -173,7 +193,8 @@ function remoteSpeechProvider(
 }
 
 export function openAiSpeechProvider(apiKey: string): SpeechProvider {
-  return remoteSpeechProvider(apiKey, async (text, cfg, signal) => {
+  return remoteSpeechProvider(apiKey, async (text, opts, signal) => {
+    const cfg = opts.voice;
     const preferred = cfg.preferredVoice?.toLowerCase();
     const voice = preferred && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(preferred)
       ? preferred : cfg.gender === 'female' ? 'nova' : 'onyx';
@@ -186,6 +207,7 @@ export function openAiSpeechProvider(apiKey: string): SpeechProvider {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini-tts', voice, input: text,
+        ...(opts.purpose === 'reading' ? { instructions: opts.pronunciation ? soundInstructions(opts.pronunciation) : READING_INSTRUCTIONS } : {}),
         speed: Math.min(4, Math.max(0.25, cfg.rate)),
       }),
     });
@@ -205,7 +227,8 @@ const ELEVEN_MALE = 'TxGEqnHWrfWFTfGW9XjX'; // "Josh" - warm young male
 const ELEVEN_FEMALE = 'EXAVITQu4vr4xnSDxMaL'; // "Sarah" - soft female
 
 export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
-  return remoteSpeechProvider(apiKey, async (text, cfg, signal) => {
+  return remoteSpeechProvider(apiKey, async (text, opts, signal) => {
+    const cfg = opts.voice;
     const fallbackId = cfg.gender === 'female' ? ELEVEN_FEMALE : ELEVEN_MALE;
     const requested = cfg.preferredVoice && /^[a-zA-Z0-9]{15,}$/.test(cfg.preferredVoice)
       ? cfg.preferredVoice : fallbackId;
@@ -217,8 +240,13 @@ export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
           'xi-api-key': apiKey.trim(), 'Content-Type': 'application/json', Accept: 'audio/mpeg',
         },
         body: JSON.stringify({
-          text, model_id: 'eleven_multilingual_v2',
-          voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.3 },
+          text: opts.pronunciation ? phonemeMarkup(text, opts.pronunciation) : text,
+          model_id: opts.pronunciation ? 'eleven_flash_v2' : 'eleven_multilingual_v2',
+          voice_settings: {
+            stability: opts.purpose === 'reading' ? 0.65 : 0.4, similarity_boost: 0.8,
+            style: opts.purpose === 'reading' ? 0 : 0.3,
+            speed: Math.min(1.2, Math.max(0.7, cfg.rate)),
+          },
         }),
       });
       if (res.ok) return res.blob();

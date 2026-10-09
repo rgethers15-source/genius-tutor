@@ -15,13 +15,13 @@ export interface LetterSound {
 
 export const LETTER_SOUNDS: LetterSound[] = [
   { letter: 'S', sound: 'sss', example: 'sun', emoji: '☀️' },
-  { letter: 'A', sound: 'ah', example: 'apple', emoji: '🍎' },
-  { letter: 'T', sound: 'tuh', example: 'top', emoji: '🔝' },
-  { letter: 'P', sound: 'puh', example: 'pig', emoji: '🐷' },
+  { letter: 'A', sound: '/æ/', example: 'apple', emoji: '🍎' },
+  { letter: 'T', sound: '/t/', example: 'top', emoji: '🔝' },
+  { letter: 'P', sound: '/p/', example: 'pig', emoji: '🐷' },
   { letter: 'M', sound: 'mmm', example: 'mom', emoji: '👩' },
-  { letter: 'C', sound: 'kuh', example: 'cat', emoji: '🐱' },
-  { letter: 'B', sound: 'buh', example: 'ball', emoji: '⚽' },
-  { letter: 'D', sound: 'duh', example: 'dog', emoji: '🐶' },
+  { letter: 'C', sound: '/k/', example: 'cat', emoji: '🐱' },
+  { letter: 'B', sound: '/b/', example: 'ball', emoji: '⚽' },
+  { letter: 'D', sound: '/d/', example: 'dog', emoji: '🐶' },
   { letter: 'F', sound: 'fff', example: 'fish', emoji: '🐟' },
   { letter: 'R', sound: 'rrr', example: 'rain', emoji: '🌧️' },
 ];

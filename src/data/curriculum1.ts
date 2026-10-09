@@ -240,11 +240,11 @@ export const CURRICULUM_1: Unit[] = [
         topic: 'Letter sounds',
         title: 'Say the sound',
         steps: [
-          { say: 'Each letter has a sound. B says "buh".', visual: '🅱️' },
-          { say: 'Say it with me: buh, buh, ball!' },
+          { say: 'B makes the first sound in ball. Close your lips, then release a short voiced sound.', visual: '🅱️' },
+          { say: 'Say ball with me. Now try just its first sound. Keep it brief without adding an extra vowel.' },
         ],
         quiz: [
-          { q: 'What sound does M make?', choices: ['mmm', 'sss', 'puh'], answer: 'mmm', hint: 'Hum it: mmmm, like yummy!' },
+          { q: 'What sound does M make?', choices: ['mmm', 'sss', '/p/'], answer: 'mmm', hint: 'Hum it: mmmm, like yummy!' },
         ],
       },
     ],

@@ -34,7 +34,7 @@ export function isListeningSupported(): boolean {
   return !!(w.SpeechRecognition || w.webkitSpeechRecognition);
 }
 
-let current: SpeechRecognitionLike | null = null;
+let cancelCurrent: (() => void) | null = null;
 
 export function listenOnce(opts: {
   onResult: (r: ListenResult) => void;
@@ -43,6 +43,7 @@ export function listenOnce(opts: {
   /** Max time to keep listening (ms). Gives time to say a full sentence. */
   maxMs?: number;
 }): void {
+  stopListening();
   const w = window as SR;
   const Ctor = w.SpeechRecognition || w.webkitSpeechRecognition;
   if (!Ctor) {
@@ -51,7 +52,7 @@ export function listenOnce(opts: {
     return;
   }
   const rec = new Ctor();
-  current = rec;
+
   rec.lang = 'en-US';
   rec.interimResults = true; // keep capturing while she speaks
   rec.maxAlternatives = 3;
@@ -69,6 +70,14 @@ export function listenOnce(opts: {
       /* noop */
     }
   }, maxMs);
+
+  cancelCurrent = () => {
+    window.clearTimeout(hardStop);
+    rec.onresult = null;
+    rec.onerror = null;
+    rec.onend = null;
+    try { rec.stop(); } catch { /* already stopped */ }
+  };
 
   rec.onresult = (e: any) => {
     let interim = '';
@@ -94,7 +103,7 @@ export function listenOnce(opts: {
   };
   rec.onend = () => {
     window.clearTimeout(hardStop);
-    current = null;
+    cancelCurrent = null;
     if (!delivered) {
       delivered = true;
       const text = finalText.trim();
@@ -107,17 +116,16 @@ export function listenOnce(opts: {
     rec.start();
   } catch {
     window.clearTimeout(hardStop);
+    stopListening();
     opts.onError?.('Could not start the microphone.');
+    opts.onEnd?.();
   }
 }
 
 export function stopListening(): void {
-  try {
-    current?.stop();
-  } catch {
-    /* noop */
-  }
-  current = null;
+  const cancel = cancelCurrent;
+  cancelCurrent = null;
+  cancel?.();
 }
 
 /** Normalize for lenient comparison (dyslexia-friendly: ignore case/punct). */
@@ -133,7 +141,7 @@ export function normalizeSpoken(s: string): string {
 export function spokenMatches(target: string, spoken: string): boolean {
   const t = normalizeSpoken(target);
   const s = normalizeSpoken(spoken);
-  if (!t) return false;
+  if (!t || !s) return false;
   if (s === t) return true;
   // Accept if the target words all appear, or strong overlap (kind grading).
   if (s.includes(t) || t.includes(s)) return true;
