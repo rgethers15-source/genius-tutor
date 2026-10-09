@@ -51,7 +51,9 @@ function pickVoice(cfg: VoiceConfig): SpeechSynthesisVoice | undefined {
     const femaleHints = ['female', 'samantha', 'victoria', 'karen', 'moira', 'tessa', 'zira', 'susan'];
     const maleHints = ['male', 'daniel', 'alex', 'fred', 'david', 'george', 'oliver', 'thomas'];
     const hints = cfg.gender === 'female' ? femaleHints : maleHints;
-    const match = pool.find((v) => hints.some((h) => v.name.toLowerCase().includes(h)));
+    const match = pool.find((v) => hints.some((h) => h === 'male'
+      ? /\bmale\b/i.test(v.name)
+      : v.name.toLowerCase().includes(h)));
     if (match) return match;
   }
   return pool[0];
@@ -80,6 +82,7 @@ export const webSpeechProvider: SpeechProvider = {
     u.pitch = opts.voice.pitch;
     u.onstart = () => opts.onStart?.();
     u.onend = () => opts.onEnd?.();
+    u.onerror = () => opts.onEnd?.();
     u.onboundary = (e) => {
       if (e.name === 'word' || e.charIndex >= 0) opts.onBoundary?.();
     };
@@ -92,65 +95,103 @@ export const webSpeechProvider: SpeechProvider = {
 // Uses the caregiver's OpenAI key. Falls back to Web Speech on error.
 // Voice names: alloy, echo, fable, onyx, nova, shimmer.
 // ============================================================
-export function openAiSpeechProvider(apiKey: string): SpeechProvider {
-  let currentAudio: HTMLAudioElement | null = null;
+/** One owner for pending requests, playback, and object URLs. */
+function remoteSpeechProvider(
+  apiKey: string,
+  load: (text: string, voice: VoiceConfig, signal: AbortSignal) => Promise<Blob>
+): SpeechProvider {
+  let generation = 0;
+  let pending: AbortController | null = null;
+  let audio: HTMLAudioElement | null = null;
+  let objectUrl: string | null = null;
 
-  function voiceName(cfg: VoiceConfig): string {
-    // Map our simple config to pleasant human voices.
-    if (cfg.preferredVoice && /alloy|echo|fable|onyx|nova|shimmer/i.test(cfg.preferredVoice)) {
-      return cfg.preferredVoice.toLowerCase();
+  function releaseAudio() {
+    if (audio) {
+      audio.onended = null;
+      audio.onerror = null;
+      audio.ontimeupdate = null;
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
+      audio = null;
     }
-    // Male-leaning: onyx/echo; female-leaning: nova/shimmer.
-    return cfg.gender === 'female' ? 'nova' : 'onyx';
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = null;
+  }
+
+  function stop() {
+    generation++;
+    pending?.abort();
+    pending = null;
+    releaseAudio();
+    // A previous remote request may have fallen back to the system voice.
+    webSpeechProvider.stop();
   }
 
   return {
-    isSupported() {
-      return apiKey.trim().length > 10;
-    },
-    stop() {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
+    isSupported: () => apiKey.trim().length > 10,
+    stop,
+    async speak(text, opts) {
+      stop();
+      const request = generation;
+      const controller = new AbortController();
+      pending = controller;
+      // Prevent a stalled service from holding the tutor indefinitely.
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      try {
+        const blob = await load(text, opts.voice, controller.signal);
+        if (request !== generation) return;
+        clearTimeout(timeout);
+        pending = null;
+        objectUrl = URL.createObjectURL(blob);
+        const player = new Audio(objectUrl);
+        audio = player;
+        let finished = false;
+        const finish = () => {
+          if (finished || request !== generation) return;
+          finished = true;
+          releaseAudio();
+          opts.onEnd?.();
+        };
+        player.onended = finish;
+        player.onerror = finish;
+        player.ontimeupdate = () => {
+          if (request === generation) opts.onBoundary?.();
+        };
+        await player.play();
+        if (request === generation && !finished) opts.onStart?.();
+      } catch {
+        if (request !== generation) return;
+        releaseAudio();
+        webSpeechProvider.speak(text, opts);
+      } finally {
+        clearTimeout(timeout);
+        if (request === generation) pending = null;
       }
     },
-    speak(text, opts) {
-      this.stop();
-      opts.onStart?.();
-      fetch('https://api.openai.com/v1/audio/speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey.trim()}`,
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini-tts',
-          voice: voiceName(opts.voice),
-          input: text,
-          speed: opts.voice.rate, // 0.25–4.0; our rates ~0.9 read calmly
-        }),
-      })
-        .then(async (res) => {
-          if (!res.ok) throw new Error(`TTS ${res.status}`);
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-          const audio = new Audio(url);
-          currentAudio = audio;
-          audio.onended = () => {
-            URL.revokeObjectURL(url);
-            currentAudio = null;
-            opts.onEnd?.();
-          };
-          // Approximate lip-sync ticks while the human voice plays.
-          audio.ontimeupdate = () => opts.onBoundary?.();
-          await audio.play();
-        })
-        .catch(() => {
-          // Fall back to the built-in (robotic) voice so speech still happens.
-          webSpeechProvider.speak(text, opts);
-        });
-    },
   };
+}
+
+export function openAiSpeechProvider(apiKey: string): SpeechProvider {
+  return remoteSpeechProvider(apiKey, async (text, cfg, signal) => {
+    const preferred = cfg.preferredVoice?.toLowerCase();
+    const voice = preferred && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'].includes(preferred)
+      ? preferred : cfg.gender === 'female' ? 'nova' : 'onyx';
+    const res = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      signal,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey.trim()}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini-tts', voice, input: text,
+        speed: Math.min(4, Math.max(0.25, cfg.rate)),
+      }),
+    });
+    if (!res.ok) throw new Error(`TTS ${res.status}`);
+    return res.blob();
+  });
 }
 
 // ============================================================
@@ -164,69 +205,29 @@ const ELEVEN_MALE = 'TxGEqnHWrfWFTfGW9XjX'; // "Josh" - warm young male
 const ELEVEN_FEMALE = 'EXAVITQu4vr4xnSDxMaL'; // "Sarah" - soft female
 
 export function elevenLabsSpeechProvider(apiKey: string): SpeechProvider {
-  let currentAudio: HTMLAudioElement | null = null;
-
-  function voiceId(cfg: VoiceConfig): string {
-    if (cfg.preferredVoice && cfg.preferredVoice.length >= 15) return cfg.preferredVoice;
-    return cfg.gender === 'female' ? ELEVEN_FEMALE : ELEVEN_MALE;
-  }
-
-  return {
-    isSupported() {
-      return apiKey.trim().length > 10;
-    },
-    stop() {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-      }
-    },
-    async speak(text, opts) {
-      this.stop();
-      opts.onStart?.();
-
-      const fallbackId = opts.voice.gender === 'female' ? ELEVEN_FEMALE : ELEVEN_MALE;
-      const requested = voiceId(opts.voice);
-      // Try the requested voice first; if it fails (e.g. not on this account),
-      // retry with a known-good default voice so it STAYS human — never robotic.
-      const tryIds = requested === fallbackId ? [requested] : [requested, fallbackId];
-
-      for (const id of tryIds) {
-        try {
-          const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${id}`, {
-            method: 'POST',
-            headers: {
-              'xi-api-key': apiKey.trim(),
-              'Content-Type': 'application/json',
-              Accept: 'audio/mpeg',
-            },
-            body: JSON.stringify({
-              text,
-              model_id: 'eleven_multilingual_v2',
-              voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.3 },
-            }),
-          });
-          if (!res.ok) throw new Error(`ElevenLabs ${res.status}`);
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-          const audio = new Audio(url);
-          currentAudio = audio;
-          audio.onended = () => {
-            URL.revokeObjectURL(url);
-            currentAudio = null;
-            opts.onEnd?.();
-          };
-          audio.ontimeupdate = () => opts.onBoundary?.();
-          await audio.play();
-          return; // success — stop trying
-        } catch {
-          // try next id
-        }
-      }
-      // All ElevenLabs attempts failed — fall back to the built-in voice.
-      webSpeechProvider.speak(text, opts);
-    },
-  };
+  return remoteSpeechProvider(apiKey, async (text, cfg, signal) => {
+    const fallbackId = cfg.gender === 'female' ? ELEVEN_FEMALE : ELEVEN_MALE;
+    const requested = cfg.preferredVoice && /^[a-zA-Z0-9]{15,}$/.test(cfg.preferredVoice)
+      ? cfg.preferredVoice : fallbackId;
+    const ids = requested === fallbackId ? [requested] : [requested, fallbackId];
+    for (const id of ids) {
+      const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${id}`, {
+        method: 'POST', signal,
+        headers: {
+          'xi-api-key': apiKey.trim(), 'Content-Type': 'application/json', Accept: 'audio/mpeg',
+        },
+        body: JSON.stringify({
+          text, model_id: 'eleven_multilingual_v2',
+          voice_settings: { stability: 0.4, similarity_boost: 0.8, style: 0.3 },
+        }),
+      });
+      if (res.ok) return res.blob();
+      // Only retry an unavailable voice; auth, billing, and rate limits
+      // will not improve by sending a second paid synthesis request.
+      if (res.status !== 400 && res.status !== 404) throw new Error(`ElevenLabs ${res.status}`);
+    }
+    throw new Error('ElevenLabs voice unavailable');
+  });
 }
 
 let active: SpeechProvider = webSpeechProvider;
@@ -234,6 +235,7 @@ export function getSpeech(): SpeechProvider {
   return active;
 }
 export function setSpeech(p: SpeechProvider) {
+  active.stop();
   active = p;
 }
 
