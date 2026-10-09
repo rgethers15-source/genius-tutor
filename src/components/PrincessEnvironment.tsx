@@ -71,14 +71,15 @@ export function PrincessEnvironment({
   useEffect(() => { setVolume(profile.musicVolume ?? 0.5); }, [profile.musicVolume]);
 
   const speak = useCallback(
-    (text: string, t: AnimeTutor, m: AvatarMood = 'speaking') => {
+    (text: string, t: AnimeTutor, m: AvatarMood = 'speaking', force = false) => {
       setVoiceError('');
       setBubble(text);
       getSpeech().stop();
-      if (profile.autoSpeak === false) { setMood(m === 'speaking' ? 'idle' : m); return; }
+      if (profile.autoSpeak === false && !force) { setMood(m === 'speaking' ? 'idle' : m); return; }
       getSpeech().speak(text, {
         voice: t.voice,
         purpose: 'reading',
+        allowSystemFallback: true,
         onError: setVoiceError,
         onStart: () => setMood('speaking'),
         onEnd: () => setMood((c) => (c === 'cheer' ? 'happy' : 'idle')),
@@ -177,7 +178,7 @@ export function PrincessEnvironment({
               <div>
                 <div className="tutor-speech dyslexia">{bubble || '…'}</div>
                 <div className="row" style={{ marginTop: 10 }}>
-                  <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, selectedTutor!)}>🔊 Say it again</button>
+                  <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, selectedTutor!, 'speaking', true)}>🔊 Say it again</button>
                 </div>
                 <div className="grid cols-2" style={{ marginTop: 16, gap: 12 }}>
                   <button className="kid-btn" style={{ background: tutor.accent }} onClick={() => { getSpeech().stop(); setScreen('lessons'); }}>📚 Lessons & Test</button>

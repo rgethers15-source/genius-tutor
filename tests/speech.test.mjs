@@ -138,7 +138,7 @@ test('reading service failure reports an error instead of robotic fallback', asy
   p.speak('cat', { voice, purpose: 'reading', onError: message => error = message, onEnd: () => ends++ });
   requests[0].resolve({ ok: false, status: 401 }); await flush();
   assert.equal(fallback.length, 0);
-  assert.match(error, /Natural voice audio is unavailable/);
+  assert.match(error, /OpenAI rejected the API key/);
   assert.equal(ends, 1);
   p.stop();
 });
@@ -162,4 +162,15 @@ test('storybook direction supports the selected princess voice while retaining p
   assert.match(phonics.instructions, /ONLY the isolated phoneme/);
   assert.doesNotMatch(phonics.instructions, /storybook/);
   p.stop(); requests[1].resolve(response()); await flush();
+});
+
+test('ordinary princess narration can recover with system audio, while phonemes remain protected', async () => {
+  const p = openAiSpeechProvider('test-key-long-enough');
+  let error = '';
+  p.speak('Welcome', { voice, purpose: 'reading', allowSystemFallback: true, onError: message => error = message });
+  requests[0].resolve({ ok: false, status: 401 }); await flush();
+  assert.equal(fallback.length, 1);
+  assert.match(error, /OpenAI rejected the API key/);
+  assert.match(error, /device voice/);
+  p.stop();
 });
