@@ -116,6 +116,8 @@ export interface Profile {
   activeRoomId?: string;
   /** Play calm lofi focus music in the study room. */
   focusMusic?: boolean;
+  soundEffects?: boolean;
+  effectsVolume?: number;
   /** Focus-music volume 0..1. */
   musicVolume?: number;
   /** Optional caregiver-uploaded focus track (data URL). */

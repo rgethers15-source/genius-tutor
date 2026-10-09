@@ -30,7 +30,8 @@ export const PLAYLIST: Track[] = [
 let audio: HTMLAudioElement | null = null;
 let index = 0;
 let playing = false;
-let volume = 0.5;
+let volume = 0.18;
+let ducked = false;
 let customUrl: string | null = null;
 let onChange: (() => void) | null = null;
 
@@ -58,7 +59,7 @@ function ensureAudio(): HTMLAudioElement {
       // Custom track loops itself; playlist advances.
       if (customUrl) {
         audio!.currentTime = 0;
-        void audio!.play();
+        void audio!.play().catch(() => { /* user gesture may be needed */ });
       } else {
         nextTrack();
       }
@@ -70,14 +71,14 @@ function ensureAudio(): HTMLAudioElement {
 function loadAndPlay() {
   const a = ensureAudio();
   a.src = currentUrl();
-  a.volume = volume;
+  a.volume = volume * (ducked ? 0.2 : 1);
   void a.play().catch(() => {
     /* autoplay/user-gesture guard; button press will retry */
   });
   onChange?.();
 }
 
-export function startFocusMusic(vol = 0.5): void {
+export function startFocusMusic(vol = 0.18): void {
   volume = Math.max(0, Math.min(1, vol));
   playing = true;
   loadAndPlay();
@@ -104,7 +105,7 @@ export function prevTrack(): void {
 
 export function setVolume(vol: number): void {
   volume = Math.max(0, Math.min(1, vol));
-  if (audio) audio.volume = volume;
+  if (audio) audio.volume = volume * (ducked ? 0.2 : 1);
 }
 
 /** Load a caregiver-provided audio file (data URL) as the focus track. */
@@ -112,4 +113,9 @@ export function setCustomTrack(dataUrl: string | null): void {
   customUrl = dataUrl;
   if (playing) loadAndPlay();
   else onChange?.();
+}
+
+export function duckMusic(on: boolean): void {
+  ducked = on;
+  if (audio) audio.volume = volume * (ducked ? 0.2 : 1);
 }

@@ -16,7 +16,7 @@ import { KidActivities, type KidMode } from './KidActivities';
 import { recordAnswer, recordLessonComplete } from '../data/stats';
 import { elevenKeyFor, openAiKeyFor } from '../data/keys';
 import {
-  startFocusMusic, stopFocusMusic, setVolume, nextTrack, currentTitle, onTrackChange,
+  nextTrack, currentTitle, onTrackChange,
 } from '../engine/focusMusic';
 
 type Screen = 'home' | 'tutor' | 'lessons' | 'kid' | 'gallery' | 'settings';
@@ -60,15 +60,7 @@ export function PrincessEnvironment({
     else setSpeech(webSpeechProvider);
   }, [profile.elevenLabsKey, profile.openAiKey, profile.humanVoice, profile.princessVoiceProvider, useEleven]);
 
-  // Focus music.
-  useEffect(() => {
-    onTrackChange(() => setNowPlaying(currentTitle()));
-    if (profile.focusMusic) startFocusMusic(profile.musicVolume ?? 0.5);
-    else stopFocusMusic();
-    return () => { stopFocusMusic(); onTrackChange(null); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile.focusMusic]);
-  useEffect(() => { setVolume(profile.musicVolume ?? 0.5); }, [profile.musicVolume]);
+  useEffect(() => { onTrackChange(() => setNowPlaying(currentTitle())); return () => onTrackChange(null); }, []);
 
   const speak = useCallback(
     (text: string, t: AnimeTutor, m: AvatarMood = 'speaking', force = false) => {

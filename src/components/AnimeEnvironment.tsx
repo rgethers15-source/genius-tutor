@@ -22,10 +22,6 @@ import { RoomScene } from './RoomScene';
 import { TutorStage } from './TutorStage';
 import { getCachedVideo } from '../data/videoCache';
 import {
-  startFocusMusic,
-  stopFocusMusic,
-  setVolume,
-  setCustomTrack,
   nextTrack,
   currentTitle,
   onTrackChange,
@@ -137,25 +133,7 @@ export function AnimeEnvironment({
 
   const [nowPlaying, setNowPlaying] = useState(currentTitle());
 
-  // Focus music lifecycle — starts/stops with the profile preference.
-  useEffect(() => {
-    onTrackChange(() => setNowPlaying(currentTitle()));
-    if (profile.customMusic) setCustomTrack(profile.customMusic);
-    if (profile.focusMusic) {
-      startFocusMusic(profile.musicVolume ?? 0.5);
-    } else {
-      stopFocusMusic();
-    }
-    return () => {
-      stopFocusMusic();
-      onTrackChange(null);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile.focusMusic, profile.customMusic]);
-
-  useEffect(() => {
-    setVolume(profile.musicVolume ?? 0.5);
-  }, [profile.musicVolume]);
+  useEffect(() => { onTrackChange(() => setNowPlaying(currentTitle())); return () => onTrackChange(null); }, []);
 
   const speak = useCallback(
     (text: string, tutor: AnimeTutor, nextMood: AvatarMood = 'speaking') => {

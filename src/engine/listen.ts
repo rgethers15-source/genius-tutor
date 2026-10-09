@@ -34,6 +34,9 @@ export function isListeningSupported(): boolean {
   return !!(w.SpeechRecognition || w.webkitSpeechRecognition);
 }
 
+function notifyListening(on: boolean) {
+  if (window.dispatchEvent) window.dispatchEvent(new CustomEvent('gt-listening', { detail: on }));
+}
 let cancelCurrent: (() => void) | null = null;
 
 export function listenOnce(opts: {
@@ -104,6 +107,7 @@ export function listenOnce(opts: {
   rec.onend = () => {
     window.clearTimeout(hardStop);
     cancelCurrent = null;
+    notifyListening(false);
     if (!delivered) {
       delivered = true;
       const text = finalText.trim();
@@ -114,6 +118,7 @@ export function listenOnce(opts: {
   };
   try {
     rec.start();
+    notifyListening(true);
   } catch {
     window.clearTimeout(hardStop);
     stopListening();
@@ -126,6 +131,7 @@ export function stopListening(): void {
   const cancel = cancelCurrent;
   cancelCurrent = null;
   cancel?.();
+  notifyListening(false);
 }
 
 /** Normalize for lenient comparison (dyslexia-friendly: ignore case/punct). */
