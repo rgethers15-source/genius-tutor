@@ -18,6 +18,7 @@ export function LessonPlayer({
   videoEnabled = false,
   voiceOverride,
   gradeBand = '6',
+  lessonBank,
   onEarnStar,
   onRecordAnswer,
   onLessonComplete,
@@ -31,6 +32,7 @@ export function LessonPlayer({
   voiceOverride?: string;
   /** '1' uses the 1st-grade curriculum; otherwise 6th-grade. */
   gradeBand?: '1' | '6';
+  lessonBank?: Lesson[];
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
   onLessonComplete?: (lessonId: string, title: string) => void;
@@ -38,10 +40,10 @@ export function LessonPlayer({
   onGenerateQuestions?: (count: number) => Promise<QuizItem[]>;
   onBack: () => void;
 }) {
-  const lessons =
+  const lessons = lessonBank ?? (
     gradeBand === '1'
       ? allLessons1ForSubject(tutor.subject)
-      : allLessonsForSubject(tutor.subject);
+      : allLessonsForSubject(tutor.subject));
   const [phase, setPhase] = useState<Phase>('menu');
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [stepIdx, setStepIdx] = useState(0);

@@ -1,0 +1,1030 @@
+[
+  {
+    "area": "Dance",
+    "code": "1.CN.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CN.1.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CN.1.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CN.1.3"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CN.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CN.2.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CN.2.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.1.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.1.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.1.3"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.2.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.CR.2.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.1.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.1.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.1.3"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.2.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.2.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.PR.2.3"
+  },
+  {
+    "area": "Dance",
+    "code": "1.RE.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.RE.1.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.RE.1.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.RE.2"
+  },
+  {
+    "area": "Dance",
+    "code": "1.RE.2.1"
+  },
+  {
+    "area": "Dance",
+    "code": "1.RE.2.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.1.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.1.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.1.3"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.2.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.CN.2.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.CR.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.CR.1.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.CR.1.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.CR.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.CR.2.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.CR.2.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.1.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.1.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.1.3"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.1.4"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.2.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.PR.2.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.1.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.1.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.1.3"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.2"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.2.1"
+  },
+  {
+    "area": "General music",
+    "code": "1.RE.2.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CN.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CN.1.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CN.1.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CN.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CN.2.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CN.2.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.1.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.1.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.1.3"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.2.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.CR.2.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.1.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.1.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.2.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.2.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.2.3"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.PR.2.4"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.RE.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.RE.1.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.RE.1.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.RE.2"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.RE.2.1"
+  },
+  {
+    "area": "Theatre arts",
+    "code": "1.RE.2.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CN.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CN.1.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CN.1.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CN.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CN.2.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CN.2.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CR.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CR.1.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CR.1.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CR.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CR.2.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.CR.2.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.PR.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.PR.1.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.PR.1.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.PR.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.PR.2.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.PR.2.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.RE.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.RE.1.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.RE.1.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.RE.2"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.RE.2.1"
+  },
+  {
+    "area": "Visual arts",
+    "code": "1.RE.2.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.1"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.3"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.4"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.5"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.6"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.7"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.8"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.9"
+  },
+  {
+    "area": "English language arts",
+    "code": "RL.1.10"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.1"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.3"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.4"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.5"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.6"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.7"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.8"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.9"
+  },
+  {
+    "area": "English language arts",
+    "code": "RI.1.10"
+  },
+  {
+    "area": "English language arts",
+    "code": "RF.1.1"
+  },
+  {
+    "area": "English language arts",
+    "code": "RF.1.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "RF.1.3"
+  },
+  {
+    "area": "English language arts",
+    "code": "RF.1.4"
+  },
+  {
+    "area": "English language arts",
+    "code": "RF.1.5"
+  },
+  {
+    "area": "English language arts",
+    "code": "W.1.1"
+  },
+  {
+    "area": "English language arts",
+    "code": "W.1.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "W.1.3"
+  },
+  {
+    "area": "English language arts",
+    "code": "W.1.4"
+  },
+  {
+    "area": "English language arts",
+    "code": "W.1.5"
+  },
+  {
+    "area": "English language arts",
+    "code": "W.1.6"
+  },
+  {
+    "area": "English language arts",
+    "code": "SL.1.1"
+  },
+  {
+    "area": "English language arts",
+    "code": "SL.1.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "SL.1.3"
+  },
+  {
+    "area": "English language arts",
+    "code": "SL.1.4"
+  },
+  {
+    "area": "English language arts",
+    "code": "SL.1.5"
+  },
+  {
+    "area": "English language arts",
+    "code": "L.1.1"
+  },
+  {
+    "area": "English language arts",
+    "code": "L.1.2"
+  },
+  {
+    "area": "English language arts",
+    "code": "L.1.3"
+  },
+  {
+    "area": "English language arts",
+    "code": "L.1.4"
+  },
+  {
+    "area": "English language arts",
+    "code": "L.1.5"
+  },
+  {
+    "area": "English language arts",
+    "code": "L.1.6"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.1.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.1.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.1.3"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.2.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.MEH.2.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.1.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.1.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.1.3"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.1.4"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.2.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.2.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.2.3"
+  },
+  {
+    "area": "Health education",
+    "code": "1.PCH.2.4"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1.3"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1.4"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1.5"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ICHR.1.6"
+  },
+  {
+    "area": "Health education",
+    "code": "1.NPA.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.NPA.1.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.NPA.1.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.NPA.1.3"
+  },
+  {
+    "area": "Health education",
+    "code": "1.NPA.2"
+  },
+  {
+    "area": "Health education",
+    "code": "1.NPA.2.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ANCOD.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ANCOD.1.1"
+  },
+  {
+    "area": "Health education",
+    "code": "1.ANCOD.1.2"
+  },
+  {
+    "area": "Physical education",
+    "code": "1.MS.1"
+  },
+  {
+    "area": "Physical education",
+    "code": "1.MC.2"
+  },
+  {
+    "area": "Physical education",
+    "code": "1.HF.3"
+  },
+  {
+    "area": "Physical education",
+    "code": "1.PR.4"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.1"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.2"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.3"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.4"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.9"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.6"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.7"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.OA.8"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.1"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.7"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.2"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.3"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.4"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.5"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.NBT.6"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.MD.1"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.MD.2"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.MD.3"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.MD.5"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.MD.4"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.G.1"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.G.2"
+  },
+  {
+    "area": "Mathematics",
+    "code": "NC.1.G.3"
+  },
+  {
+    "area": "Science",
+    "code": "PS.1.1"
+  },
+  {
+    "area": "Science",
+    "code": "PS.1.1.1"
+  },
+  {
+    "area": "Science",
+    "code": "PS.1.1.2"
+  },
+  {
+    "area": "Science",
+    "code": "LS.1.1"
+  },
+  {
+    "area": "Science",
+    "code": "LS.1.1.1"
+  },
+  {
+    "area": "Science",
+    "code": "LS.1.1.2"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.1"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.1.1"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.1.2"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.2"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.2.1"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.2.2"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.3"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.3.1"
+  },
+  {
+    "area": "Science",
+    "code": "ESS.1.3.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.3"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.4"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.5"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.6"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.7"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.8"
+  },
+  {
+    "area": "Social studies",
+    "code": "I.1.9"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.B.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.B.1.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.B.1.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.B.1.3"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.B.1.4"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.C&G.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.C&G.1.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.C&G.1.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.C&G.1.3"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.C&G.1.4"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.E.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.E.1.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.E.1.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.E.1.3"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.E.1.4"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.G.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.G.1.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.G.1.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.G.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.G.2.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.G.2.2"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.H.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.H.1.1"
+  },
+  {
+    "area": "Social studies",
+    "code": "1.H.1.2"
+  }
+]
