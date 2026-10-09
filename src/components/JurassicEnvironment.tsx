@@ -206,8 +206,8 @@ export function JurassicEnvironment({
             voiceOverride={selectedTutor?.voice.preferredVoice}
             gradeBand="1"
             lessonBank={[...allLessons1ForSubject(tutor.subject), ...EXPEDITION_LESSONS.filter(l => l.subject === tutor.subject)]}
-            onEarnStar={() => earnStar(tutor.subject)}
-            onRecordAnswer={(correct, kind) => onUpdate(recordAnswer(profile, tutor.subject, correct, kind))}
+            onEarnStar={() => {}}
+            onRecordAnswer={(correct, kind) => onUpdate({ ...recordAnswer(profile, tutor.subject, correct, kind), starsEarned: profile.starsEarned + (correct ? 1 : 0) })}
             onLessonComplete={(id, title) => onUpdate(recordLessonComplete(profile, tutor.subject, id, title))}
             onBack={() => setScreen('tutor')}
           />

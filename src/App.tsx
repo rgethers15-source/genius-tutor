@@ -31,14 +31,14 @@ export function App() {
     });
   }, []);
 
-  useEffect(() => { configureEffects(active?.soundEffects !== false, active?.effectsVolume ?? 0.25); }, [active?.soundEffects, active?.effectsVolume]);
+  useEffect(() => { configureEffects(!(active?.princessEnvironment && !active?.jurassicEnvironment) && active?.soundEffects !== false, active?.effectsVolume ?? 0.25); }, [active?.soundEffects, active?.effectsVolume, active?.princessEnvironment, active?.jurassicEnvironment]);
   useEffect(() => {
     if (active?.princessEnvironment && !active?.jurassicEnvironment) return;
     setCustomTrack(active?.customMusic ?? null);
     if (active?.focusMusic) startFocusMusic(active.musicVolume ?? 0.18); else stopFocusMusic();
     return stopFocusMusic;
   }, [active?.id, active?.focusMusic, active?.customMusic]);
-  useEffect(() => { setVolume(active?.musicVolume ?? 0.18); }, [active?.musicVolume]);
+  useEffect(() => { if (active?.princessEnvironment && !active?.jurassicEnvironment) return; setVolume(active?.musicVolume ?? 0.18); }, [active?.musicVolume, active?.princessEnvironment, active?.jurassicEnvironment]);
   useEffect(() => {
     const activity = { speaking: false, listening: false };
     const sync = () => { const busy = activity.speaking || activity.listening; duckMusic(busy); quietEffects(busy); };

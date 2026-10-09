@@ -1,13 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { playEffect } from '../engine/soundEffects';
+import { EXPEDITION_LESSONS } from '../data/expeditionCurriculum';
 
-const MISSIONS = [
-  {title:'Power the rescue gate',q:'We have 6 power cells and find 4 more. How many?',choices:['10','8','12'],answer:'10'},
-  {title:'Read the trail sign',q:'Which word rhymes with cat?',choices:['hat','dog','sun'],answer:'hat'},
-  {title:'Care for the dinosaurs',q:'What does a living animal need?',choices:['Water','Plastic','A phone'],answer:'Water'},
-  {title:'Find the safe route',q:'A map helps us find…',choices:['Places','Flavors','Songs'],answer:'Places'},
-];
+const MISSIONS = EXPEDITION_LESSONS.flatMap(lesson => lesson.quiz.map(item => ({ ...item, title: lesson.title, subject: lesson.subject })));
 export function JurassicExpedition({onBack,onReward,zombies,quiet}:{onBack:()=>void;onReward:()=>void;zombies:boolean;quiet:boolean}) {
   const host=useRef<HTMLDivElement>(null);const keys=useRef(new Set<string>());
   const [error,setError]=useState('');const [mission,setMission]=useState(0);const [feedback,setFeedback]=useState('');
