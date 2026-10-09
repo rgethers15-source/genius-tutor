@@ -15,6 +15,24 @@ export function PrincessSettings({ profile, onUpdate, onBack }: { profile: Profi
   const eleven = elevenKeyFor(draft);
   const openai = openAiKeyFor(draft);
   const usesEleven = provider === 'elevenlabs' || (provider === 'auto' && !!eleven);
+  async function testSpeakers() {
+    const context = new AudioContext();
+    try {
+      await context.resume();
+      const tone = context.createOscillator();
+      const gain = context.createGain();
+      tone.frequency.value = 440;
+      gain.gain.setValueAtTime(0.08, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
+      tone.connect(gain); gain.connect(context.destination);
+      tone.onended = () => { void context.close(); };
+      tone.start(); tone.stop(context.currentTime + 0.5);
+      setStatus('A short chime should play. If you hear it, your output works; test a voice next.');
+    } catch {
+      void context.close();
+      setStatus('Speaker test could not start. Check your device audio output and volume.');
+    }
+  }
   function hear(id: string) {
     preview?.stop(); webSpeechProvider.stop();
     const key = usesEleven ? eleven : openai;
@@ -31,6 +49,7 @@ export function PrincessSettings({ profile, onUpdate, onBack }: { profile: Profi
   return <div className="center princess-settings card">
     <h1>👑 Princess settings</h1>
     <p>Choose her voice, hear it first, then save. Voices are AI generated.</p>
+    <button className="btn ghost" onClick={testSpeakers}>🔈 Test speakers (short chime)</button>
     <label>Natural voice service<select value={provider} onChange={e => setDraft({ ...draft, princessVoiceProvider: e.target.value as Profile['princessVoiceProvider'] })}>
       <option value="auto">Automatic: ElevenLabs, then OpenAI</option><option value="openai">OpenAI storybook voice</option><option value="elevenlabs">ElevenLabs selected voice</option>
     </select></label>

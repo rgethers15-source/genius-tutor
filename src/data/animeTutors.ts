@@ -114,7 +114,7 @@ export function getAnimeTutor(id: string | undefined): AnimeTutor | undefined {
 
 /** Voice config for a tutor, applying any per-tutor override from the profile. */
 export function effectiveVoice(tutor: AnimeTutor, override?: string): VoiceConfig {
-  if (override && override.trim().length >= 15) {
+  if (override && (override.trim().length >= 15 || ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral'].includes(override.trim().toLowerCase()))) {
     return { ...tutor.voice, preferredVoice: override.trim() };
   }
   return tutor.voice;

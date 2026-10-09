@@ -26,6 +26,8 @@ export interface SpeakOptions {
   /** Reading demonstrations must not silently fall back to robotic speech. */
   purpose?: 'reading';
   pronunciation?: PronunciationTarget;
+  /** Ordinary narration may use a system voice when premium audio fails. */
+  allowSystemFallback?: boolean;
   onError?: (message: string) => void;
   /** Fires as each word starts — used to drive mouth lip-sync. */
   onBoundary?: () => void;
@@ -82,7 +84,7 @@ export const webSpeechProvider: SpeechProvider = {
       return;
     }
     window.speechSynthesis.cancel();
-    if (opts.purpose === 'reading') {
+    if (opts.purpose === 'reading' && !opts.allowSystemFallback) {
       opts.onError?.('Natural pronunciation audio needs an ElevenLabs or OpenAI key in Settings.');
       opts.onEnd?.();
       return;
@@ -107,6 +109,17 @@ export const webSpeechProvider: SpeechProvider = {
 // Uses the caregiver's OpenAI key. Falls back to Web Speech on error.
 // Voice names: alloy, echo, fable, onyx, nova, shimmer.
 // ============================================================
+export function voiceFailureMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : '';
+  const service = message.startsWith('ElevenLabs') ? 'ElevenLabs' : message.startsWith('TTS') ? 'OpenAI' : 'Voice service';
+  if (/401/.test(message)) return `${service} rejected the API key. Check the key in Princess Settings.`;
+  if (/402|403/.test(message)) return `${service} denied voice access. Check API permissions, plan, and credits.`;
+  if (/429/.test(message)) return `${service} reached a usage or rate limit. Check credits and try again shortly.`;
+  if (/400|404|unavailable/.test(message)) return `${service} could not use this voice or model. Choose another voice in Princess Settings.`;
+  if (/NotAllowed/.test(message)) return 'Audio playback was blocked. Tap Hear voice to start playback.';
+  return 'Natural voice audio is unavailable. Check your voice key, credits, and connection in Settings, then try again.';
+}
+
 /** One owner for pending requests, playback, and object URLs. */
 function remoteSpeechProvider(
   apiKey: string,
@@ -175,13 +188,14 @@ function remoteSpeechProvider(
         };
         await player.play();
         if (request === generation && !finished) opts.onStart?.();
-      } catch {
+      } catch (error) {
         if (request !== generation) return;
         releaseAudio();
-        if (opts.purpose === 'reading') {
-          opts.onError?.('Natural voice audio is unavailable. Check your voice key, credits, and connection in Settings, then try again.');
+        if (opts.purpose === 'reading' && !opts.allowSystemFallback) {
+          opts.onError?.(voiceFailureMessage(error));
           opts.onEnd?.();
         } else {
+          opts.onError?.(`${voiceFailureMessage(error)} Using the device voice for this narration.`);
           webSpeechProvider.speak(text, opts);
         }
       } finally {
