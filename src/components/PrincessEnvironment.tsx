@@ -1,3 +1,6 @@
+import { lazy, Suspense } from 'react';
+import { setTutorTheme, setCustomTrack } from '../engine/focusMusic';
+import { useTutorTheme } from '../engine/useTutorTheme';
 import { useCallback, useEffect, useState } from 'react';
 import type { Profile } from '../types';
 import { princessPortrait } from '../data/princessPortraits';
@@ -19,7 +22,9 @@ import {
   startFocusMusic, stopFocusMusic, setVolume, nextTrack, currentTitle, onTrackChange,
 } from '../engine/focusMusic';
 
-type Screen = 'home' | 'tutor' | 'lessons' | 'kid' | 'gallery' | 'settings';
+const RoyalRealm = lazy(() => import('./RoyalRealm').then(m => ({default:m.RoyalRealm})));
+
+type Screen = 'realm' | 'home' | 'tutor' | 'lessons' | 'kid' | 'gallery' | 'settings';
 
 export function PrincessEnvironment({
   profile,
@@ -32,6 +37,7 @@ export function PrincessEnvironment({
 }) {
   const [screen, setScreen] = useState<Screen>('home');
   const [tutor, setTutor] = useState<AnimeTutor | null>(null);
+  useTutorTheme(screen === 'realm' ? 'royal-prince' : tutor?.id, profile.tutorThemes);
   const [kidMode, setKidMode] = useState<KidMode>('learnRead');
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [bubble, setBubble] = useState('');
@@ -63,12 +69,13 @@ export function PrincessEnvironment({
   // Focus music.
   useEffect(() => {
     onTrackChange(() => setNowPlaying(currentTitle()));
-    if (profile.focusMusic) startFocusMusic(profile.musicVolume ?? 0.5);
+    setCustomTrack(profile.customMusic ?? null);
+    if (profile.focusMusic) startFocusMusic(profile.musicVolume ?? 0.18);
     else stopFocusMusic();
     return () => { stopFocusMusic(); onTrackChange(null); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile.focusMusic]);
-  useEffect(() => { setVolume(profile.musicVolume ?? 0.5); }, [profile.musicVolume]);
+  }, [profile.focusMusic, profile.customMusic]);
+  useEffect(() => { setVolume(profile.musicVolume ?? 0.18); }, [profile.musicVolume]);
 
   const speak = useCallback(
     (text: string, t: AnimeTutor, m: AvatarMood = 'speaking', force = false) => {
@@ -105,6 +112,7 @@ export function PrincessEnvironment({
   return (
     <div className={`anime-env princess-world ${profile.princessReducedMotion ? "quiet-kingdom" : ""}`} style={{ position: 'relative', minHeight: '100%' }}>
       <EnchantedKingdom />
+      <div className="royal-backdrop" aria-hidden="true" />
 
       {/* Simple top bar */}
       <div className="room-bar">
@@ -126,6 +134,7 @@ export function PrincessEnvironment({
 
       <div className="content">
         {voiceError && <p className="card" role="alert">{voiceError}</p>}
+        {screen === 'realm' && <Suspense fallback={<p>Opening the royal gardens…</p>}><RoyalRealm tutors={tutors} quiet={profile.princessReducedMotion === true} journeys={profile.royalJourneys ?? 0} onBack={() => setScreen('home')} onAnswer={(correct,subject) => onUpdate({ ...recordAnswer(profile,subject,correct,'quiz'), starsEarned:profile.starsEarned+(correct?1:0) })} onJourney={() => onUpdate({ ...profile,royalJourneys:(profile.royalJourneys??0)+1 })} /></Suspense>}
         {screen === 'settings' && <PrincessSettings profile={profile} onUpdate={onUpdate} onBack={() => setScreen('home')} />}
         {/* ---------------- HOME: pick a princess ---------------- */}
         {screen === 'home' && (
@@ -139,6 +148,8 @@ export function PrincessEnvironment({
             <p className="dyslexia" style={{ fontSize: '1.3rem' }}>
               Tap a princess to start learning, beautiful! 💎
             </p>
+            <button className="btn big-btn" onClick={() => { getSpeech().stop(); setScreen('realm'); }}>🏰 Enter the 3D royal realm</button>
+            <p className="faint">{profile.royalJourneys ?? 0} royal journeys completed · Nine learning quests · Princesses and Prince Adisa</p>
             <div className="grid cols-4" style={{ marginTop: 20 }}>
               {tutors.map((t) => {
                 const label = SUBJECTS.find((s) => s.value === t.subject)?.label ?? t.subject;
@@ -179,6 +190,7 @@ export function PrincessEnvironment({
                 <div className="tutor-speech dyslexia">{bubble || '…'}</div>
                 <div className="row" style={{ marginTop: 10 }}>
                   <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, selectedTutor!, 'speaking', true)}>🔊 Say it again</button>
+                  <button className="btn ghost" onClick={() => { setTutorTheme(tutor.id); onUpdate({ ...profile,focusMusic:true,tutorThemes:true }); }}>🎵 Play {tutor.name}’s theme</button>
                 </div>
                 <div className="grid cols-2" style={{ marginTop: 16, gap: 12 }}>
                   <button className="kid-btn" style={{ background: tutor.accent }} onClick={() => { getSpeech().stop(); setScreen('lessons'); }}>📚 Lessons & Test</button>

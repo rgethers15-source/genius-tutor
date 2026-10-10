@@ -19,6 +19,7 @@ jobs:
         run: |
           python3 -m http.server 5173 --bind 127.0.0.1 --directory dist &
           node --experimental-strip-types e2e/mandela.mjs
+          node --experimental-strip-types e2e/royal.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -12,7 +12,7 @@ await page.reload();await page.getByText('Mandela',{exact:true}).first().click()
 await page.getByRole('heading',{name:/Dinosaur Rescue Academy/}).waitFor();
 const migrated=await page.evaluate(()=>JSON.parse(localStorage.getItem('genius-tutor-data')).profiles[0]);
 if(migrated.id!==p.id||!migrated.jurassicEnvironment||migrated.princessEnvironment)throw new Error('Legacy Mandela migration failed');
-await page.getByText('v0.17.1',{exact:true}).waitFor();
+await page.getByText('v0.18.0',{exact:true}).waitFor();
 await page.waitForFunction(()=>[...document.querySelectorAll('.explorer-portal img')].length===9&&[...document.querySelectorAll('.explorer-portal img')].every(i=>i.complete&&i.naturalWidth>0));
 await page.screenshot({path:'screenshots/mandela-home.png',fullPage:true});
 await page.getByRole('button',{name:/First-grade field missions/}).click();

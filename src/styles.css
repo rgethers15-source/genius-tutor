@@ -664,3 +664,18 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 @media (prefers-reduced-motion:reduce) { .jurassic-fireflies { animation:none; } .jurassic-world .explorer-portal { transition:none; } }
 
 .jurassic-world .field-map textarea { display:block; width:100%; min-height:140px; padding:12px; border-radius:10px; font:inherit; line-height:1.5; box-sizing:border-box; margin:8px 0 12px; }
+
+/* McKenzie's original royal fantasy world. */
+.princess-world { isolation:isolate; }
+.royal-backdrop { position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#30203955,#302039dd),url('/royal/kingdom.webp') center/cover; }
+.princess-world .princess-portal { background:linear-gradient(145deg,#5a3c68ee,#302344ef);box-shadow:0 12px 30px #20102566; }
+.princess-world .princess-portal img { height:190px!important;object-position:center 25%; }
+.royal-realm .card { background:#352840ee;color:#fff0db;border:1px solid #d8bd8466; }
+.royal-realm .expedition-hud { background:#4b3659;color:#fff0db; }
+.royal-realm .expedition-complete { background:linear-gradient(145deg,#765889,#342440); }
+.royal-guide { display:flex;gap:18px;align-items:center;margin:16px 0; }
+.royal-guide img { width:100px;height:110px;object-fit:cover;border-radius:18px; }
+.royal-guide p { margin:8px 0;line-height:1.6; }
+.royal-choices { flex-wrap:wrap;gap:12px; }
+.royal-choices .btn { white-space:normal;min-height:48px; }
+@media(max-width:700px){.royal-guide img{width:70px;height:85px}.royal-realm .row.between{flex-wrap:wrap}.princess-world .grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}

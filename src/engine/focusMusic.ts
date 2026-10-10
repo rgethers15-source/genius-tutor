@@ -1,3 +1,4 @@
+import themes from '../data/tutorThemes.json';
 // ============================================================
 // Focus music — real, instrumental lo-fi (not synth tones).
 //
@@ -33,14 +34,16 @@ let playing = false;
 let volume = 0.18;
 let ducked = false;
 let customUrl: string | null = null;
+let themeId: string | null = null;
+const themeTracks: Record<string, Track> = themes;
 let onChange: (() => void) | null = null;
 
 function currentUrl(): string {
-  return customUrl ?? PLAYLIST[index].url;
+  return customUrl ?? (themeId ? themeTracks[themeId]?.url : undefined) ?? PLAYLIST[index].url;
 }
 
 export function currentTitle(): string {
-  return customUrl ? 'Your track' : PLAYLIST[index].title;
+  return customUrl ? 'Your track' : (themeId ? themeTracks[themeId]?.title : undefined) ?? PLAYLIST[index].title;
 }
 
 export function isPlaying(): boolean {
@@ -57,7 +60,7 @@ function ensureAudio(): HTMLAudioElement {
     audio = new Audio();
     audio.addEventListener('ended', () => {
       // Custom track loops itself; playlist advances.
-      if (customUrl) {
+      if (customUrl || themeId) {
         audio!.currentTime = 0;
         void audio!.play().catch(() => { /* user gesture may be needed */ });
       } else {
@@ -91,6 +94,7 @@ export function stopFocusMusic(): void {
 
 export function nextTrack(): void {
   if (customUrl) return; // custom track has no "next"
+  themeId = null;
   index = (index + 1) % PLAYLIST.length;
   if (playing) loadAndPlay();
   else onChange?.();
@@ -118,4 +122,12 @@ export function setCustomTrack(dataUrl: string | null): void {
 export function duckMusic(on: boolean): void {
   ducked = on;
   if (audio) audio.volume = volume * (ducked ? 0.2 : 1);
+}
+
+/** Tutor themes share one player with focus music; custom caregiver tracks take priority. */
+export function setTutorTheme(id: string | null): void {
+ const next = id && themeTracks[id] ? id : null;
+ if (themeId === next) return;
+ themeId = next;
+ if (playing) loadAndPlay(); else onChange?.();
 }
