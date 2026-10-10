@@ -1,3 +1,5 @@
+import { setTutorTheme } from '../engine/focusMusic';
+import { useTutorTheme } from '../engine/useTutorTheme';
 import { NCFirstGradeMap } from './NCFirstGradeMap';
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import type { Profile } from '../types';
@@ -44,6 +46,7 @@ export function JurassicEnvironment({
 }) {
   const [screen, setScreen] = useState<Screen>('home');
   const [tutor, setTutor] = useState<AnimeTutor | null>(null);
+  useTutorTheme(tutor?.id, profile.tutorThemes);
   const [kidMode, setKidMode] = useState<KidMode>('learnRead');
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [bubble, setBubble] = useState('');
@@ -193,7 +196,7 @@ export function JurassicEnvironment({
               <div>
                 <div className="tutor-speech dyslexia">{bubble || '…'}</div>
                 <div className="row" style={{ marginTop: 10 }}>
-                  <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, selectedTutor!, 'speaking', true)}>🔊 Say it again</button>
+                  <button className="read-btn" type="button" onClick={() => bubble && speak(bubble, selectedTutor!, 'speaking', true)}>🔊 Say it again</button><button className="btn ghost" onClick={() => { setTutorTheme(tutor.id); onUpdate({ ...profile,focusMusic:true,tutorThemes:true }); }}>🎵 Play {tutor.name}’s theme</button>
                 </div>
                 <div className="grid cols-2" style={{ marginTop: 16, gap: 12 }}>
                   <button className="kid-btn" style={{ background: tutor.accent }} onClick={() => { getSpeech().stop(); setScreen('lessons'); }}>📚 Lessons & Test</button>

@@ -9,6 +9,7 @@ export function AudioControls({ profile, onUpdate }: { profile: Profile; onUpdat
     {open && <div className="card audio-panel">
       <strong>Chill-hop study lounge</strong><p className="faint">{title} · {PLAYLIST.length} bundled instrumental tracks</p>
       <label><input type="checkbox" checked={!!profile.focusMusic} onChange={e => onUpdate({ ...profile, focusMusic: e.target.checked })} /> Play instrumentals</label>
+      <label><input type="checkbox" checked={profile.tutorThemes !== false} onChange={e => onUpdate({ ...profile, tutorThemes: e.target.checked })} /> Play each tutor’s own theme</label>
       <label>Music volume<input aria-label="Music volume" type="range" min="0" max="1" step="0.05" value={profile.musicVolume ?? 0.18} onChange={e => onUpdate({ ...profile, musicVolume: Number(e.target.value) })} /></label>
       <button className="btn ghost" onClick={() => { nextTrack(); setTitle(currentTitle()); }}>Next instrumental</button>
       <label><input type="checkbox" checked={profile.soundEffects !== false} onChange={e => onUpdate({ ...profile, soundEffects: e.target.checked })} /> Gentle button & reward sounds</label>

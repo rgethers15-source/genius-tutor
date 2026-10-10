@@ -32,7 +32,7 @@ export function App() {
     });
   }, []);
 
-  useEffect(() => { configureEffects(!(active?.princessEnvironment && !active?.jurassicEnvironment) && active?.soundEffects !== false, active?.effectsVolume ?? 0.25); }, [active?.soundEffects, active?.effectsVolume, active?.princessEnvironment, active?.jurassicEnvironment]);
+  useEffect(() => { configureEffects(active?.soundEffects !== false, active?.effectsVolume ?? 0.25); }, [active?.soundEffects, active?.effectsVolume, active?.princessEnvironment, active?.jurassicEnvironment]);
   useEffect(() => {
     if (active?.princessEnvironment && !active?.jurassicEnvironment) return;
     setCustomTrack(active?.customMusic ?? null);

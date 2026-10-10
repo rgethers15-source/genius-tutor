@@ -1,3 +1,5 @@
+import { setTutorTheme } from '../engine/focusMusic';
+import { useTutorTheme } from '../engine/useTutorTheme';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Profile } from '../types';
 import { ANIME_TUTORS, effectiveVoice, type AnimeTutor } from '../data/animeTutors';
@@ -62,6 +64,7 @@ export function AnimeEnvironment({
 }) {
   const [screen, setScreen] = useState<Screen>('roster');
   const [activeTutor, setActiveTutor] = useState<AnimeTutor | null>(null);
+  useTutorTheme(activeTutor?.id, profile.tutorThemes);
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [turn, setTurn] = useState<TutorTurn | null>(null);
   const [bubble, setBubble] = useState('');
@@ -363,6 +366,7 @@ export function AnimeEnvironment({
           </button>
         </div>
         <div className="room-music">
+          {activeTutor && <button className="chip small" onClick={() => { setTutorTheme(activeTutor.id); onUpdate({ ...profile,focusMusic:true,tutorThemes:true }); }}>🎵 {activeTutor.name}’s theme</button>}
           <button
             type="button"
             className={`chip small ${profile.focusMusic ? 'on' : ''}`}

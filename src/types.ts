@@ -75,6 +75,8 @@ export interface Profile {
   jurassicEnvironment?: boolean;
   jurassicZombies?: boolean;
   jurassicRescues?: number;
+  royalJourneys?: number;
+  tutorThemes?: boolean;
   jurassicFieldwork?: Record<string, { response: string; done: boolean; at: string }>;
   /**
    * LEGACY: single uploaded tutor portrait, keyed by anime tutor id.

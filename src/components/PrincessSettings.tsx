@@ -68,6 +68,11 @@ export function PrincessSettings({ profile, onUpdate, onBack }: { profile: Profi
     </div>)}
     <label><input type="checkbox" checked={draft.princessReducedMotion ?? false} onChange={e => setDraft({ ...draft, princessReducedMotion: e.target.checked })} /> Quiet scenery · less motion</label>
     <label><input type="checkbox" checked={draft.autoSpeak !== false} onChange={e => setDraft({ ...draft, autoSpeak: e.target.checked })} /> Tutors speak automatically</label>
+    <label><input type="checkbox" checked={!!draft.focusMusic} onChange={e => setDraft({ ...draft, focusMusic: e.target.checked })} /> Play instrumental music</label>
+    <label><input type="checkbox" checked={draft.tutorThemes !== false} onChange={e => setDraft({ ...draft, tutorThemes: e.target.checked })} /> Each tutor’s own instrumental theme</label>
+    <label>Music volume<input aria-label="Princess music volume" type="range" min="0" max="1" step="0.05" value={draft.musicVolume ?? 0.18} onChange={e => setDraft({ ...draft, musicVolume: Number(e.target.value) })} /></label>
+    <label><input type="checkbox" checked={draft.soundEffects !== false} onChange={e => setDraft({ ...draft, soundEffects: e.target.checked })} /> Royal sound effects</label>
+    <label>Effects volume<input aria-label="Princess effects volume" type="range" min="0" max="1" step="0.05" value={draft.effectsVolume ?? 0.25} onChange={e => setDraft({ ...draft, effectsVolume: Number(e.target.value) })} /></label>
     {status && <p role="status">{status}</p>}
     <div className="row"><button className="btn" onClick={() => { preview?.stop(); syncKeysToDevice(draft); onUpdate({ ...draft, humanVoice: true }); onBack(); }}>Save settings</button><button className="btn ghost" onClick={() => { preview?.stop(); onBack(); }}>Cancel</button></div>
     <p className="faint">Natural audio requires service credits. ElevenLabs uses the voice you choose; preview it before saving.</p>

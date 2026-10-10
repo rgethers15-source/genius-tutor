@@ -1,0 +1,94 @@
+{
+  "tutor-kaito": {
+    "title": "Kaito \u00b7 Neon Notebook",
+    "url": "./music/themes/tutor-kaito.mp3"
+  },
+  "tutor-ren": {
+    "title": "Ren \u00b7 Midnight Numbers",
+    "url": "./music/themes/tutor-ren.mp3"
+  },
+  "tutor-sora": {
+    "title": "Sora \u00b7 Cloud Laboratory",
+    "url": "./music/themes/tutor-sora.mp3"
+  },
+  "tutor-akira": {
+    "title": "Akira \u00b7 Story Street",
+    "url": "./music/themes/tutor-akira.mp3"
+  },
+  "tutor-haru": {
+    "title": "Haru \u00b7 Aurora Sketchbook",
+    "url": "./music/themes/tutor-haru.mp3"
+  },
+  "princess-amara": {
+    "title": "Amara \u00b7 Storybook Sunrise",
+    "url": "./music/themes/princess-amara.mp3"
+  },
+  "princess-zuri": {
+    "title": "Zuri \u00b7 Diamond Garden",
+    "url": "./music/themes/princess-zuri.mp3"
+  },
+  "princess-nia": {
+    "title": "Nia \u00b7 Starlight Discovery",
+    "url": "./music/themes/princess-nia.mp3"
+  },
+  "princess-imani": {
+    "title": "Imani \u00b7 Painted Palace",
+    "url": "./music/themes/princess-imani.mp3"
+  },
+  "princess-ayana": {
+    "title": "Ayana \u00b7 Royal Rhythm",
+    "url": "./music/themes/princess-ayana.mp3"
+  },
+  "princess-sanaa": {
+    "title": "Sanaa \u00b7 Crystal Conversation",
+    "url": "./music/themes/princess-sanaa.mp3"
+  },
+  "princess-kaia": {
+    "title": "Kaia \u00b7 Kindness Courtyard",
+    "url": "./music/themes/princess-kaia.mp3"
+  },
+  "princess-makeda": {
+    "title": "Makeda \u00b7 Golden Heritage",
+    "url": "./music/themes/princess-makeda.mp3"
+  },
+  "royal-prince": {
+    "title": "Prince Adisa \u00b7 Garden of Stars",
+    "url": "./music/themes/royal-prince.mp3"
+  },
+  "ranger-jay": {
+    "title": "Jay \u00b7 Jungle Journal",
+    "url": "./music/themes/ranger-jay.mp3"
+  },
+  "hero-kofi": {
+    "title": "Kofi \u00b7 Amber Shield",
+    "url": "./music/themes/hero-kofi.mp3"
+  },
+  "rex": {
+    "title": "Rex \u00b7 Ancient Giants",
+    "url": "./music/themes/rex.mp3"
+  },
+  "scout-malik": {
+    "title": "Malik \u00b7 Trail Stories",
+    "url": "./music/themes/scout-malik.mp3"
+  },
+  "hero-zion": {
+    "title": "Zion \u00b7 Homeward Map",
+    "url": "./music/themes/hero-zion.mp3"
+  },
+  "ranger-amari": {
+    "title": "Amari \u00b7 Clear Skies",
+    "url": "./music/themes/ranger-amari.mp3"
+  },
+  "triceratops": {
+    "title": "Trix \u00b7 Fern Colors",
+    "url": "./music/themes/triceratops.mp3"
+  },
+  "hero-noah": {
+    "title": "Noah \u00b7 Expedition Groove",
+    "url": "./music/themes/hero-noah.mp3"
+  },
+  "explorer-musa": {
+    "title": "Musa \u00b7 Roots and Rivers",
+    "url": "./music/themes/explorer-musa.mp3"
+  }
+}
