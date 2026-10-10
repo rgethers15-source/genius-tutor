@@ -1,5 +1,6 @@
+import { version as appVersion } from '../package.json';
 import { JurassicEnvironment } from './components/JurassicEnvironment';
-import { mandelaProfile } from './data/mandelaProfile';
+import { mandelaProfile, upgradeMandelaProfile } from './data/mandelaProfile';
 import { AudioControls } from './components/AudioControls';
 import { configureEffects, playEffect, quietEffects } from './engine/soundEffects';
 import { startFocusMusic, stopFocusMusic, setVolume, duckMusic, setCustomTrack } from './engine/focusMusic';
@@ -70,10 +71,11 @@ export function App() {
   }
 
   function handleComplete(profile: Profile) {
+    profile = upgradeMandelaProfile(profile);
     const next = upsertProfile(data, profile);
     persist(next);
     setActiveId(profile.id);
-    setView('dashboard');
+    setView(profile.jurassicEnvironment ? 'jurassic' : 'dashboard');
   }
 
   function handleUpdate(profile: Profile) {
@@ -89,6 +91,9 @@ export function App() {
   }
 
   function openProfile(p: Profile) {
+    const upgraded = upgradeMandelaProfile(p);
+    if (upgraded !== p) void persist(upsertProfile(data, upgraded));
+    p = upgraded;
     void playEffect('welcome');
     setActiveId(p.id);
     // Route to the right immersive environment.
@@ -104,7 +109,7 @@ export function App() {
     <div className="app">
       <div className="topbar">
         <div className="brand">
-          <span className="logo">🎓</span> Genius Tutor
+          <span className="logo">🎓</span> Genius Tutor <small className="muted" style={{ fontSize: 14 }}>v{appVersion}</small>
         </div>
         <div className="row">
           {active && <AudioControls profile={active} onUpdate={handleUpdate} />}

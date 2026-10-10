@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mandelaProfile } from '../src/data/mandelaProfile.ts';
+import { mandelaProfile, upgradeMandelaProfile } from '../src/data/mandelaProfile.ts';
 import { EXPEDITION_LESSONS } from '../src/data/expeditionCurriculum.ts';
 import { JURASSIC_TUTORS } from '../src/data/jurassicTutors.ts';
 test('Mandela setup selects his own world and all nine subjects', () => {
@@ -35,4 +35,14 @@ test('AI practice rejects duplicate choices and answers absent from choices',()=
  assert.equal(parseMandelaQuestions(JSON.stringify({questions:[valid]})).length,1);
  assert.throws(()=>parseMandelaQuestions(JSON.stringify({questions:[{...valid,answer:'4'}]})));
  assert.throws(()=>parseMandelaQuestions(JSON.stringify({questions:[{...valid,choices:['2','2','3']}]})));
+});
+
+test('legacy Mandela opens his world without losing progress or touching McKenzie', () => {
+ const old = {...mandelaProfile(), id:'original', name:' Mandela ', jurassicEnvironment:undefined, princessEnvironment:true, starsEarned:42, progress:{math:3}};
+ const updated=upgradeMandelaProfile(old);
+ assert.equal(updated.id, old.id); assert.equal(updated.starsEarned,42); assert.deepEqual(updated.progress,old.progress);
+ assert.equal(updated.jurassicEnvironment,true); assert.equal(updated.princessEnvironment,false);
+ assert.equal(upgradeMandelaProfile(updated),updated);
+ const mckenzie={...old,name:'McKenzie'}; assert.equal(upgradeMandelaProfile(mckenzie),mckenzie);
+ assert.equal(old.princessEnvironment,true);
 });
