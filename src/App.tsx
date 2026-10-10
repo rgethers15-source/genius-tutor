@@ -168,7 +168,7 @@ export function App() {
       </div>
       )}
 
-      {view === 'jurassic' && active && <JurassicEnvironment profile={active} onUpdate={handleUpdate} onExit={() => setView('picker')} />}
+      {view === 'jurassic' && active && <JurassicEnvironment onParent={() => setView('parent')} profile={active} onUpdate={handleUpdate} onExit={() => setView('picker')} />}
       {view === 'anime' && active && (
         <AnimeEnvironment
           profile={active}

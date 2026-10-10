@@ -636,3 +636,31 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .expedition-viewport canvas:focus { outline:3px solid #edd5a0;outline-offset:-3px; }
 .jurassic-world .avatar-blink,.jurassic-world .avatar-mouth { display:none; }
 @media(max-width:1000px){.jurassic-world .grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr));}}
+/* Mandela only: cinematic field base and accessible mission UI. */
+.jurassic-backdrop { position:fixed; inset:0; background:linear-gradient(180deg,rgba(5,24,23,.25),rgba(5,20,20,.88)),url('/mandela/island.webp') center/cover; z-index:-2; }
+.jurassic-world { isolation:isolate; color:#edf4db; }
+.jurassic-world .card { background:rgba(13,37,34,.94); border:1px solid #77977955; color:#edf4db; }
+.jurassic-world .room-bar { background:#0e2423df; }
+.jurassic-world .faint { color:#becbbe; }
+.jurassic-world .explorer-portal { background:linear-gradient(145deg,#284943e8,#122826ef); box-shadow:0 12px 30px #0004; transition:transform .2s; }
+.jurassic-world .explorer-portal:hover { transform:translateY(-5px); }
+.jurassic-world .explorer-portal img { height:190px!important; object-position:center 28%; }
+.jurassic-world .field-goal { text-align:left; cursor:pointer; width:100%; font:inherit; }
+.jurassic-world .field-goal p { font-size:.92rem; line-height:1.55; }
+.jurassic-world .field-goal:hover { border-color:#edc66f; }
+.jurassic-world textarea,.jurassic-world input:not([type=checkbox]):not([type=range]),.jurassic-world select { background:#ecf0d9; color:#17332d; }
+.jurassic-world .field-map section { max-width:760px; margin:auto; }
+.jurassic-world .field-map h3 { font-size:1.6rem; line-height:1.5; }
+.jurassic-world .field-map a { color:#edcd83; }
+.jurassic-fireflies { position:fixed; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(3px 3px at 20% 30%,#ffd976,transparent),radial-gradient(3px 3px at 80% 50%,#ffd976,transparent),radial-gradient(2px 2px at 65% 20%,#ffd976,transparent); animation:expedition-glow 8s ease-in-out infinite alternate; }
+@keyframes expedition-glow { to { transform:translateY(-25px); opacity:.3; } }
+.jurassic-world.quiet-kingdom .jurassic-fireflies { animation:none; }
+.expedition-hud { display:flex; gap:14px; align-items:center; flex-wrap:wrap; padding:12px; background:#122c28; border-radius:12px; }
+.expedition-viewport { border:2px solid #a5b99266; border-radius:20px; height:clamp(280px,50vh,600px); overflow:hidden; }
+.expedition-controls { margin:12px 0; flex-wrap:wrap; }
+.expedition-controls button { touch-action:none; min-width:48px; }
+.expedition-complete { text-align:center; padding:36px; background:linear-gradient(145deg,#365644,#122826); border-radius:24px; }
+@media (max-width:700px) { .jurassic-world .grid.cols-4 { grid-template-columns:repeat(2,minmax(0,1fr)); } .jurassic-world .grid.cols-2 { grid-template-columns:1fr; } }
+@media (prefers-reduced-motion:reduce) { .jurassic-fireflies { animation:none; } .jurassic-world .explorer-portal { transition:none; } }
+
+.jurassic-world .field-map textarea { display:block; width:100%; min-height:140px; padding:12px; border-radius:10px; font:inherit; line-height:1.5; box-sizing:border-box; margin:8px 0 12px; }

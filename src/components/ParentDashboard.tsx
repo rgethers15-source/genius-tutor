@@ -81,6 +81,7 @@ export function ParentDashboard({
         <div className="card"><div className="faint">Last active</div><div style={{ fontWeight: 700 }}>{stats.lastActive ? new Date(stats.lastActive).toLocaleDateString() : '—'}</div></div>
       </div>
 
+      {profile.jurassicEnvironment && <div className="card" style={{marginBottom:20}}><h2>🦖 Mandela’s expedition fieldwork</h2><p>{profile.jurassicRescues??0} rescue expeditions · {Object.values(profile.jurassicFieldwork??{}).filter(w=>w.done).length} learning goals practiced</p><p>These are practice records, not certified mastery. Review the activity and discuss the evidence with your learner.</p>{Object.entries(profile.jurassicFieldwork??{}).map(([id,work])=><details key={id}><summary>{id} · {work.done?'Practiced':'Notes saved'}</summary><p style={{whiteSpace:'pre-wrap'}}>{work.response||'No written notes. Ask your learner to show their drawing or activity.'}</p><p className="faint">{new Date(work.at).toLocaleDateString()}</p></details>)}</div>}
       {/* Per-subject progress */}
       <div className="card" style={{ marginBottom: 20 }}>
         <h2>By subject</h2>
