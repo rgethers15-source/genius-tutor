@@ -679,3 +679,6 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .royal-choices { flex-wrap:wrap;gap:12px; }
 .royal-choices .btn { white-space:normal;min-height:48px; }
 @media(max-width:700px){.royal-guide img{width:70px;height:85px}.royal-realm .row.between{flex-wrap:wrap}.princess-world .grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.app > .topbar { position:relative;z-index:3; }
+.princess-world .faint { color:#decedf; }
+.royal-realm > p { background:#352840e8;padding:12px;border-radius:12px;line-height:1.6; }
