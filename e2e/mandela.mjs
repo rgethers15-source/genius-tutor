@@ -10,6 +10,7 @@ const p=mandelaProfile();p.autoSpeak=false;p.focusMusic=false;p.soundEffects=fal
 await page.evaluate(p=>localStorage.setItem('genius-tutor-data',JSON.stringify({profiles:[p],version:1})),p);
 await page.reload();await page.getByText('Mandela',{exact:true}).first().click();
 await page.getByRole('heading',{name:/Dinosaur Rescue Academy/}).waitFor();
+await page.waitForFunction(()=>[...document.querySelectorAll('.explorer-portal img')].length===9&&[...document.querySelectorAll('.explorer-portal img')].every(i=>i.complete&&i.naturalWidth>0));
 await page.screenshot({path:'screenshots/mandela-home.png',fullPage:true});
 await page.getByRole('button',{name:/First-grade field missions/}).click();
 await page.getByRole('button',{name:/NC.1.OA.1 · Supply station/}).click();
@@ -21,7 +22,7 @@ await page.getByRole('button',{name:'Return to base'}).click();await page.getByR
 await page.locator('canvas').waitFor();await page.waitForTimeout(2000);
 await page.screenshot({path:'screenshots/mandela-island.png',fullPage:true});
 await page.locator('canvas').click(); await page.keyboard.down('w');
-await page.waitForTimeout(1900);await page.keyboard.up('w');
+await page.getByRole('button',{name:'Read question',exact:false}).waitFor({timeout:20000});await page.keyboard.up('w');
 const hasQuestion=await page.getByRole('button',{name:'Read question',exact:false}).isVisible();
 await page.getByRole('button',{name:'Return to base'}).click();
 await page.getByRole('button',{name:'Settings',exact:false}).first().click();await page.getByLabel('Friendly robot-zombie encounters').check();

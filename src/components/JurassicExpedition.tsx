@@ -26,11 +26,21 @@ export function JurassicExpedition({onBack,onAnswer,onRescue,zombies,quiet,rescu
   const camera=new THREE.PerspectiveCamera(65,1,.1,200);camera.position.set(0,1.85,14);let yaw=0;
   scene.add(new THREE.HemisphereLight('#faeacd','#2d4e37',2.2));const sun=new THREE.DirectionalLight('#ffdaa3',3.8);sun.position.set(-20,35,10);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-35;sun.shadow.camera.right=35;sun.shadow.camera.top=35;sun.shadow.camera.bottom=-35;scene.add(sun);
   const make=(geometry:THREE.BufferGeometry,color:string,x:number,y:number,z:number,parent:THREE.Object3D=scene)=>{const m=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color,roughness:.85}));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;};
-  const ground=make(new THREE.PlaneGeometry(180,180),'#54704a',0,0,0);ground.rotation.x=-Math.PI/2;
-  const trail=make(new THREE.PlaneGeometry(25,65),'#8e8260',0,.015,-11);trail.rotation.x=-Math.PI/2;
+  const texture=(kind:'grass'|'dirt'|'skin'|'sky')=>{const c=document.createElement('canvas');c.width=512;c.height=512;const ctx=c.getContext('2d')!;
+   if(kind==='sky'){const gradient=ctx.createLinearGradient(0,0,0,512);gradient.addColorStop(0,'#728c9a');gradient.addColorStop(.6,'#c6c7aa');gradient.addColorStop(1,'#f3d59a');ctx.fillStyle=gradient;ctx.fillRect(0,0,512,512);for(let n=0;n<12;n++){ctx.fillStyle='#fcebd82b';ctx.beginPath();ctx.ellipse((n*73)%512,60+(n*29)%180,80,13,0,0,Math.PI*2);ctx.fill();}}
+   else{ctx.fillStyle=kind==='grass'?'#65734b':kind==='dirt'?'#b2a077':'#749177';ctx.fillRect(0,0,512,512);for(let n=0;n<9000;n++){const x=Math.random()*512,y=Math.random()*512;ctx.fillStyle=kind==='skin'?(n%2?'#294e3c45':'#d4c38930'):kind==='grass'?(n%2?'#34513388':'#a4b97c66'):(n%2?'#74634555':'#f2d8a755');ctx.beginPath();ctx.ellipse(x,y,kind==='skin'?2+Math.random()*5:1+Math.random()*2,kind==='grass'?5:2,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();}}
+   const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;if(kind!=='sky'){t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(kind==='skin'?2:24,kind==='skin'?2:24);}return t;};
+  const grass=texture('grass'),dirt=texture('dirt'),skin=texture('skin'),sky=texture('sky');scene.background=sky;
+  const ground=make(new THREE.PlaneGeometry(180,180),'#54704a',0,0,0);ground.rotation.x=-Math.PI/2;(ground.material as THREE.MeshStandardMaterial).map=grass;(ground.material as THREE.MeshStandardMaterial).bumpMap=grass;(ground.material as THREE.MeshStandardMaterial).bumpScale=.08;
+  const trail=make(new THREE.PlaneGeometry(9,65),'#8e8260',0,.015,-11);trail.rotation.x=-Math.PI/2;(trail.material as THREE.MeshStandardMaterial).map=dirt;
   const river=make(new THREE.PlaneGeometry(14,130),'#5f9c99',-28,.05,-10);river.rotation.x=-Math.PI/2;(river.material as THREE.MeshStandardMaterial).metalness=.45;(river.material as THREE.MeshStandardMaterial).roughness=.18;
   const obstacles:{x:number;z:number;r:number}[]=[];
-  for(let i=0;i<110;i++){const x=Math.sin(i*7.3)*65,z=Math.cos(i*3.7)*65;if(Math.abs(x)<15&&z>-45&&z<25)continue;obstacles.push({x,z,r:.8});make(new THREE.CylinderGeometry(.3,.65,7+i%4,8),'#695542',x,3.5,z);for(let layer=0;layer<3;layer++){const leaf=make(new THREE.SphereGeometry(2.8,8,6),layer%2?'#385b3c':'#254a39',x,7+layer*1.8,z);leaf.scale.set(1.3,.8,1.3);}}
+  const leafShape=new THREE.Shape();leafShape.moveTo(0,0);leafShape.quadraticCurveTo(1,2,0,5);leafShape.quadraticCurveTo(-1,2,0,0);
+  const leafGeometry=new THREE.ShapeGeometry(leafShape,8);const leafMaterial=new THREE.MeshStandardMaterial({color:'#3c754e',side:THREE.DoubleSide,roughness:.9});
+  const leaves=new THREE.InstancedMesh(leafGeometry,leafMaterial,110*8);leaves.castShadow=true;scene.add(leaves);const dummy=new THREE.Object3D();let leafCount=0;
+  for(let i=0;i<110;i++){const x=Math.sin(i*7.3)*65,z=Math.cos(i*3.7)*65;if(Math.abs(x)<15&&z>-45&&z<25)continue;const height=7+i%4;obstacles.push({x,z,r:.8});make(new THREE.CylinderGeometry(.25,.6,height,10),'#695542',x,height/2,z);
+   for(let j=0;j<8;j++){dummy.position.set(x,height,z);dummy.rotation.set(-1.0,j*Math.PI/4+i*.1,0);dummy.scale.set(1,1,1);dummy.updateMatrix();leaves.setMatrixAt(leafCount++,dummy.matrix);}}
+  leaves.count=leafCount;leaves.instanceMatrix.needsUpdate=true;
   for(let i=0;i<35;i++){const x=Math.sin(i*3)*50,z=Math.cos(i*4)*50;if(Math.abs(x)<13&&z>-40)continue;make(new THREE.DodecahedronGeometry(1+i%3),'#718174',x,.5,z);}
   for(let i=0;i<8;i++){const peak=make(new THREE.ConeGeometry(15,25+i*2,7),'#718475',Math.sin(i*2)*80,10,-65-Math.abs(Math.cos(i)*20));peak.rotation.y=i;}
   const dinos:THREE.Group[]=[];
@@ -42,6 +52,7 @@ export function JurassicExpedition({onBack,onAnswer,onRescue,zombies,quiet,rescu
     if(i%3===1){const frill=make(new THREE.CylinderGeometry(1.4,1.4,.2,12),color,0,3.1,-1.5,d);frill.rotation.x=Math.PI/2;for(const x of [-.5,.5]){const horn=make(new THREE.ConeGeometry(.16,1.4,10),'#d8d3b3',x,3.4,-2.65,d);horn.rotation.x=-.65;}}
    }
    for(const x of [-.8,.8])for(const z of [-.9,.8])make(new THREE.CapsuleGeometry(.28,1.35,6,10),color,x,.9,z,d);
+   d.traverse(o=>{if(o instanceof THREE.Mesh && (o.material as THREE.MeshStandardMaterial).color.getHexString()===new THREE.Color(color).getHexString()){(o.material as THREE.MeshStandardMaterial).map=skin;(o.material as THREE.MeshStandardMaterial).bumpMap=skin;(o.material as THREE.MeshStandardMaterial).bumpScale=.07;}});
    for(let j=0;j<6;j++){const tail=make(new THREE.SphereGeometry(.65-j*.09,12,8),color,Math.sin(j*.3)*.4,1.9-j*.13,2+j*.5,d);tail.scale.z=1.5;}
   }
   const bots:THREE.Group[]=[];if(zombies)for(let i=0;i<3;i++){const b=new THREE.Group();b.position.set(14,0,-4-i*10);scene.add(b);bots.push(b);make(new THREE.BoxGeometry(.85,1.2,.55),'#778c69',0,1.4,0,b);make(new THREE.BoxGeometry(.65,.65,.6),'#acc18c',0,2.3,0,b);for(const x of [-.3,.3]){make(new THREE.BoxGeometry(.25,.7,.3),'#455f5c',x,.5,0,b);make(new THREE.SphereGeometry(.065,8,6),'#f1bd65',x*.7,2.4,-.33,b);}}
@@ -53,7 +64,7 @@ export function JurassicExpedition({onBack,onAnswer,onRescue,zombies,quiet,rescu
   let pointer:number|null=null,px=0;const pdown=(e:PointerEvent)=>{pointer=e.pointerId;px=e.clientX;renderer.domElement.setPointerCapture(e.pointerId);renderer.domElement.focus();};const pmove=(e:PointerEvent)=>{if(e.pointerId===pointer){yaw-=(e.clientX-px)*.005;px=e.clientX;}};const pup=()=>{pointer=null;};
   renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','Explore dinosaur island. WASD or arrows move; Q and E turn. Drag to look around.');renderer.domElement.style.touchAction='none';
   window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur);renderer.domElement.addEventListener('pointerdown',pdown);renderer.domElement.addEventListener('pointermove',pmove);renderer.domElement.addEventListener('pointerup',pup);renderer.domElement.addEventListener('pointercancel',pup);
-  const loop=(now:number)=>{const dt=Math.min((now-last)/1000,.05);last=now;elapsed+=dt;const k=keys.current;
+  const loop=(now:number)=>{const dt=Math.min((now-last)/1000,.1);last=now;elapsed+=dt;const k=keys.current;
    yaw+=((k.has('q')?1:0)-(k.has('e')?1:0))*dt*1.5;camera.rotation.y=yaw;
    const f=(k.has('w')||k.has('arrowup')?1:0)-(k.has('s')||k.has('arrowdown')?1:0);const side=(k.has('d')||k.has('arrowright')?1:0)-(k.has('a')||k.has('arrowleft')?1:0);
    const speed=dt*5/Math.max(1,Math.hypot(f,side));const nx=THREE.MathUtils.clamp(camera.position.x+(-Math.sin(yaw)*f+Math.cos(yaw)*side)*speed,-13,13);const nz=THREE.MathUtils.clamp(camera.position.z+(-Math.cos(yaw)*f-Math.sin(yaw)*side)*speed,-32,22);
@@ -63,7 +74,7 @@ export function JurassicExpedition({onBack,onAnswer,onRescue,zombies,quiet,rescu
    if(elapsed-hud>.25){const dist=Math.hypot(camera.position.x-beacon.position.x,camera.position.z-beacon.position.z);setDistance(Math.round(dist));setNear(dist<3);hud=elapsed;}
    if(elapsed-roar>18){void islandSound('dinosaur');roar=elapsed;}
    renderer.render(scene,camera);frame=requestAnimationFrame(loop);};frame=requestAnimationFrame(loop);
-  return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);keys.current.clear();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});renderer.dispose();renderer.domElement.remove();};
+  return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);keys.current.clear();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});grass.dispose();dirt.dispose();skin.dispose();sky.dispose();renderer.dispose();renderer.domElement.remove();};
  },[zombies,quiet]);
  const move=(label:string,key:string)=><button className="btn" key={key} aria-label={label} onPointerDown={e=>{e.currentTarget.setPointerCapture(e.pointerId);keys.current.add(key);}} onPointerUp={()=>keys.current.delete(key)} onPointerCancel={()=>keys.current.delete(key)} onLostPointerCapture={()=>keys.current.delete(key)}>{label}</button>;
  return <div className="expedition-shell"><div className="row between"><h1>🦖 Rescue expedition</h1><button className="btn" onClick={onBack}>Return to base</button></div>
