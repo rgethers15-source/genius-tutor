@@ -9,6 +9,8 @@ export function configureEffects(on: boolean, level: number) {
   enabled = on; volume = Math.max(0, Math.min(1, level));
 }
 export function quietEffects(on: boolean) { busy = on; }
+export function effectsLevel() { return volume; }
+export function effectsAvailable() { return enabled && !busy && volume > 0; }
 export async function playEffect(cue: SoundCue = 'tap') {
   if (!enabled || busy || !volume || Date.now() - last < 150) return;
   last = Date.now();

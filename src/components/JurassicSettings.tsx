@@ -40,7 +40,7 @@ export function JurassicSettings({ profile, onUpdate, onBack, tutors = PRINCESS_
     if (!key || key.length < 10) { setStatus('Add the selected service’s API key to hear a natural voice.'); return; }
     const player = usesEleven ? elevenLabsSpeechProvider(key) : openAiSpeechProvider(key, direction);
     setPreview(player); setStatus('Preparing voice…');
-    player.speak(`Hello ${profile.name}! Welcome to our enchanted academy. Let’s discover something wonderful together.`, {
+    player.speak(`Hello ${profile.name}! Welcome to our dinosaur rescue academy. Let’s discover something wonderful together.`, {
       voice: { gender: tutors.find(t => t.id === id)?.voice.gender ?? 'female', rate: draft.princessVoiceRate ?? 0.95, pitch: 1,
         preferredVoice: usesEleven ? draft.tutorVoices?.[id] : draft.princessOpenAiVoices?.[id] ?? (profile.jurassicEnvironment ? 'echo' : 'shimmer') },
       purpose: 'reading', onStart: () => setStatus('Playing your voice preview'),
@@ -49,7 +49,7 @@ export function JurassicSettings({ profile, onUpdate, onBack, tutors = PRINCESS_
   }
   return <div className="center princess-settings card">
     <h1>{title}</h1>
-    <p>Choose her voice, hear it first, then save. Voices are AI generated.</p>
+    <p>Choose each guide’s voice, hear it first, then save. Voices are AI generated.</p>
     <button className="btn ghost" onClick={testSpeakers}>🔈 Test speakers (short chime)</button>
     <label>Natural voice service<select value={provider} onChange={e => setDraft({ ...draft, princessVoiceProvider: e.target.value as Profile['princessVoiceProvider'] })}>
       <option value="auto">Automatic: ElevenLabs, then OpenAI</option><option value="openai">OpenAI storybook voice</option><option value="elevenlabs">ElevenLabs selected voice</option>
@@ -70,6 +70,13 @@ export function JurassicSettings({ profile, onUpdate, onBack, tutors = PRINCESS_
     <label><input type="checkbox" checked={draft.princessReducedMotion ?? false} onChange={e => setDraft({ ...draft, princessReducedMotion: e.target.checked })} /> Quiet scenery · less motion</label>
     {profile.jurassicEnvironment && <label><input type="checkbox" checked={draft.jurassicZombies === true} onChange={e => setDraft({ ...draft, jurassicZombies: e.target.checked })} /> Friendly robot-zombie encounters</label>}
     <label><input type="checkbox" checked={draft.autoSpeak !== false} onChange={e => setDraft({ ...draft, autoSpeak: e.target.checked })} /> Tutors speak automatically</label>
+    <h2>Sound and accessibility</h2>
+    <label><input type="checkbox" checked={draft.soundEffects !== false} onChange={e => setDraft({...draft,soundEffects:e.target.checked})}/> Sound effects</label>
+    <label>Effects volume<input type="range" min="0" max="1" step="0.05" value={draft.effectsVolume??0.25} onChange={e=>setDraft({...draft,effectsVolume:Number(e.target.value)})}/></label>
+    <label><input type="checkbox" checked={draft.focusMusic===true} onChange={e=>setDraft({...draft,focusMusic:e.target.checked})}/> Chill focus instrumentals</label>
+    <label>Music volume<input type="range" min="0" max="1" step="0.05" value={draft.musicVolume??0.18} onChange={e=>setDraft({...draft,musicVolume:Number(e.target.value)})}/></label>
+    <label><input type="checkbox" checked={draft.support.dyslexiaSupport} onChange={e=>setDraft({...draft,support:{...draft.support,dyslexiaSupport:e.target.checked}})}/> Dyslexia reading support</label>
+    <label><input type="checkbox" checked={draft.support.largerText} onChange={e=>setDraft({...draft,support:{...draft.support,largerText:e.target.checked}})}/> Larger text</label>
     {status && <p role="status">{status}</p>}
     <div className="row"><button className="btn" onClick={() => { preview?.stop(); syncKeysToDevice(draft); onUpdate({ ...draft, humanVoice: true }); onBack(); }}>Save settings</button><button className="btn ghost" onClick={() => { preview?.stop(); onBack(); }}>Cancel</button></div>
     <p className="faint">Natural audio requires service credits. ElevenLabs uses the voice you choose; preview it before saving.</p>

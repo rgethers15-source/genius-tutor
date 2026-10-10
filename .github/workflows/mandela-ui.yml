@@ -1,0 +1,26 @@
+name: Check Mandela UI
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm install --no-save playwright
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build:renderer
+      - name: Exercise profile, saved fieldwork, 3D movement and settings
+        run: |
+          python3 -m http.server 5173 --bind 127.0.0.1 --directory dist &
+          node --experimental-strip-types e2e/mandela.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mandela-ui-screenshots
+          path: screenshots/*.png

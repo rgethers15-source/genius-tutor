@@ -1,1030 +1,1782 @@
 [
   {
     "area": "Dance",
-    "code": "1.CN.1"
+    "code": "1.CN.1",
+    "objective": "Relate dance ideas and works with personal, societal, cultural, historical, and daily life contexts, including diverse and marginalized groups."
   },
   {
     "area": "Dance",
-    "code": "1.CN.1.1"
+    "code": "1.CN.1.1",
+    "objective": "Explain how dance can reflect culture, values, and ideas."
   },
   {
     "area": "Dance",
-    "code": "1.CN.1.2"
+    "code": "1.CN.1.2",
+    "objective": "Identify cross-curricular connections between dance and other arts disciplines."
   },
   {
     "area": "Dance",
-    "code": "1.CN.1.3"
+    "code": "1.CN.1.3",
+    "objective": "Identify psychological challenges encountered by dancers."
   },
   {
     "area": "Dance",
-    "code": "1.CN.2"
+    "code": "1.CN.2",
+    "objective": "Explore advancements in the field of dance."
   },
   {
     "area": "Dance",
-    "code": "1.CN.2.1"
+    "code": "1.CN.2.1",
+    "objective": "Identify the various roles of individuals in the creation and production of dance."
   },
   {
     "area": "Dance",
-    "code": "1.CN.2.2"
+    "code": "1.CN.2.2",
+    "objective": "Describe how innovations and technology are used to create and present dance."
   },
   {
     "area": "Dance",
-    "code": "1.CR.1"
+    "code": "1.CR.1",
+    "objective": "Create original dance movements and works that communicate ideas, experiences, feelings, or images, independently and collaboratively."
   },
   {
     "area": "Dance",
-    "code": "1.CR.1.1"
+    "code": "1.CR.1.1",
+    "objective": "Generate spontaneous movement in response to visual cues."
   },
   {
     "area": "Dance",
-    "code": "1.CR.1.2"
+    "code": "1.CR.1.2",
+    "objective": "Create movement as a group for the beginning, middle, and end of a dance."
   },
   {
     "area": "Dance",
-    "code": "1.CR.1.3"
+    "code": "1.CR.1.3",
+    "objective": "Depict shapes in dance by drawing a picture or using a symbol."
   },
   {
     "area": "Dance",
-    "code": "1.CR.2"
+    "code": "1.CR.2",
+    "objective": "Adapt original dance ideas and works, and those of peers and other artists, independently and collaboratively."
   },
   {
     "area": "Dance",
-    "code": "1.CR.2.1"
+    "code": "1.CR.2.1",
+    "objective": "Adapt a dance sequence by changing the body shapes."
   },
   {
     "area": "Dance",
-    "code": "1.CR.2.2"
+    "code": "1.CR.2.2",
+    "objective": "Explain how and when to credit others when using their ideas in dance."
   },
   {
     "area": "Dance",
-    "code": "1.PR.1"
+    "code": "1.PR.1",
+    "objective": "Perform dance works from a variety of styles, cultures, and genres."
   },
   {
     "area": "Dance",
-    "code": "1.PR.1.1"
+    "code": "1.PR.1.1",
+    "objective": "Improve dance skills by incorporating feedback from instructors and peers."
   },
   {
     "area": "Dance",
-    "code": "1.PR.1.2"
+    "code": "1.PR.1.2",
+    "objective": "Sequence basic motor skills with body awareness."
   },
   {
     "area": "Dance",
-    "code": "1.PR.1.3"
+    "code": "1.PR.1.3",
+    "objective": "Demonstrate focus when dancing with others."
   },
   {
     "area": "Dance",
-    "code": "1.PR.2"
+    "code": "1.PR.2",
+    "objective": "Develop dance presentations."
   },
   {
     "area": "Dance",
-    "code": "1.PR.2.1"
+    "code": "1.PR.2.1",
+    "objective": "Compare topics or themes for improvisation or informal performance with support."
   },
   {
     "area": "Dance",
-    "code": "1.PR.2.2"
+    "code": "1.PR.2.2",
+    "objective": "Demonstrate safe and respectful behaviors when performing and observing informal performances."
   },
   {
     "area": "Dance",
-    "code": "1.PR.2.3"
+    "code": "1.PR.2.3",
+    "objective": "Compare the use of props from given options to enhance a dance."
   },
   {
     "area": "Dance",
-    "code": "1.RE.1"
+    "code": "1.RE.1",
+    "objective": "Analyze dance from a variety of styles, cultures, and genres using content-specific vocabulary."
   },
   {
     "area": "Dance",
-    "code": "1.RE.1.1"
+    "code": "1.RE.1.1",
+    "objective": "Describe movements that exemplify an element of dance."
   },
   {
     "area": "Dance",
-    "code": "1.RE.1.2"
+    "code": "1.RE.1.2",
+    "objective": "Describe the emotions evoked by choreographic works."
   },
   {
     "area": "Dance",
-    "code": "1.RE.2"
+    "code": "1.RE.2",
+    "objective": "Evaluate dance works using content-specific vocabulary."
   },
   {
     "area": "Dance",
-    "code": "1.RE.2.1"
+    "code": "1.RE.2.1",
+    "objective": "Describe preferences in observing various dance styles, forms, or genres."
   },
   {
     "area": "Dance",
-    "code": "1.RE.2.2"
+    "code": "1.RE.2.2",
+    "objective": "Provide positive feedback for self and others."
   },
   {
-    "area": "General music",
-    "code": "1.CN.1"
+    "area": "General Music",
+    "code": "1.CN.1",
+    "objective": "Relate musical ideas and works with personal, societal, cultural, historical, and daily life contexts, including diverse and marginalized groups."
   },
   {
-    "area": "General music",
-    "code": "1.CN.1.1"
+    "area": "General Music",
+    "code": "1.CN.1.1",
+    "objective": "Explain how music can reflect culture, values, and ideas."
   },
   {
-    "area": "General music",
-    "code": "1.CN.1.2"
+    "area": "General Music",
+    "code": "1.CN.1.2",
+    "objective": "Identify cross-curricular connections between music and other arts disciplines."
   },
   {
-    "area": "General music",
-    "code": "1.CN.1.3"
+    "area": "General Music",
+    "code": "1.CN.1.3",
+    "objective": "Describe how music exists in local community traditions, celebrations, entertainment, or other uses."
   },
   {
-    "area": "General music",
-    "code": "1.CN.2"
+    "area": "General Music",
+    "code": "1.CN.2",
+    "objective": "Explore advancements in the field of music."
   },
   {
-    "area": "General music",
-    "code": "1.CN.2.1"
+    "area": "General Music",
+    "code": "1.CN.2.1",
+    "objective": "Identify the various roles of individuals that contribute to the support and consumption of music."
   },
   {
-    "area": "General music",
-    "code": "1.CN.2.2"
+    "area": "General Music",
+    "code": "1.CN.2.2",
+    "objective": "Describe how innovations and technology are used to create and present music."
   },
   {
-    "area": "General music",
-    "code": "1.CR.1"
+    "area": "General Music",
+    "code": "1.CR.1",
+    "objective": "Create original musical ideas and works, independently and collaboratively."
   },
   {
-    "area": "General music",
-    "code": "1.CR.1.1"
+    "area": "General Music",
+    "code": "1.CR.1.1",
+    "objective": "Improvise 4-8 beat rhythmic patterns and 3-pitch melodic patterns."
   },
   {
-    "area": "General music",
-    "code": "1.CR.1.2"
+    "area": "General Music",
+    "code": "1.CR.1.2",
+    "objective": "Notate 4-8 beats of original rhythmic ideas using iconic or standard notation that incorporate grade-level appropriate rhythms."
   },
   {
-    "area": "General music",
-    "code": "1.CR.2"
+    "area": "General Music",
+    "code": "1.CR.2",
+    "objective": "Adapt original musical ideas and works, and those of peers and other artists, independently and collaboratively."
   },
   {
-    "area": "General music",
-    "code": "1.CR.2.1"
+    "area": "General Music",
+    "code": "1.CR.2.1",
+    "objective": "Accompany readings, stories, or dramatizations with corresponding traditional and non-traditional sound sources."
   },
   {
-    "area": "General music",
-    "code": "1.CR.2.2"
+    "area": "General Music",
+    "code": "1.CR.2.2",
+    "objective": "Explain how and when to give credit to others when creating work that borrows from other musicians."
   },
   {
-    "area": "General music",
-    "code": "1.PR.1"
+    "area": "General Music",
+    "code": "1.PR.1",
+    "objective": "Perform music from a variety of styles, cultures, and genres."
   },
   {
-    "area": "General music",
-    "code": "1.PR.1.1"
+    "area": "General Music",
+    "code": "1.PR.1.1",
+    "objective": "Improve musical skills by incorporating feedback from instructors and peers."
   },
   {
-    "area": "General music",
-    "code": "1.PR.1.2"
+    "area": "General Music",
+    "code": "1.PR.1.2",
+    "objective": "Read iconic or standard notation to sing or play music with at least three pitches and rhythms with quarter rests in 2/4 and 4/4 meters."
   },
   {
-    "area": "General music",
-    "code": "1.PR.1.3"
+    "area": "General Music",
+    "code": "1.PR.1.3",
+    "objective": "Sing or play in unison with simple accompaniments."
   },
   {
-    "area": "General music",
-    "code": "1.PR.1.4"
+    "area": "General Music",
+    "code": "1.PR.1.4",
+    "objective": "Demonstrate opposites in tempos, form, texture, articulations, and dynamics."
   },
   {
-    "area": "General music",
-    "code": "1.PR.2"
+    "area": "General Music",
+    "code": "1.PR.2",
+    "objective": "Develop musical presentations."
   },
   {
-    "area": "General music",
-    "code": "1.PR.2.1"
+    "area": "General Music",
+    "code": "1.PR.2.1",
+    "objective": "Identify the production elements needed to develop formal and informal performances."
   },
   {
-    "area": "General music",
-    "code": "1.PR.2.2"
+    "area": "General Music",
+    "code": "1.PR.2.2",
+    "objective": "Contrast audience and performer etiquette."
   },
   {
-    "area": "General music",
-    "code": "1.RE.1"
+    "area": "General Music",
+    "code": "1.RE.1",
+    "objective": "Analyze musical works from a variety of styles, cultures, and genres including response through moving, singing, playing instruments, or content-specific vocabulary."
   },
   {
-    "area": "General music",
-    "code": "1.RE.1.1"
+    "area": "General Music",
+    "code": "1.RE.1.1",
+    "objective": "Identify opposites in tempos, form, texture, articulations, and dynamics in aural or written musical works."
   },
   {
-    "area": "General music",
-    "code": "1.RE.1.2"
+    "area": "General Music",
+    "code": "1.RE.1.2",
+    "objective": "Explain how musical works are used to communicate meaning."
   },
   {
-    "area": "General music",
-    "code": "1.RE.1.3"
+    "area": "General Music",
+    "code": "1.RE.1.3",
+    "objective": "Identify a variety of instruments and voices by sound, including available classroom instruments."
   },
   {
-    "area": "General music",
-    "code": "1.RE.2"
+    "area": "General Music",
+    "code": "1.RE.2",
+    "objective": "Evaluate musical works using content-specific vocabulary."
   },
   {
-    "area": "General music",
-    "code": "1.RE.2.1"
+    "area": "General Music",
+    "code": "1.RE.2.1",
+    "objective": "Describe personal preferences for music."
   },
   {
-    "area": "General music",
-    "code": "1.RE.2.2"
+    "area": "General Music",
+    "code": "1.RE.2.2",
+    "objective": "Provide positive feedback and areas for improvement for others."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CN.1"
+    "area": "Theatre Arts",
+    "code": "1.CN.1",
+    "objective": "Relate theatrical ideas and works with personal, societal, cultural, historical, and daily life contexts, including diverse and marginalized groups."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CN.1.1"
+    "area": "Theatre Arts",
+    "code": "1.CN.1.1",
+    "objective": "Compare theatre from a variety of cultures."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CN.1.2"
+    "area": "Theatre Arts",
+    "code": "1.CN.1.2",
+    "objective": "Identify cross-curricular connections between theatre, dance, music, and visual arts."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CN.2"
+    "area": "Theatre Arts",
+    "code": "1.CN.2",
+    "objective": "Explore advancements in the field of theatre arts."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CN.2.1"
+    "area": "Theatre Arts",
+    "code": "1.CN.2.1",
+    "objective": "Describe the roles of the actor, director, and designers."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CN.2.2"
+    "area": "Theatre Arts",
+    "code": "1.CN.2.2",
+    "objective": "Identify tools that are used by technical theatre designers."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.1"
+    "area": "Theatre Arts",
+    "code": "1.CR.1",
+    "objective": "Create original theatrical ideas and works, independently and collaboratively."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.1.1"
+    "area": "Theatre Arts",
+    "code": "1.CR.1.1",
+    "objective": "Improvise a variety of activities and scenarios using dramatic play."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.1.2"
+    "area": "Theatre Arts",
+    "code": "1.CR.1.2",
+    "objective": "Create an original sequence of events by acting, drawing, or writing with support."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.1.3"
+    "area": "Theatre Arts",
+    "code": "1.CR.1.3",
+    "objective": "Create simple costumes and props to enhance dramatic play using available resources."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.2"
+    "area": "Theatre Arts",
+    "code": "1.CR.2",
+    "objective": "Adapt original theatrical ideas and works, and those of peers and other artists, independently and collaboratively."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.2.1"
+    "area": "Theatre Arts",
+    "code": "1.CR.2.1",
+    "objective": "Arrange the sequence of events from a story with support."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.CR.2.2"
+    "area": "Theatre Arts",
+    "code": "1.CR.2.2",
+    "objective": "Explain how and when to give credit to others when borrowing from other theatre artists."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.1"
+    "area": "Theatre Arts",
+    "code": "1.PR.1",
+    "objective": "Perform theatrical works from a variety of styles, cultures, and genres."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.1.1"
+    "area": "Theatre Arts",
+    "code": "1.PR.1.1",
+    "objective": "Apply suggested feedback of the director to dramatic play."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.1.2"
+    "area": "Theatre Arts",
+    "code": "1.PR.1.2",
+    "objective": "Pantomime stories communicating a sequence of movements."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.2"
+    "area": "Theatre Arts",
+    "code": "1.PR.2",
+    "objective": "Develop theatrical presentations."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.2.1"
+    "area": "Theatre Arts",
+    "code": "1.PR.2.1",
+    "objective": "Identify characters and settings for dramatic play with support."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.2.2"
+    "area": "Theatre Arts",
+    "code": "1.PR.2.2",
+    "objective": "Demonstrate the responsibility of an audience member as a participant in a shared experience."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.2.3"
+    "area": "Theatre Arts",
+    "code": "1.PR.2.3",
+    "objective": "Manipulate costumes and props to enhance dramatic play."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.PR.2.4"
+    "area": "Theatre Arts",
+    "code": "1.PR.2.4",
+    "objective": "Compare movement and vocal choices in a variety of spaces."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.RE.1"
+    "area": "Theatre Arts",
+    "code": "1.RE.1",
+    "objective": "Analyze theatrical works from a variety of styles, cultures, and genres using content-specific vocabulary."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.RE.1.1"
+    "area": "Theatre Arts",
+    "code": "1.RE.1.1",
+    "objective": "Identify relationships between characters in various informal, recorded, or live classroom presentations."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.RE.1.2"
+    "area": "Theatre Arts",
+    "code": "1.RE.1.2",
+    "objective": "Describe how artistic choices communicate meaning."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.RE.2"
+    "area": "Theatre Arts",
+    "code": "1.RE.2",
+    "objective": "Evaluate theatrical works using content-specific vocabulary."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.RE.2.1"
+    "area": "Theatre Arts",
+    "code": "1.RE.2.1",
+    "objective": "Explain personal preferences in response to theatrical performances."
   },
   {
-    "area": "Theatre arts",
-    "code": "1.RE.2.2"
+    "area": "Theatre Arts",
+    "code": "1.RE.2.2",
+    "objective": "Provide positive feedback for self and others."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CN.1"
+    "area": "Visual Arts",
+    "code": "1.CN.1",
+    "objective": "Relate visual arts ideas and works with personal, societal, cultural, historical, and daily life contexts, including diverse and marginalized groups."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CN.1.1"
+    "area": "Visual Arts",
+    "code": "1.CN.1.1",
+    "objective": "Explain how visual arts are used in cultures around the world."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CN.1.2"
+    "area": "Visual Arts",
+    "code": "1.CN.1.2",
+    "objective": "Identify cross-curricular connections between visual arts and other arts disciplines."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CN.2"
+    "area": "Visual Arts",
+    "code": "1.CN.2",
+    "objective": "Explore advancements in the field of visual arts."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CN.2.1"
+    "area": "Visual Arts",
+    "code": "1.CN.2.1",
+    "objective": "Name various careers in visual arts."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CN.2.2"
+    "area": "Visual Arts",
+    "code": "1.CN.2.2",
+    "objective": "Identify how technology, innovations, and digital media tools are used in art making."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CR.1"
+    "area": "Visual Arts",
+    "code": "1.CR.1",
+    "objective": "Create original visual arts ideas and 2-Dand 3-Dartworks, including drawing, painting, printmaking, fibers, sculpture, ceramics, and digital media, using tools safely and appropriately, independently or collaboratively."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CR.1.1"
+    "area": "Visual Arts",
+    "code": "1.CR.1.1",
+    "objective": "Experiment with materials to make unique combinations of ideas, themes, or events."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CR.1.2"
+    "area": "Visual Arts",
+    "code": "1.CR.1.2",
+    "objective": "Create original art from imaginary sources of inspiration."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CR.2"
+    "area": "Visual Arts",
+    "code": "1.CR.2",
+    "objective": "Adapt original visual arts ideas and works, and those of peers and other artists, independently and collaboratively."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CR.2.1"
+    "area": "Visual Arts",
+    "code": "1.CR.2.1",
+    "objective": "Differentiate between sharing ideas and copying."
   },
   {
-    "area": "Visual arts",
-    "code": "1.CR.2.2"
+    "area": "Visual Arts",
+    "code": "1.CR.2.2",
+    "objective": "Explain how and when to give credit to others when creating derivative work."
   },
   {
-    "area": "Visual arts",
-    "code": "1.PR.1"
+    "area": "Visual Arts",
+    "code": "1.PR.1",
+    "objective": "Present visual artworks."
   },
   {
-    "area": "Visual arts",
-    "code": "1.PR.1.1"
+    "area": "Visual Arts",
+    "code": "1.PR.1.1",
+    "objective": "Improve art based on positive feedback from instructors and peers."
   },
   {
-    "area": "Visual arts",
-    "code": "1.PR.1.2"
+    "area": "Visual Arts",
+    "code": "1.PR.1.2",
+    "objective": "Identify elements of art in personal art."
   },
   {
-    "area": "Visual arts",
-    "code": "1.PR.2"
+    "area": "Visual Arts",
+    "code": "1.PR.2",
+    "objective": "Develop visual arts presentations."
   },
   {
-    "area": "Visual arts",
-    "code": "1.PR.2.1"
+    "area": "Visual Arts",
+    "code": "1.PR.2.1",
+    "objective": "Describe ways personal artwork can be presented."
   },
   {
-    "area": "Visual arts",
-    "code": "1.PR.2.2"
+    "area": "Visual Arts",
+    "code": "1.PR.2.2",
+    "objective": "Identify various ways an audience can interact with works of art."
   },
   {
-    "area": "Visual arts",
-    "code": "1.RE.1"
+    "area": "Visual Arts",
+    "code": "1.RE.1",
+    "objective": "Analyze visual artworks from a variety of styles, cultures, and genres using content-specific vocabulary."
   },
   {
-    "area": "Visual arts",
-    "code": "1.RE.1.1"
+    "area": "Visual Arts",
+    "code": "1.RE.1.1",
+    "objective": "Describe how works of art are made."
   },
   {
-    "area": "Visual arts",
-    "code": "1.RE.1.2"
+    "area": "Visual Arts",
+    "code": "1.RE.1.2",
+    "objective": "Explain how symbols, subjects or themes are used in the works of others to communicate meaning."
   },
   {
-    "area": "Visual arts",
-    "code": "1.RE.2"
+    "area": "Visual Arts",
+    "code": "1.RE.2",
+    "objective": "Evaluate visual artworks using content-specific vocabulary."
   },
   {
-    "area": "Visual arts",
-    "code": "1.RE.2.1"
+    "area": "Visual Arts",
+    "code": "1.RE.2.1",
+    "objective": "Describe why a work of art is personally appealing."
   },
   {
-    "area": "Visual arts",
-    "code": "1.RE.2.2"
+    "area": "Visual Arts",
+    "code": "1.RE.2.2",
+    "objective": "Provide positive feedback for personal and peer art."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.1"
+    "area": "Computer Science",
+    "code": "K2-CS-01",
+    "objective": "Choose appropriate devices to perform a variety of classroom tasks."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.2"
+    "area": "Computer Science",
+    "code": "K2-CS-02",
+    "objective": "Describe the function of common physical components of computing systems (hardware) with appropriate terminology."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.3"
+    "area": "Computer Science",
+    "code": "K2-CS-03",
+    "objective": "Operate appropriate software to perform a variety of tasks."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.4"
+    "area": "Computer Science",
+    "code": "K2-CS-04",
+    "objective": "Describe basic hardware and software problems with accurate terminology."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.5"
+    "area": "Computer Science",
+    "code": "K2-NI-01",
+    "objective": "Illustrate how information is broken down into smaller pieces and can be reassembled."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.6"
+    "area": "Computer Science",
+    "code": "K2-NI-02",
+    "objective": "A pply knowledge of what passwords are and why we use strong passwords to protect devices and information from unauthorized access."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.7"
+    "area": "Computer Science",
+    "code": "K2-NI-03",
+    "objective": "Discover your digital footprint and how personal information can be protected."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.8"
+    "area": "Computer Science",
+    "code": "K2-DA-01",
+    "objective": "Store, copy, search, retrieve, modify, and delete information using a computing device."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.9"
+    "area": "Computer Science",
+    "code": "K2-DA-02",
+    "objective": "Define information stored on a computing device as data."
   },
   {
-    "area": "English language arts",
-    "code": "RL.1.10"
+    "area": "Computer Science",
+    "code": "K2-DA-03",
+    "objective": "Collect and present the same data in various visual formats."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.1"
+    "area": "Computer Science",
+    "code": "K2-DA-04",
+    "objective": "Make predictions with patterns in data visualizations."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.2"
+    "area": "Computer Science",
+    "code": "K2-AP-01",
+    "objective": "Model daily processes with algorithms to complete tasks."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.3"
+    "area": "Computer Science",
+    "code": "K2-AP-02",
+    "objective": "Demonstrate how programs store and manipulate data by using numbers or other symbols to represent information."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.4"
+    "area": "Computer Science",
+    "code": "K2-AP-03",
+    "objective": "Develop programs with sequences and simple loops to express ideas or address a problem."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.5"
+    "area": "Computer Science",
+    "code": "K2-AP-04",
+    "objective": "Decompose the steps needed to solve a problem into a precise sequence of instructions."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.6"
+    "area": "Computer Science",
+    "code": "K2-AP-05",
+    "objective": "Develop plans that describe a program\u2019s sequence of events, goals and expected outcomes."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.7"
+    "area": "Computer Science",
+    "code": "K2-AP-06",
+    "objective": "Give attribution when using the ideas and creations of others while developing programs."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.8"
+    "area": "Computer Science",
+    "code": "K2-AP-07",
+    "objective": "Identify and debug errors in an algorithm or program that includes sequences and simple loops."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.9"
+    "area": "Computer Science",
+    "code": "K2-AP-08",
+    "objective": "Using correct terminology, describe steps taken and choices made during the iterative process of program development."
   },
   {
-    "area": "English language arts",
-    "code": "RI.1.10"
+    "area": "Computer Science",
+    "code": "K2-IC-01",
+    "objective": "Compare how people live and work before and after the implementation or adoption of new computing technology."
   },
   {
-    "area": "English language arts",
-    "code": "RF.1.1"
+    "area": "Computer Science",
+    "code": "K2-IC-02",
+    "objective": "Select software that meets the diverse needs and preferences for the technology individuals use in the classroom."
   },
   {
-    "area": "English language arts",
-    "code": "RF.1.2"
+    "area": "Computer Science",
+    "code": "K2-IC-03",
+    "objective": "Work respectfully and responsibly with others online."
   },
   {
-    "area": "English language arts",
-    "code": "RF.1.3"
+    "area": "Computer Science",
+    "code": "K2-IC-04",
+    "objective": "Model responsible login and logoff procedures on all devices."
   },
   {
-    "area": "English language arts",
-    "code": "RF.1.4"
+    "area": "Digital Learning",
+    "code": "DL.1a",
+    "objective": "Students articulate and set personal learning goals, develop strategies leveraging technology to achieve them and reflect on the learning process itself to improve learning outcomes."
   },
   {
-    "area": "English language arts",
-    "code": "RF.1.5"
+    "area": "Digital Learning",
+    "code": "DL.1b",
+    "objective": "Students build networks and customize their learning environments in ways that support the learning process."
   },
   {
-    "area": "English language arts",
-    "code": "W.1.1"
+    "area": "Digital Learning",
+    "code": "DL.1c",
+    "objective": "Students use technology to seek feedback that informs and improves their practice and to demonstrate their learning in a variety of ways."
   },
   {
-    "area": "English language arts",
-    "code": "W.1.2"
+    "area": "Digital Learning",
+    "code": "DL.1d",
+    "objective": "Students understand the fundamental concepts of technology operations, demonstrate the ability to choose, use and troubleshoot current technologies and are able to transfer their knowledge to explore emerging technologies."
   },
   {
-    "area": "English language arts",
-    "code": "W.1.3"
+    "area": "Digital Learning",
+    "code": "DL.2a",
+    "objective": "Students cultivate and manage their digital identity and reputation and are aware of the permanence of their actions in the digital world."
   },
   {
-    "area": "English language arts",
-    "code": "W.1.4"
+    "area": "Digital Learning",
+    "code": "DL.2b",
+    "objective": "Students engage in positive, safe, legal and ethical behavior when using technology, including social interactions online or when using networked devices."
   },
   {
-    "area": "English language arts",
-    "code": "W.1.5"
+    "area": "Digital Learning",
+    "code": "DL.2c",
+    "objective": "Students demonstrate an understanding of and respect for the rights and obligations of using and sharing intellectual property."
   },
   {
-    "area": "English language arts",
-    "code": "W.1.6"
+    "area": "Digital Learning",
+    "code": "DL.2d",
+    "objective": "Students manage their personal data to maintain digital privacy and security and are aware of data-collection technology used to track their navigation online."
   },
   {
-    "area": "English language arts",
-    "code": "SL.1.1"
+    "area": "Digital Learning",
+    "code": "DL.3a",
+    "objective": "Students plan and employ effective research strategies to locate information and other resources for their intellectual or creative pursuits."
   },
   {
-    "area": "English language arts",
-    "code": "SL.1.2"
+    "area": "Digital Learning",
+    "code": "DL.3b",
+    "objective": "Students evaluate the accuracy, perspective, credibility and relevance of information, media, data or other resources."
   },
   {
-    "area": "English language arts",
-    "code": "SL.1.3"
+    "area": "Digital Learning",
+    "code": "DL.3c",
+    "objective": "Students curate information from digital resources using a variety of tools and methods to create collections of artifacts that demonstrate meaningful connections or conclusions."
   },
   {
-    "area": "English language arts",
-    "code": "SL.1.4"
+    "area": "Digital Learning",
+    "code": "DL.3d",
+    "objective": "Students build knowledge by actively exploring real-world issues and problems, developing ideas and theories and pursuing answers and solutions."
   },
   {
-    "area": "English language arts",
-    "code": "SL.1.5"
+    "area": "Digital Learning",
+    "code": "DL.4a",
+    "objective": "Students know and use a deliberate design process for generating ideas, testing theories, creating innovative artifacts or solving authentic problems."
   },
   {
-    "area": "English language arts",
-    "code": "L.1.1"
+    "area": "Digital Learning",
+    "code": "DL.4b",
+    "objective": "Students select and use digital tools to plan and manage a design process that considers design constraints and calculated risks."
   },
   {
-    "area": "English language arts",
-    "code": "L.1.2"
+    "area": "Digital Learning",
+    "code": "DL.4c",
+    "objective": "Students develop, test and refine prototypes as part of a cyclical design process."
   },
   {
-    "area": "English language arts",
-    "code": "L.1.3"
+    "area": "Digital Learning",
+    "code": "DL.4d",
+    "objective": "Students exhibit a tolerance for ambiguity, perseverance and the capacity to work with open-ended problems."
   },
   {
-    "area": "English language arts",
-    "code": "L.1.4"
+    "area": "Digital Learning",
+    "code": "DL.5a",
+    "objective": "Students formulate problem definitions suited for technology-assisted methods such as data analysis, abstract models and algorithmic thinking in exploring and finding solutions."
   },
   {
-    "area": "English language arts",
-    "code": "L.1.5"
+    "area": "Digital Learning",
+    "code": "DL.5b",
+    "objective": "Students collect data or identify relevant data sets, use digital tools to analyze them, and represent data in various ways to facilitate problem-solving and decision-making."
   },
   {
-    "area": "English language arts",
-    "code": "L.1.6"
+    "area": "Digital Learning",
+    "code": "DL.5c",
+    "objective": "Students break problems into component parts, extract key information, and develop descriptive models to understand complex systems or facilitate problem-solving."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.1"
+    "area": "Digital Learning",
+    "code": "DL.5d",
+    "objective": "Students understand how automation works and use algorithmic thinking to develop a sequence of steps to create and test automated solutions."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.1.1"
+    "area": "Digital Learning",
+    "code": "DL.6a",
+    "objective": "Students choose the appropriate platforms and tools for meeting the desired objectives of their creation or communication."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.1.2"
+    "area": "Digital Learning",
+    "code": "DL.6b",
+    "objective": "Students create original works or responsibly repurpose or remix digital resources into new creations."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.1.3"
+    "area": "Digital Learning",
+    "code": "DL.6c",
+    "objective": "Students communicate complex ideas clearly and effectively by creating or using a variety of digital objects such as visualizations, models or simulations."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.2"
+    "area": "Digital Learning",
+    "code": "DL.6d",
+    "objective": "Students publish or present content that customizes the message and medium for their intended audiences."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.2.1"
+    "area": "Digital Learning",
+    "code": "DL.7a",
+    "objective": "Students use digital tools to connect with learners from a variety of backgrounds and cultures, engaging with them in ways that broaden mutual understanding and learning."
   },
   {
-    "area": "Health education",
-    "code": "1.MEH.2.2"
+    "area": "Digital Learning",
+    "code": "DL.7b",
+    "objective": "Students use collaborative technologies to work with others, including peers, experts or community members, to examine issues and problems from multiple viewpoints."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.1"
+    "area": "Digital Learning",
+    "code": "DL.7c",
+    "objective": "Students contribute constructively to project teams, assuming various roles and responsibilities to work effectively toward a common goal."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.1.1"
+    "area": "Digital Learning",
+    "code": "DL.7d",
+    "objective": "Students explore local and global issues and use collaborative technologies to work with others to investigate solutions."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.1.2"
+    "area": "English Language Arts",
+    "code": "RL.1.1",
+    "objective": "Ask and answer questions about key details in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.1.3"
+    "area": "English Language Arts",
+    "code": "RL.1.2",
+    "objective": "Retell stories, including key details, and demonstrate understanding of their central message or lesson."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.1.4"
+    "area": "English Language Arts",
+    "code": "RL.1.3",
+    "objective": "Describe characters, settings, and major events in a story, using key details."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.2"
+    "area": "English Language Arts",
+    "code": "RL.1.4",
+    "objective": "Identify words and phrases in stories or poems that suggest feelings or appeal to the senses."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.2.1"
+    "area": "English Language Arts",
+    "code": "RL.1.5",
+    "objective": "Explain major differences between books that tell stories and books that give information."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.2.2"
+    "area": "English Language Arts",
+    "code": "RL.1.6",
+    "objective": "Identify who is telling the story at various points in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.2.3"
+    "area": "English Language Arts",
+    "code": "RL.1.7",
+    "objective": "Use illustrations and details in a story to describe its characters, setting, or events."
   },
   {
-    "area": "Health education",
-    "code": "1.PCH.2.4"
+    "area": "English Language Arts",
+    "code": "RL.1.9",
+    "objective": "Compare and contrast the adventures and experiences of characters in stories."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1"
+    "area": "English Language Arts",
+    "code": "RL.1.10",
+    "objective": "With prompting and support, read and understand literature of appropriate complexity for grade 1 for sustained periods of time."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1.1"
+    "area": "English Language Arts",
+    "code": "RI.1.1",
+    "objective": "Ask and answer questions about key details in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1.2"
+    "area": "English Language Arts",
+    "code": "RI.1.2",
+    "objective": "Identify the main topic and retell key details of a text."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1.3"
+    "area": "English Language Arts",
+    "code": "RI.1.3",
+    "objective": "Describe the connection between two individuals, events, ideas, or pieces of information in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1.4"
+    "area": "English Language Arts",
+    "code": "RI.1.4",
+    "objective": "Ask and answer questions to help determine or clarify the meaning of words and phrases in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1.5"
+    "area": "English Language Arts",
+    "code": "RI.1.5",
+    "objective": "Know and use various text features to locate key facts or information in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.ICHR.1.6"
+    "area": "English Language Arts",
+    "code": "RI.1.6",
+    "objective": "Distinguish between information provided by pictures or other illustrations and information provided by the words in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.NPA.1"
+    "area": "English Language Arts",
+    "code": "RI.1.7",
+    "objective": "Use the illustrations and details in a text to describe its key ideas."
   },
   {
-    "area": "Health education",
-    "code": "1.NPA.1.1"
+    "area": "English Language Arts",
+    "code": "RI.1.8",
+    "objective": "With guidance and support, identify the reasons an author gives to support ideas in a text."
   },
   {
-    "area": "Health education",
-    "code": "1.NPA.1.2"
+    "area": "English Language Arts",
+    "code": "RI.1.9",
+    "objective": "Identify basic similarities in and differences between two texts on the same topic."
   },
   {
-    "area": "Health education",
-    "code": "1.NPA.1.3"
+    "area": "English Language Arts",
+    "code": "RI.1.10",
+    "objective": "With prompting and support, read and understand informational texts appropriately complex for grade 1 for sustained periods of time."
   },
   {
-    "area": "Health education",
-    "code": "1.NPA.2"
+    "area": "English Language Arts",
+    "code": "RF.1.1",
+    "objective": "Demonstrate understanding of the organization and basic features of print. a. Recognize and use capitalization and ending punctuation."
   },
   {
-    "area": "Health education",
-    "code": "1.NPA.2.1"
+    "area": "English Language Arts",
+    "code": "RF.1.2",
+    "objective": "Print all upper- and lowercase letters legibly."
   },
   {
-    "area": "Health education",
-    "code": "1.ANCOD.1"
+    "area": "English Language Arts",
+    "code": "RF.1.3",
+    "objective": "Demonstrate understanding of spoken words, syllables, and sounds (phonemes). a. Distinguish long from short vowel sounds in spoken single-syllable words. b. Orally produce single-syllable words by blending sounds (phonemes), including consonant blends. c. Isolate and pronounce initial, medial vowel, and final sounds (phonemes) in spoken single-syllable words. d. Segment spoken single-syllable words into their complete sequence of individual sounds (phonemes)."
   },
   {
-    "area": "Health education",
-    "code": "1.ANCOD.1.1"
+    "area": "English Language Arts",
+    "code": "RF.1.4",
+    "objective": "Know and apply grade-level phonics and word analysis skills in decoding words. a. Know the spelling-sound correspondences for common consonant digraphs. b. Decode regularly spelled one-syllable words. c. Know final -e and common vowel team conventions for representing long vowel sounds. d. Use knowledge that every syllable must have a vowel sound to determine the number of syllables in a printed word. e. Decode two-syllable words following basic patterns by breaking the words into syllables. f. Read words with inflectional endings. g. Recognize and read grade-appropriate irregularly spelled words."
   },
   {
-    "area": "Health education",
-    "code": "1.ANCOD.1.2"
+    "area": "English Language Arts",
+    "code": "RF.1.5",
+    "objective": "Read with sufficient accuracy and fluency to support comprehension. a. Read on-level text with purpose and understanding. b. Read on-level text orally with accuracy, appropriate rate, and expression on successive readings. c. Use context to confirm or self-correct word recognition and understanding, rereading as necessary."
   },
   {
-    "area": "Physical education",
-    "code": "1.MS.1"
+    "area": "English Language Arts",
+    "code": "W.1.1",
+    "objective": "Write opinion pieces in which they introduce the topic or name the book they are writing about, state an opinion, supply a reason for the opinion, and provide closure. a. With guidance and support from adults, organize information and ideas around a topic to plan and prepare to write. b. With guidance and support from adults, focus on a topic, respond to questions and suggestions from peers, and add details to strengthen writing as needed."
   },
   {
-    "area": "Physical education",
-    "code": "1.MC.2"
+    "area": "English Language Arts",
+    "code": "W.1.2",
+    "objective": "Write informative/explanatory texts in which they name a topic, supply some facts about the topic, and provide closure. a. With guidance and support from adults, organize information and ideas around a topic to plan and prepare to write. b. With guidance and support from adults, focus on a topic, respond to questions and suggestions from peers, and add details to strengthen writing as needed."
   },
   {
-    "area": "Physical education",
-    "code": "1.HF.3"
+    "area": "English Language Arts",
+    "code": "W.1.3",
+    "objective": "Write narratives in which they recount two or more appropriately sequenced events, include some details regarding what happened, use temporal transition words to signal event order, and provide some sense of closure. a. With guidance and support from adults, organize information and ideas around a topic to plan and prepare to write. b. With guidance and support from adults, focus on a topic, respond to questions and suggestions from peers, and add details to strengthen writing as needed."
   },
   {
-    "area": "Physical education",
-    "code": "1.PR.4"
+    "area": "English Language Arts",
+    "code": "W.1.4",
+    "objective": "With guidance and support from adults, use a variety of digital tools and resources to produce and publish writing, including in collaboration with peers."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "W.1.5",
+    "objective": "Participate in shared research and writing projects."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "W.1.6",
+    "objective": "With guidance and support from adults, recall information from experiences or gather information from provided sources to answer a question."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "SL.1.1",
+    "objective": "Participate in collaborative conversations with diverse partners about grade 1 topics and texts with peers and adults in small and larger groups. a. Follow agreed-upon rules for discussions. b. Build on others\u2019 talk in conversations by responding to the comments of others through multiple exchanges. c. Ask questions to clear up any confusion about the topics and texts under discussion."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "SL.1.2",
+    "objective": "Ask and answer questions about key details in a text read aloud or information presented orally or through other media."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "SL.1.3",
+    "objective": "Ask and answer questions about what a speaker says in order to gather additional information or clarify something that is not understood."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "SL.1.4",
+    "objective": "Produce complete sentences to describe people, places, things, and events with relevant details, expressing ideas and feelings clearly."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "SL.1.5",
+    "objective": "Add drawings or other visual displays to descriptions when appropriate to clarify ideas, thoughts, and feelings."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "L.1.1",
+    "objective": "Demonstrate command of the conventions of standard English grammar and usage when writing or speaking; demonstrate proficiency within the K-1 grammar continuum."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "L.1.2",
+    "objective": "Demonstrate command of the conventions of standard English capitalization, punctuation, and spelling when writing; demonstrate proficiency within the K-1 conventions continuum."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "L.1.3",
+    "objective": "(Begins in grade 2)"
+  },
+  {
+    "area": "English Language Arts",
+    "code": "L.1.4",
+    "objective": "Determine and/or clarify the meaning of unknown and multiple-meaning words and phrases based on grade 1 reading and content, choosing flexibly from an array of strategies: context clues, word parts and word relationships."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "L.1.5",
+    "objective": "With guidance and support from adults, demonstrate understanding of nuances in word meanings. a. Sort words into categories to gain a sense of the concepts the categories represent. b. Define words by category and by one or more key attributes. c. Distinguish shades of meaning among verbs differing in manner and adjectives differing in intensity by defining or choosing them or by acting out the meanings."
+  },
+  {
+    "area": "English Language Arts",
+    "code": "L.1.6",
+    "objective": "Use words and phrases learned through conversations, reading, and being read to, including common conjunctions."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.1",
+    "objective": "Understand the connection between healthy expressions of emotions, mental wellness, and healthy behaviors."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.1.1",
+    "objective": "Identify appropriate ways to express needs, wants and feelings."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.1.2",
+    "objective": "Describe how different situations impact emotions and vary among individuals."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.1.3",
+    "objective": "Utilize effective communication to express and cope with emotions."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.2",
+    "objective": "Remember that effort and practice lead to improved skills."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.2.1",
+    "objective": "Identify more than one strategy to solve a problem."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.MEH.2.2",
+    "objective": "Identify resources to get help with solving a problem."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.1",
+    "objective": "List various personal behaviors and practices that promote health and prevent disease."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.1.1",
+    "objective": "Explain that germs produce illness and can be spread from one person to another."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.1.2",
+    "objective": "Demonstrate measures for preventing the spread of germs."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.1.3",
+    "objective": "Summarize the transition between primary and permanent teeth and steps for seeking help for dental problems."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.1.4",
+    "objective": "Use appropriate clothing according to the weather."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.2",
+    "objective": "Understand necessary steps to prevent and respond to unintentional injury."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.2.1",
+    "objective": "Identify and describe situations that cause injury."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.2.2",
+    "objective": "Identify items that can cause burns and strategies to prevent fire and burn injury."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.2.3",
+    "objective": "Execute the Stop, Drop, and Roll response."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.PCH.2.4",
+    "objective": "Execute an emergency phone call."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1",
+    "objective": "Recognize healthy and effective interpersonal communications and relationships."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1.1",
+    "objective": "Explain the importance of demonstrating respect for the personal space and boundaries of others."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1.2",
+    "objective": "Describe positive characteristics that are unique to each individual."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1.3",
+    "objective": "Demonstrate how to tell a parent, guardian, or trusted adult when feeling threatened or unsafe."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1.4",
+    "objective": "Recognize that anyone who has experienced bullying or mistreatment is not at fault."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1.5",
+    "objective": "Demonstrate effective refusal skills, including saying no and moving away to enforce personal boundaries for yourself and others."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ICHR.1.6",
+    "objective": "Identify a parent, guardian, or trusted adult within your home, school and community who can be informed when feeling threatened or harmed."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.NPA.1",
+    "objective": "Describe where food and water come from and their importance to the body."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.NPA.1.1",
+    "objective": "Name the reasons why we need to drink water."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.NPA.1.2",
+    "objective": "Explore a variety of foods and why it\u2019s important to eat them"
+  },
+  {
+    "area": "Health Education",
+    "code": "1.NPA.1.3",
+    "objective": "Categorize the sources of a variety of foods."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.NPA.2",
+    "objective": "Recognize the benefits of physical activity for the body."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.NPA.2.1",
+    "objective": "List physical activities that are beneficial to your body."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ANCOD.1",
+    "objective": "Understand household safety procedures for products and medicines with adult supervision."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ANCOD.1.1",
+    "objective": "Recognize the harmful effects of medicine when used incorrectly."
+  },
+  {
+    "area": "Health Education",
+    "code": "1.ANCOD.1.2",
+    "objective": "Recognize how to behave safely with medicines and household cleaners."
+  },
+  {
+    "area": "Physical Education",
+    "code": "1.MS.1",
+    "objective": "Demonstrate motor skills and movement patterns needed to perform a variety of physical activities."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MS.1.1",
+    "objective": "Demonstrate emerging forms of all eight basic locomotor skills (walk, run, jump, hop, skip, gallop, leap, slide) in different pathways, levels, or directions."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MS.1.2",
+    "objective": "Demonstrate emerging forms of manipulative skills (throwing, catching, dribbling, passing, volleying, striking, and kicking)."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MS.1.3",
+    "objective": "Demonstrate transitions between sequential locomotor skills."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MS.1.4",
+    "objective": "Demonstrate a combination of rhythmic locomotor and non-locomotor movements to a beat."
+  },
+  {
+    "area": "Physical Education",
+    "code": "1.MC.2",
+    "objective": "Demonstrate understanding of concepts that apply to the learning and performance of movement."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MC.2.1",
+    "objective": "Demonstrate understanding of the movement concepts of space, pathways, and speed through movement."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MC.2.2",
+    "objective": "Identify two or more of the critical elements for fundamental manipulative skills (throwing, catching, dribbling, passing, volleying, striking, and kicking)."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.MC.2.3",
+    "objective": "Use teacher and/or peer feedback to improve basic motor performance."
+  },
+  {
+    "area": "Physical Education",
+    "code": "1.HF.3",
+    "objective": "Demonstrate the knowledge and skills needed to achieve a health-enhancing level of physical activity and fitness."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.HF.3.1",
+    "objective": "Identify two or more of the five health-related fitness components (cardiorespiratory endurance, muscular strength, muscular endurance, flexibility, or body composition) and their associated exercises."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.HF.3.2",
+    "objective": "Identify benefits of being physically active."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.HF.3.3",
+    "objective": "Actively engage in physical education class."
+  },
+  {
+    "area": "Physical Education",
+    "code": "1.PR.4",
+    "objective": "Demonstrate responsible personal and social behavior that respects self and others."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.PR.4.1",
+    "objective": "Demonstrate cooperation by following directions and accepting responsibility in group settings."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.PR.4.2",
+    "objective": "Identify positive feelings that result from participation in physical activity."
+  },
+  {
+    "area": "Physical Education",
+    "code": "PE.1.PR.4.3",
+    "objective": "Demonstrate safe practices when engaging in physical activities with minimal teacher reminders."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.1"
+    "code": "NC.1.OA.1",
+    "objective": "Represent and solve addition and subtraction word problems, within 20, with unknowns, by using objects, drawings, and equations with a symbol for the unknown number to represent the problem, when solving: \u2022 Add to/Take from-Change Unknown \u2022 Put Together/Take Apart-Addend Unknown \u2022 Compare-Difference Unknown"
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.2"
+    "code": "NC.1.OA.2",
+    "objective": "Represent and solve word problems that call for addition of three whole numbers whose sum is less than or equal to 20, by using objects, drawings, and equations with a symbol for the unknown number."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.3"
+    "code": "NC.1.OA.3",
+    "objective": "Apply the commutative and associative properties as strategies for solving addition problems."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.4"
+    "code": "NC.1.OA.4",
+    "objective": "Solve an unknown-addend problem, within 20, by using addition strategies and/ or changing it to a subtraction problem."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.9"
+    "code": "NC.1.OA.9",
+    "objective": "Demonstrate fluency with addition and subtraction within 10."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.6"
+    "code": "NC.1.OA.6",
+    "objective": "Add and subtract, within 20, using strategies such as: \u2022 Counting on \u2022 Making ten \u2022 Decomposing a number leading to a ten \u2022 Using the relationship between addition and subtraction \u2022 Using a number line \u2022 Creating equivalent but simpler or known sums"
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.7"
+    "code": "NC.1.OA.7",
+    "objective": "Apply understanding of the equal sign to determine if equations involving addition and subtraction are true."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.OA.8"
+    "code": "NC.1.OA.8",
+    "objective": "Determine the unknown whole number in an addition or subtraction equation involving three whole numbers."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.1"
+    "code": "NC.1.NBT.1",
+    "objective": "Count to 150, starting at any number less than 150."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.7"
+    "code": "NC.1.NBT.7",
+    "objective": "Read and write numerals, and represent a number of objects with a written numeral, to 100."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.2"
+    "code": "NC.1.NBT.2",
+    "objective": "Understand that the two digits of a two-digit number represent amounts of tens and ones. \u2022 Unitize by making a ten from a collection of ten ones. \u2022 Model the numbers from 11 to 19 as composed of a ten and one, two, three, four, five, six, seven, eight, or nine ones. \u2022 Demonstrate that the numbers 10, 20, 30, 40, 50, 60, 70, 80, 90 refer to one, two, three, four, five, six, seven, eight, or nine tens, with 0 ones."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.3"
+    "code": "NC.1.NBT.3",
+    "objective": "Compare two two-digit numbers based on the value of the tens and ones digits, recording the results of comparisons with the symbols >, =, and <."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.4"
+    "code": "NC.1.NBT.4",
+    "objective": "Using concrete models or drawings, strategies based on place value, properties of operations, and explaining the reasoning used, add, within 100, in the following situations: \u2022 Atwo-digit number and a one-digit number \u2022 Atwo-digit number and a multiple of 10"
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.5"
+    "code": "NC.1.NBT.5",
+    "objective": "Given a two-digit number, mentally find 10 more or 10 less than the number, without having to count; explain the reasoning used."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.NBT.6"
+    "code": "NC.1.NBT.6",
+    "objective": "Subtract multiples of 10 in the range 10-90 from multiples of 10 in the range 10-90, explaining the reasoning, using: \u2022 Concrete models and drawings \u2022 Number lines \u2022 Strategies based on place value \u2022 Properties of operations \u2022 The relationship between addition and subtraction"
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.MD.1"
+    "code": "NC.1.MD.1",
+    "objective": "Order three objects by length; compare the lengths of two objects indirectly by using a third object."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.MD.2"
+    "code": "NC.1.MD.2",
+    "objective": "Measure lengths with non-standard units. \u2022 Express the length of an object as a whole number of non-standard length units. \u2022 Measure by laying multiple copies of a shorter object (the length unit) end to end (iterating) with no gaps or overlaps."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.MD.3"
+    "code": "NC.1.MD.3",
+    "objective": "Tell and write time in hours and half-hours using analog and digital clocks."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.MD.5"
+    "code": "NC.1.MD.5",
+    "objective": "Identify quarters, dimes, and nickels and relate their values to pennies."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.MD.4"
+    "code": "NC.1.MD.4",
+    "objective": "Organize, represent, and interpret data with up to three categories. \u2022 Ask and answer questions about the total number of data points. \u2022 Ask and answer questions about how many in each category. \u2022 Ask and answer questions about how many more or less are in one category than in another."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.G.1"
+    "code": "NC.1.G.1",
+    "objective": "Distinguish between defining and non-defining attributes and create shapes with defining attributes by: \u2022 Building and drawing triangles, rectangles, squares, trapezoids, hexagons, circles. \u2022 Building cubes, rectangular prisms, cones, spheres, and cylinders."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.G.2"
+    "code": "NC.1.G.2",
+    "objective": "Create composite shapes by: \u2022 Making a two-dimensional composite shape using rectangles, squares, trapezoids, triangles, and half-circles naming the components of the new shape. \u2022 Making a three-dimensional composite shape using cubes, rectangular prisms, cones, and cylinders, naming the components of the new shape."
   },
   {
     "area": "Mathematics",
-    "code": "NC.1.G.3"
+    "code": "NC.1.G.3",
+    "objective": "Partition circles and rectangles into two and four equal shares. \u2022 Describe the shares as halves and fourths, as half of and fourth of. \u2022 Describe the whole as two of, or four of the shares. \u2022 Explain that decomposing into more equal shares creates smaller shares."
   },
   {
     "area": "Science",
-    "code": "PS.1.1"
+    "code": "PS.1.1",
+    "objective": "Understand how forces (pushes or pulls) affect the motion of an object."
   },
   {
     "area": "Science",
-    "code": "PS.1.1.1"
+    "code": "PS.1.1.1",
+    "objective": "Use models to explain the effect of a push or pull on the motion of an object, with or without contact."
   },
   {
     "area": "Science",
-    "code": "PS.1.1.2"
+    "code": "PS.1.1.2",
+    "objective": "Carry out investigations to compare the effects of a given force on the motion of an object."
   },
   {
     "area": "Science",
-    "code": "LS.1.1"
+    "code": "LS.1.1",
+    "objective": "Understand the basic needs of a variety of plants and animals in different ecosystems."
   },
   {
     "area": "Science",
-    "code": "LS.1.1.1"
+    "code": "LS.1.1.1",
+    "objective": "Obtain, evaluate and communicate information to summarize the needs of different plants and animals."
   },
   {
     "area": "Science",
-    "code": "LS.1.1.2"
+    "code": "LS.1.1.2",
+    "objective": "Analyze and interpret data to compare how the needs of plants and animals can be met in different environments."
   },
   {
     "area": "Science",
-    "code": "ESS.1.1"
+    "code": "ESS.1.1",
+    "objective": "Recognize the features and patterns of the earth/moon/sun system as observed from Earth."
   },
   {
     "area": "Science",
-    "code": "ESS.1.1.1"
+    "code": "ESS.1.1.1",
+    "objective": "Use models to recognize differences in the features of the day and night sky and apparent movement of objects across the sky as observed from Earth."
   },
   {
     "area": "Science",
-    "code": "ESS.1.1.2"
+    "code": "ESS.1.1.2",
+    "objective": "Analyze and interpret data to recognize patterns of observable changes in the moon\u2019s appearance from day to day."
   },
   {
     "area": "Science",
-    "code": "ESS.1.2"
+    "code": "ESS.1.2",
+    "objective": "Understand the physical properties of Earth materials."
   },
   {
     "area": "Science",
-    "code": "ESS.1.2.1"
+    "code": "ESS.1.2.1",
+    "objective": "Obtain, evaluate and communicate information to summarize the physical properties of Earth materials, including rocks, minerals, soils, and water."
   },
   {
     "area": "Science",
-    "code": "ESS.1.2.2"
+    "code": "ESS.1.2.2",
+    "objective": "Carry out investigations to compare the properties of different soil samples from local places relating their capacity to retain water, provide nutrients, and support the growth of plants."
   },
   {
     "area": "Science",
-    "code": "ESS.1.3"
+    "code": "ESS.1.3",
+    "objective": "Understand that natural resources are important to humans."
   },
   {
     "area": "Science",
-    "code": "ESS.1.3.1"
+    "code": "ESS.1.3.1",
+    "objective": "Obtain, evaluate and communicate information to summarize ways in which humans use natural resources."
   },
   {
     "area": "Science",
-    "code": "ESS.1.3.2"
+    "code": "ESS.1.3.2",
+    "objective": "Engage in argument from evidence to explain ways that humans can protect natural resources in the environment."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.1"
+    "area": "Social Studies",
+    "code": "I.1.1",
+    "objective": "Identify inquiry as a process to answer questions and solve issues."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.2"
+    "area": "Social Studies",
+    "code": "I.1.2",
+    "objective": "Recognize a compelling question with prompting and support."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.3"
+    "area": "Social Studies",
+    "code": "I.1.3",
+    "objective": "Explain why or how a compelling question is important to a topic or issue."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.4"
+    "area": "Social Studies",
+    "code": "I.1.4",
+    "objective": "Identify what questions are needed to support the compelling question."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.5"
+    "area": "Social Studies",
+    "code": "I.1.5",
+    "objective": "Recognize how supporting questions connect to compelling questions."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.6"
+    "area": "Social Studies",
+    "code": "I.1.6",
+    "objective": "Demonstrate an understanding of facts, opinions, and other details in sources."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.7"
+    "area": "Social Studies",
+    "code": "I.1.7",
+    "objective": "Identify the information surrounding a primary or secondary source including who created it, when they created it, where they created it, and why they created it."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.8"
+    "area": "Social Studies",
+    "code": "I.1.8",
+    "objective": "Construct responses to compelling questions using information from sources."
   },
   {
-    "area": "Social studies",
-    "code": "I.1.9"
+    "area": "Social Studies",
+    "code": "I.1.9",
+    "objective": "Identify problems related to the compelling question that students think are important."
   },
   {
-    "area": "Social studies",
-    "code": "1.B.1"
+    "area": "Social Studies",
+    "code": "1.B.1",
+    "objective": "Understand how culture, values, and beliefs shape people, places, and environments."
   },
   {
-    "area": "Social studies",
-    "code": "1.B.1.1"
+    "area": "Social Studies",
+    "code": "1.B.1.1",
+    "objective": "Identify cultural practices and traditions in local communities and places around the world."
   },
   {
-    "area": "Social studies",
-    "code": "1.B.1.2"
+    "area": "Social Studies",
+    "code": "1.B.1.2",
+    "objective": "Summarize ways that culturally, racially, and ethnically diverse people help shape a community."
   },
   {
-    "area": "Social studies",
-    "code": "1.B.1.3"
+    "area": "Social Studies",
+    "code": "1.B.1.3",
+    "objective": "Explain how the artistic expressions of diverse people and cultures contribute to communities around the world."
   },
   {
-    "area": "Social studies",
-    "code": "1.B.1.4"
+    "area": "Social Studies",
+    "code": "1.B.1.4",
+    "objective": "Explain how culture, values, and beliefs influence how disagreements are resolved in classrooms, local communities, and the world."
   },
   {
-    "area": "Social studies",
-    "code": "1.C&G.1"
+    "area": "Social Studies",
+    "code": "1.C&G.1",
+    "objective": "Understand how people engage with and participate in the community."
   },
   {
-    "area": "Social studies",
-    "code": "1.C&G.1.1"
+    "area": "Social Studies",
+    "code": "1.C&G.1.1",
+    "objective": "Exemplify ways individuals and groups play a role in shaping communities."
   },
   {
-    "area": "Social studies",
-    "code": "1.C&G.1.2"
+    "area": "Social Studies",
+    "code": "1.C&G.1.2",
+    "objective": "Exemplify ways individuals and groups contribute to the making of rules and laws."
   },
   {
-    "area": "Social studies",
-    "code": "1.C&G.1.3"
+    "area": "Social Studies",
+    "code": "1.C&G.1.3",
+    "objective": "Identify the differences between rights and responsibilities of citizens in various communities."
   },
   {
-    "area": "Social studies",
-    "code": "1.C&G.1.4"
+    "area": "Social Studies",
+    "code": "1.C&G.1.4",
+    "objective": "Compare various processes or strategies people can use to improve communities."
   },
   {
-    "area": "Social studies",
-    "code": "1.E.1"
+    "area": "Social Studies",
+    "code": "1.E.1",
+    "objective": "Understand the role of basic economic concepts in the decisions people make."
   },
   {
-    "area": "Social studies",
-    "code": "1.E.1.1"
+    "area": "Social Studies",
+    "code": "1.E.1.1",
+    "objective": "Distinguish the relationship between scarcity and limited resources."
   },
   {
-    "area": "Social studies",
-    "code": "1.E.1.2"
+    "area": "Social Studies",
+    "code": "1.E.1.2",
+    "objective": "Recognize the relationship between supply and demand."
   },
   {
-    "area": "Social studies",
-    "code": "1.E.1.3"
+    "area": "Social Studies",
+    "code": "1.E.1.3",
+    "objective": "Exemplify how supply and demand affect the choices people make."
   },
   {
-    "area": "Social studies",
-    "code": "1.E.1.4"
+    "area": "Social Studies",
+    "code": "1.E.1.4",
+    "objective": "Summarize reasons why people and countries trade goods and services."
   },
   {
-    "area": "Social studies",
-    "code": "1.G.1"
+    "area": "Social Studies",
+    "code": "1.G.1",
+    "objective": "Apply geographic representations, tools, and terms to describe surroundings."
   },
   {
-    "area": "Social studies",
-    "code": "1.G.1.1"
+    "area": "Social Studies",
+    "code": "1.G.1.1",
+    "objective": "Use maps, globes, and/or digital representations to identify various types of landforms of places around the world."
   },
   {
-    "area": "Social studies",
-    "code": "1.G.1.2"
+    "area": "Social Studies",
+    "code": "1.G.1.2",
+    "objective": "Exemplify how geographic features are represented by symbols on maps or digital representations."
   },
   {
-    "area": "Social studies",
-    "code": "1.G.2"
+    "area": "Social Studies",
+    "code": "1.G.2",
+    "objective": "Understand interactions between humans and the environment in different places and"
   },
   {
-    "area": "Social studies",
-    "code": "1.G.2.1"
+    "area": "Social Studies",
+    "code": "1.G.2.1",
+    "objective": "Explain the various ways the physical environment impacts people in different regions around the world."
   },
   {
-    "area": "Social studies",
-    "code": "1.G.2.2"
+    "area": "Social Studies",
+    "code": "1.G.2.2",
+    "objective": "Explain the various ways people impact the physical environment in different regions around the world."
   },
   {
-    "area": "Social studies",
-    "code": "1.H.1"
+    "area": "Social Studies",
+    "code": "1.H.1",
+    "objective": "Understand how people and events have changed society over time."
   },
   {
-    "area": "Social studies",
-    "code": "1.H.1.1"
+    "area": "Social Studies",
+    "code": "1.H.1.1",
+    "objective": "Explain how the experiences and achievements of people throughout history have helped contribute to the changes in various local communities and communities around the world over time."
   },
   {
-    "area": "Social studies",
-    "code": "1.H.1.2"
+    "area": "Social Studies",
+    "code": "1.H.1.2",
+    "objective": "Use primary and secondary sources to compare multiple perspectives of various events in history."
+  },
+  {
+    "area": "Student Success",
+    "code": "M1",
+    "objective": "Belief in development of whole self, including a healthy balance of mental, social/emotional and"
+  },
+  {
+    "area": "Student Success",
+    "code": "M2",
+    "objective": "Sense of acceptance, respect, support and inclusion for self and others in the school environment"
+  },
+  {
+    "area": "Student Success",
+    "code": "M3",
+    "objective": "Positive attitude toward work and learning"
+  },
+  {
+    "area": "Student Success",
+    "code": "M4",
+    "objective": "Self-confidence in ability to succeed"
+  },
+  {
+    "area": "Student Success",
+    "code": "M5",
+    "objective": "Belief in using abilities to their fullest to achieve high-quality results and outcomes"
+  },
+  {
+    "area": "Student Success",
+    "code": "M6",
+    "objective": "Understanding that postsecondary education and lifelong learning are necessary for long-term success"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS1",
+    "objective": "Critical thinking skills to make informed decisions"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS2",
+    "objective": "Creative approach to learning, tasks and problem solving"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS3",
+    "objective": "Time-management, organizational and study skills"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS4",
+    "objective": "Self-motivation and self-direction for learning"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS5",
+    "objective": "Media and technology skills to enhance learning"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS6",
+    "objective": "High-quality standards for tasks and activities"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS7",
+    "objective": "Long- and short- term academic, career and social/emotional goals"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS8",
+    "objective": "Engagement in challenging coursework"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS9",
+    "objective": "Decision-making informed by gathering evidence, getting others\u2019 perspectives and recognizing personal bias"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-LS10",
+    "objective": "Participation in enrichment and extracurricular activities"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS1",
+    "objective": "Responsibility for self and actions"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS2",
+    "objective": "Self-discipline and self-control"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS3",
+    "objective": "Independent work"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS4",
+    "objective": "Delayed gratification for long-term rewards"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS5",
+    "objective": "Perseverance to achieve long- and short- term goals"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS6",
+    "objective": "Ability to identify and overcome barriers"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS7",
+    "objective": "Effective coping skills"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS8",
+    "objective": "Balance of school, home and community activities"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS9",
+    "objective": "Personal safety skills"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SMS10",
+    "objective": "Ability to manage transitions and adapt to change"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS1",
+    "objective": "Effective oral and written communication skills and listening skills"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS2",
+    "objective": "Positive, respectful and supportive relationships with students who are similar and different from them"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS3",
+    "objective": "Positive relationships with adults to support success"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS4",
+    "objective": "Empathy"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS5",
+    "objective": "Ethical decision-making and social responsibility"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS6",
+    "objective": "Effective collaboration and cooperation skills"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS7",
+    "objective": "Leadership and teamwork skills to work effectively in diverse groups"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS8",
+    "objective": "Advocacy skills for self and others and ability to assert self, when necessary"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS9",
+    "objective": "Social maturity and behaviors appropriate to the situation and environment"
+  },
+  {
+    "area": "Student Success",
+    "code": "B-SS10",
+    "objective": "Cultural awareness, sensitivity and responsiveness"
   }
 ]
