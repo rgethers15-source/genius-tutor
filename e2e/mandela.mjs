@@ -6,10 +6,13 @@ const browser=await chromium.launch({headless:true,args:['--enable-unsafe-swifts
 const page=await browser.newPage({viewport:{width:1440,height:1000}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://localhost:5173');
-const p=mandelaProfile();p.autoSpeak=false;p.focusMusic=false;p.soundEffects=false;
+const p=mandelaProfile();p.autoSpeak=false;p.focusMusic=false;p.soundEffects=false;p.jurassicEnvironment=undefined;p.princessEnvironment=true;
 await page.evaluate(p=>localStorage.setItem('genius-tutor-data',JSON.stringify({profiles:[p],version:1})),p);
 await page.reload();await page.getByText('Mandela',{exact:true}).first().click();
 await page.getByRole('heading',{name:/Dinosaur Rescue Academy/}).waitFor();
+const migrated=await page.evaluate(()=>JSON.parse(localStorage.getItem('genius-tutor-data')).profiles[0]);
+if(migrated.id!==p.id||!migrated.jurassicEnvironment||migrated.princessEnvironment)throw new Error('Legacy Mandela migration failed');
+await page.getByText('v0.17.1',{exact:true}).waitFor();
 await page.waitForFunction(()=>[...document.querySelectorAll('.explorer-portal img')].length===9&&[...document.querySelectorAll('.explorer-portal img')].every(i=>i.complete&&i.naturalWidth>0));
 await page.screenshot({path:'screenshots/mandela-home.png',fullPage:true});
 await page.getByRole('button',{name:/First-grade field missions/}).click();
