@@ -37,7 +37,7 @@ export function JurassicExpedition({onBack,onAnswer,onRescue,zombies,quiet,rescu
   const obstacles:{x:number;z:number;r:number}[]=[];
   const leafShape=new THREE.Shape();leafShape.moveTo(0,0);leafShape.quadraticCurveTo(1,2,0,5);leafShape.quadraticCurveTo(-1,2,0,0);
   const leafGeometry=new THREE.ShapeGeometry(leafShape,8);const leafMaterial=new THREE.MeshStandardMaterial({color:'#3c754e',side:THREE.DoubleSide,roughness:.9});
-  const leaves=new THREE.InstancedMesh(leafGeometry,leafMaterial,110*8);leaves.castShadow=true;scene.add(leaves);const dummy=new THREE.Object3D();let leafCount=0;
+  const leaves=new THREE.InstancedMesh(leafGeometry,leafMaterial,110*8);leaves.castShadow=true;scene.add(leaves);const dummy=new THREE.Object3D();dummy.rotation.order='YXZ';let leafCount=0;
   for(let i=0;i<110;i++){const x=Math.sin(i*7.3)*65,z=Math.cos(i*3.7)*65;if(Math.abs(x)<15&&z>-45&&z<25)continue;const height=7+i%4;obstacles.push({x,z,r:.8});make(new THREE.CylinderGeometry(.25,.6,height,10),'#695542',x,height/2,z);
    for(let j=0;j<8;j++){dummy.position.set(x,height,z);dummy.rotation.set(-1.0,j*Math.PI/4+i*.1,0);dummy.scale.set(1,1,1);dummy.updateMatrix();leaves.setMatrixAt(leafCount++,dummy.matrix);}}
   leaves.count=leafCount;leaves.instanceMatrix.needsUpdate=true;

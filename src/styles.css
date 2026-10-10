@@ -662,3 +662,5 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .expedition-complete { text-align:center; padding:36px; background:linear-gradient(145deg,#365644,#122826); border-radius:24px; }
 @media (max-width:700px) { .jurassic-world .grid.cols-4 { grid-template-columns:repeat(2,minmax(0,1fr)); } .jurassic-world .grid.cols-2 { grid-template-columns:1fr; } }
 @media (prefers-reduced-motion:reduce) { .jurassic-fireflies { animation:none; } .jurassic-world .explorer-portal { transition:none; } }
+
+.jurassic-world .field-map textarea { display:block; width:100%; min-height:140px; padding:12px; border-radius:10px; font:inherit; line-height:1.5; box-sizing:border-box; margin:8px 0 12px; }
