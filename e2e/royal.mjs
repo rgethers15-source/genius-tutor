@@ -28,11 +28,9 @@ await page.getByRole('button',{name:'Princesses',exact:false}).click();
 await page.getByRole('button',{name:/Enter the 3D royal realm/}).click();
 await page.locator('canvas').waitFor();await page.waitForTimeout(1500);
 await page.screenshot({path:'screenshots/royal-garden.png',fullPage:true});
-const positions=[[0,4],[-7,-3],[7,-10],[-6,-17],[6,-24],[-7,-31],[7,-38],[-5,-45],[0,-52]];let at=[0,14];
-async function walk(key,metres){if(Math.abs(metres)<.1)return;await page.locator('canvas').focus();await page.keyboard.down(key);await page.waitForTimeout(Math.abs(metres)*200);await page.keyboard.up(key);}
 for(let i=0;i<9;i++){
- const target=positions[i];await walk(target[0]<at[0]?'a':'d',target[0]-at[0]);await walk('w',at[1]-target[1]);at=target;
- await page.getByRole('button',{name:'Read royal question',exact:false}).waitFor({timeout:5000});
+ if(i===0){await page.locator('canvas').focus();await page.keyboard.down('w');await page.getByRole('button',{name:'Read royal question',exact:false}).waitFor({timeout:30000});await page.keyboard.up('w');}
+ else{await page.getByRole('button',{name:'Royal carriage to next gem',exact:false}).click();await page.getByRole('button',{name:'Read royal question',exact:false}).waitFor({timeout:10000});}
  if(i===0){await page.getByRole('button',{name:'4',exact:true}).click();}
  await page.getByRole('button',{name:ROYAL_MISSIONS[i].answer,exact:true}).click();
  await page.getByText('Royal gem earned!',{exact:true}).waitFor();

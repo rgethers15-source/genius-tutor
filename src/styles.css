@@ -667,7 +667,7 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 
 /* McKenzie's original royal fantasy world. */
 .princess-world { isolation:isolate; }
-.royal-backdrop { position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#30203955,#302039dd),url('/royal/kingdom.webp') center/cover; }
+.royal-backdrop { position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#30203955,#302039dd),url('/royal/kingdom.webp') center/cover; }
 .princess-world .princess-portal { background:linear-gradient(145deg,#5a3c68ee,#302344ef);box-shadow:0 12px 30px #20102566; }
 .princess-world .princess-portal img { height:190px!important;object-position:center 25%; }
 .royal-realm .card { background:#352840ee;color:#fff0db;border:1px solid #d8bd8466; }

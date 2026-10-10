@@ -8,7 +8,6 @@ import { PRINCESS_TUTORS } from '../data/princessTutors';
 import { type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
 import { TutorStage } from './TutorStage';
-import { EnchantedKingdom } from './EnchantedKingdom';
 import { PrincessSettings, PRINCESS_DIRECTION } from './PrincessSettings';
 import { type AvatarMood } from './AnimatedAvatar';
 import { getSpeech, warmUpVoices, setSpeech, elevenLabsSpeechProvider, openAiSpeechProvider, webSpeechProvider } from '../engine/speech';
@@ -111,7 +110,6 @@ export function PrincessEnvironment({
 
   return (
     <div className={`anime-env princess-world ${profile.princessReducedMotion ? "quiet-kingdom" : ""}`} style={{ position: 'relative', minHeight: '100%' }}>
-      <EnchantedKingdom />
       <div className="royal-backdrop" aria-hidden="true" />
 
       {/* Simple top bar */}

@@ -9,7 +9,7 @@ import type { AnimeTutor } from '../data/animeTutors';
 
 const STATIONS = [[0,4],[-7,-3],[7,-10],[-6,-17],[6,-24],[-7,-31],[7,-38],[-5,-45],[0,-52]];
 export function RoyalRealm({onBack,onAnswer,onJourney,journeys,quiet,tutors}:{onBack:()=>void;onAnswer:(correct:boolean,subject:Subject)=>void;onJourney:()=>void;journeys:number;quiet:boolean;tutors:AnimeTutor[]}) {
- const host=useRef<HTMLDivElement>(null),keys=useRef(new Set<string>()),checkpoint=useRef(0);
+ const host=useRef<HTMLDivElement>(null),keys=useRef(new Set<string>()),checkpoint=useRef(0),carriage=useRef(false);
  const [mission,setMission]=useState(0),[near,setNear]=useState(false),[distance,setDistance]=useState(10);
  const [error,setError]=useState(''),[solved,setSolved]=useState(false),[feedback,setFeedback]=useState(''),[finished,setFinished]=useState(false);
  const answerLocked=useRef(false),journeyClaimed=useRef(false),celebrating=useRef(false);
@@ -118,8 +118,9 @@ export function RoyalRealm({onBack,onAnswer,onJourney,journeys,quiet,tutors}:{on
    if(!obstacles.some(o=>Math.hypot(x-o.x,z-o.z)<o.r+.6)){camera.position.x=x;camera.position.z=z;}
    if(forward||side)void islandSound('footstep');
    const [bx,bz]=STATIONS[checkpoint.current];beacon.position.set(bx,0,bz);
+   if(carriage.current){camera.position.set(bx,1.7,bz+1.5);yaw=0;keys.current.clear();carriage.current=false;}
    if(!quiet){camera.position.y=1.7+(forward||side?Math.sin(elapsed*8)*.025:0);gem.rotation.y=elapsed*.6;gem.position.y=1.4+Math.sin(elapsed*1.7)*.15;fountainCrystal.rotation.y=elapsed*.25;sparkle.rotation.y=Math.sin(elapsed*.04)*.01;floats.forEach((g,i)=>g.position.y=13+i*2+Math.sin(elapsed*.6+i)*.35);figures.forEach((g,i)=>g.rotation.y=Math.sin(elapsed*.8+i)*.12);flowers.forEach((g,i)=>g.rotation.z=Math.sin(elapsed*.4+i)*.025);}
-   if(elapsed-hud>.2){const dist=Math.hypot(x-bx,z-bz);setDistance(Math.round(dist));setNear(dist<3);hud=elapsed;}
+   if(elapsed-hud>.2){const dist=Math.hypot(camera.position.x-bx,camera.position.z-bz);setDistance(Math.round(dist));setNear(dist<3);hud=elapsed;}
    royalGlow.intensity=celebrating.current?35:0;
    const entrance=material('#54405d');entrance.emissive.set(celebrating.current?'#c4a15e':'#000000');entrance.emissiveIntensity=celebrating.current?1.4:0;
    renderer.render(scene,camera);frame=requestAnimationFrame(loop);};frame=requestAnimationFrame(loop);
@@ -132,7 +133,7 @@ export function RoyalRealm({onBack,onAnswer,onJourney,journeys,quiet,tutors}:{on
  <div className="expedition-hud"><strong>Royal gems {mission+(solved?1:0)} / 9</strong><span>Next gem {distance} m away</span><span>Journeys completed: {journeys}</span></div>
  <p>Click the garden. WASD or arrows move, Q/E turns, and dragging looks around. You can use the buttons below. No timer or lost lives.</p>
  <div ref={host} className="expedition-viewport"/>{error&&<p role="alert">{error}</p>}
- <div className="row expedition-controls">{move('Forward','w')}{move('Left','a')}{move('Back','s')}{move('Right','d')}{move('Turn left','q')}{move('Turn right','e')}</div>
+ <div className="row expedition-controls">{move('Forward','w')}{move('Left','a')}{move('Back','s')}{move('Right','d')}{move('Turn left','q')}{move('Turn right','e')}<button className="btn ghost" disabled={finished} onClick={()=>{carriage.current=true;void playEffect('welcome');}}>✨ Royal carriage to next gem</button></div>
  {finished?<div className="expedition-complete"><h2>✨ The palace is shining!</h2><p>You earned nine royal gems through reading, math, science, writing, kindness, art, music, speech and heritage. Your royal journey is saved.</p><button className="btn" onClick={onBack}>Bring your crown home</button></div>:<div className="card"><h2>Quest {mission+1}: {task.title}</h2>{!near&&!error?<p>Walk to the glowing gem to unlock this learning quest.</p>:<><p className="dyslexia">{task.q}</p><button className="btn ghost" onClick={()=>getSpeech().speak(task.q,{voice,purpose:'reading',allowSystemFallback:true})}>🔊 Read royal question</button><div className="row royal-choices">{task.choices.map(c=><button className="btn" key={c} disabled={solved} onClick={()=>answer(c)}>{c}</button>)}</div></>}
  <p role="status">{feedback}</p>{solved&&<button className="btn" onClick={()=>{getSpeech().stop();if(mission===8){if(!journeyClaimed.current){journeyClaimed.current=true;celebrating.current=true;onJourney();}setFinished(true);}else setMission(m=>m+1);}}>{mission===8?'Light the royal palace':'Next royal gem →'}</button>}</div>}
  </div>;
