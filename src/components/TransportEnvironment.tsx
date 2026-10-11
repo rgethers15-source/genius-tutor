@@ -237,7 +237,7 @@ export function TransportEnvironment({
             mode={kidMode}
             tutor={selectedTutor!}
             profile={{ ...profile, activeTutorImage: { ...profile.activeTutorImage, [tutor.id]: img(tutor)! }, tutorVoices: { ...profile.tutorVoices, [tutor.id]: selectedTutor!.voice.preferredVoice! } }}
-            onEarnStar={() => earnStar(tutor.subject)}
+            onEarnStar={() => earnStar(kidMode === 'games' ? 'math' : tutor.subject)}
             onBack={() => setScreen('tutor')}
           />
         )}

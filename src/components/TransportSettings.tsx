@@ -5,7 +5,7 @@ import { TRANSPORT_TUTORS as PRINCESS_TUTORS, VEHICLE_DIRECTION } from '../data/
 import { elevenKeyFor, openAiKeyFor, syncKeysToDevice } from '../data/keys';
 import { elevenLabsSpeechProvider, openAiSpeechProvider, webSpeechProvider } from '../engine/speech';
 
-export const EXPLORER_DIRECTION = 'A youthful adult male adventure guide: warm, energetic and encouraging. Speak naturally with clear American English diction. Gentle energy, no baby talk, no exaggerated pitch, no singing. Use an original voice.';
+
 
 export function TransportSettings({ profile, onUpdate, onBack, tutors = PRINCESS_TUTORS, title = 'Vehicle voice and sound settings', direction = VEHICLE_DIRECTION }: { profile: Profile; onUpdate: (p: Profile) => void; onBack: () => void; tutors?: AnimeTutor[]; title?: string; direction?: string }) {
   const [draft, setDraft] = useState(profile);

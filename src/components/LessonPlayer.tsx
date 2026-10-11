@@ -1,3 +1,4 @@
+import { TRANSPORT_LESSONS } from '../data/curriculumK';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
 import type { Lesson, QuizItem } from '../data/curriculum6';
@@ -41,7 +42,7 @@ export function LessonPlayer({
   onBack: () => void;
 }) {
   const lessons = lessonBank ?? (
-    gradeBand === '1'
+    gradeBand === 'K' ? TRANSPORT_LESSONS.filter(l=>l.subject===tutor.subject) : gradeBand === '1'
       ? allLessons1ForSubject(tutor.subject)
       : allLessonsForSubject(tutor.subject));
   const [phase, setPhase] = useState<Phase>('menu');

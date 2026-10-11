@@ -5,6 +5,7 @@ import {transportMissions} from '../src/data/curriculumK.ts';
 mkdirSync('screenshots',{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required']});
 const page=await browser.newPage({viewport:{width:1440,height:1100}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.addInitScript(()=>{window.__music=[];const Base=window.Audio;window.Audio=function(...args){const a=new Base(...args);window.__music.push(a);return a;};window.Audio.prototype=Base.prototype;});
 await page.goto('http://localhost:5173');
 const learner={...mandeciesProfile(),id:'existing-mandecies',transportEnvironment:false,princessEnvironment:true,starsEarned:7,autoSpeak:false,focusMusic:false,soundEffects:false};
 const others=['McKenzie','Mandela','Madeline'].map((name,i)=>({...mandeciesProfile(),id:'other-'+i,name,transportEnvironment:false,starsEarned:12}));
@@ -14,7 +15,13 @@ await page.waitForFunction(()=>document.querySelectorAll('.transport-portal img'
 await page.screenshot({path:'screenshots/transport-academy.png',fullPage:true});
 await page.getByRole('button',{name:'Settings',exact:false}).click();await page.getByText('Vehicle voice and sound settings',{exact:true}).waitFor();
 await page.getByRole('button',{name:'Save settings',exact:true}).click();
-await page.getByRole('button',{name:'Pip the Story Train',exact:false}).click();await page.getByRole('button',{name:'Lessons & Test',exact:false}).click();await page.getByText('NC Kindergarten Reading',{exact:false}).waitFor();
+await page.getByRole('button',{name:'Pip the Story Train',exact:false}).click();
+await page.getByRole('button',{name:/Play Pip.*theme/}).click();await page.waitForFunction(()=>window.__music.length===1&&window.__music[0].src.endsWith('/vehicle-pip.mp3')&&window.__music[0].currentTime>0&&!window.__music[0].paused);
+await page.getByRole('button',{name:'Music On',exact:false}).click();await page.waitForFunction(()=>window.__music[0].paused);
+await page.getByRole('button',{name:'Games',exact:false}).click();await page.getByRole('button',{name:'Count cargo',exact:true}).click();
+await page.getByRole('button',{name:'1',exact:true}).click();await page.getByText('Delivery star earned!',{exact:true}).waitFor();
+await page.getByRole('button',{name:'Back',exact:false}).first().click();
+await page.getByRole('button',{name:'Lessons & Test',exact:false}).click();await page.getByText('NC Kindergarten Reading',{exact:false}).waitFor();
 await page.getByRole('button',{name:'Back',exact:false}).first().click();
 await page.getByRole('button',{name:'Vehicle friends',exact:false}).click();
 await page.getByRole('button',{name:'Enter the 3D vehicle town',exact:false}).click();await page.locator('canvas').waitFor();
@@ -26,5 +33,5 @@ for(let i=0;i<9;i++){
 }
 await page.getByText('All deliveries complete!',{exact:false}).waitFor();await page.screenshot({path:'screenshots/transport-complete.png',fullPage:true});
 const data=await page.evaluate(()=>JSON.parse(localStorage.getItem('genius-tutor-data')));const saved=data.profiles[0];
-if(errors.length||saved.starsEarned!==16||saved.transportTrips!==1||saved.plan.gradeLevel!=='K'||JSON.stringify(data.profiles.slice(1))!==JSON.stringify(others))throw Error(JSON.stringify({errors,saved}));
+if(errors.length||saved.starsEarned!==17||saved.transportTrips!==1||saved.plan.gradeLevel!=='K'||JSON.stringify(data.profiles.slice(1))!==JSON.stringify(others))throw Error(JSON.stringify({errors,saved}));
 console.log('Transport profile: kindergarten lessons, nine delivery quests, saved stars/trip, four-profile migration and other-profile preservation passed.');await browser.close();
