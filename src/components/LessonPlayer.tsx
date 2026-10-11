@@ -31,7 +31,7 @@ export function LessonPlayer({
   videoEnabled?: boolean;
   voiceOverride?: string;
   /** '1' uses the 1st-grade curriculum; otherwise 6th-grade. */
-  gradeBand?: '1' | '6';
+  gradeBand?: 'K' | '1' | '6';
   lessonBank?: Lesson[];
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
@@ -255,7 +255,7 @@ export function LessonPlayer({
       {phase === 'menu' ? (
         <div>
           <p className="muted" style={{ fontSize: '1.1rem' }}>
-            📗 <strong>NC {gradeBand === '1' ? '1st' : '6th'}-Grade {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject === 'africanHeritage' ? 'African Heritage' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
+            📗 <strong>NC {gradeBand === 'K' ? 'Kindergarten' : (gradeBand === '1' ? '1st' : '6th') + '-Grade'} {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject === 'africanHeritage' ? 'African Heritage' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
           </p>
           <div className="grid cols-2" style={{ marginTop: 16 }}>
             {lessons.map((l) => (

@@ -1,3 +1,5 @@
+import { TransportEnvironment } from './components/TransportEnvironment';
+import { mandeciesProfile, upgradeMandeciesProfile } from './data/mandeciesProfile';
 import { version as appVersion } from '../package.json';
 import { JurassicEnvironment } from './components/JurassicEnvironment';
 import { mandelaProfile, upgradeMandelaProfile } from './data/mandelaProfile';
@@ -15,7 +17,7 @@ import { AnimeEnvironment } from './components/AnimeEnvironment';
 import { PrincessEnvironment } from './components/PrincessEnvironment';
 import { ParentDashboard } from './components/ParentDashboard';
 
-type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'princess' | 'parent' | 'jurassic';
+type View = 'loading' | 'picker' | 'setup' | 'dashboard' | 'anime' | 'princess' | 'parent' | 'jurassic' | 'transport';
 
 export function App() {
   const [data, setData] = useState<AppData>({ profiles: [], version: 1 });
@@ -71,11 +73,11 @@ export function App() {
   }
 
   function handleComplete(profile: Profile) {
-    profile = upgradeMandelaProfile(profile);
+    profile = upgradeMandeciesProfile(upgradeMandelaProfile(profile));
     const next = upsertProfile(data, profile);
     persist(next);
     setActiveId(profile.id);
-    setView(profile.jurassicEnvironment ? 'jurassic' : 'dashboard');
+    setView(profile.transportEnvironment ? 'transport' : profile.jurassicEnvironment ? 'jurassic' : 'dashboard');
   }
 
   function handleUpdate(profile: Profile) {
@@ -91,13 +93,13 @@ export function App() {
   }
 
   function openProfile(p: Profile) {
-    const upgraded = upgradeMandelaProfile(p);
+    const upgraded = upgradeMandeciesProfile(upgradeMandelaProfile(p));
     if (upgraded !== p) void persist(upsertProfile(data, upgraded));
     p = upgraded;
     void playEffect('welcome');
     setActiveId(p.id);
     // Route to the right immersive environment.
-    setView(p.jurassicEnvironment ? 'jurassic' : p.princessEnvironment ? 'princess' : p.animeEnvironment ? 'anime' : 'dashboard');
+    setView(p.transportEnvironment ? 'transport' : p.jurassicEnvironment ? 'jurassic' : p.princessEnvironment ? 'princess' : p.animeEnvironment ? 'anime' : 'dashboard');
   }
 
   function toggleNight() {
@@ -126,7 +128,7 @@ export function App() {
         </div>
       </div>
 
-      {view !== 'anime' && view !== 'princess' && view !== 'jurassic' && (
+      {view !== 'anime' && view !== 'princess' && view !== 'jurassic' && view !== 'transport' && (
       <div className="content">
         {view === 'loading' && <div className="center muted">Loading…</div>}
 
@@ -135,6 +137,7 @@ export function App() {
             data={data}
             onOpen={openProfile}
             onAdd={() => setView('setup')}
+            onAddMandecies={() => { handleComplete(mandeciesProfile()); }}
             onAddMandela={() => { const p = mandelaProfile(); handleComplete(p); setView('jurassic'); }}
             onDelete={handleDelete}
           />
@@ -167,12 +170,13 @@ export function App() {
           <ParentDashboard
             profile={active}
             onUpdate={handleUpdate}
-            onExit={() => setView(active.jurassicEnvironment ? 'jurassic' : active.princessEnvironment ? 'princess' : active.animeEnvironment ? 'anime' : 'dashboard')}
+            onExit={() => setView(active.transportEnvironment ? 'transport' : active.jurassicEnvironment ? 'jurassic' : active.princessEnvironment ? 'princess' : active.animeEnvironment ? 'anime' : 'dashboard')}
           />
         )}
       </div>
       )}
 
+      {view === 'transport' && active && <TransportEnvironment onParent={() => setView('parent')} profile={active} onUpdate={handleUpdate} onExit={() => setView('picker')} />}
       {view === 'jurassic' && active && <JurassicEnvironment onParent={() => setView('parent')} profile={active} onUpdate={handleUpdate} onExit={() => setView('picker')} />}
       {view === 'anime' && active && (
         <AnimeEnvironment

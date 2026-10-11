@@ -53,6 +53,8 @@ export interface LearningPlan {
 }
 
 export interface Profile {
+  transportEnvironment?: boolean;
+  transportTrips?: number;
   id: string;
   name: string;
   age: number;

@@ -682,3 +682,6 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .app > .topbar { position:relative;z-index:3; }
 .princess-world .faint { color:#decedf; }
 .royal-realm > p { background:#352840e8;padding:12px;border-radius:12px;line-height:1.6; }
+
+.transport-world{background:linear-gradient(140deg,#34584c,#263847);color:#fff5df}.transport-world .card,.transport-world .kid-tile{background:#263d43ed;color:#fff5df}.transport-world .room-bar{background:#233a40}.transport-portal img{height:190px!important}.transport-portal{transition:transform .2s}.transport-portal:hover{transform:translateY(-4px)}.transport-world .faint{color:#d8e4d6}.transport-realm .royal-guide img{width:120px;border-radius:16px}.transport-world.quiet-kingdom *{animation:none!important}.transport-world .expedition-title{color:#ffd585}
+.transport-backdrop{position:fixed;inset:0;pointer-events:none;background:linear-gradient(#1f3949bb,#214739ee),url('../public/transport/guide-0.webp') center/cover;z-index:0}.transport-world>.content,.transport-world>.room-bar{position:relative;z-index:1}
