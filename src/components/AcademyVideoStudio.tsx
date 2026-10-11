@@ -1,0 +1,26 @@
+import {useEffect,useRef,useState} from 'react';
+import type {Profile} from '../types';
+import type {AnimeTutor} from '../data/animeTutors';
+import {ACADEMY_LESSONS} from '../data/academyCurriculum';
+import {academyVideoId,collectAcademyLines,prepareAcademyVideos,type AcademyVideoProgress} from '../engine/academyVideo';
+import {didVideoProvider} from '../engine/videoAvatar';
+import {didKeyFor} from '../data/keys';
+import {cacheAvailable,getCachedVideo} from '../data/videoCache';
+import {VIDEO_VOICE_OPTIONS} from '../data/videoVoices';
+import {getSpeech} from '../engine/speech';
+export function AcademyVideoStudio({profile,tutors,imageFor,onUpdate,onBack,onSettings}:{profile:Profile;tutors:AnimeTutor[];imageFor:(id:string)=>string;onUpdate:(p:Profile)=>void;onBack:()=>void;onSettings:()=>void}){
+ const [id,setId]=useState(tutors[0].id),[scope,setScope]=useState<'starter'|'all'>('starter'),[busy,setBusy]=useState(false),[status,setStatus]=useState(''),[progress,setProgress]=useState<AcademyVideoProgress|null>(null),[ready,setReady]=useState(0);
+ const cancelled=useRef(false),mounted=useRef(true);useEffect(()=>{mounted.current=true;return()=>{cancelled.current=true;mounted.current=false;};},[]);
+ const tutor=tutors.find(t=>t.id===id)!;const image=imageFor(id),voiceId=profile.tutorVideoVoices?.[id]||tutor.videoVoiceId;
+ const cacheId=academyVideoId(id,image,voiceId),lines=collectAcademyLines(tutor,ACADEMY_LESSONS,scope);
+ useEffect(()=>{let active=true;void Promise.all(lines.map(line=>getCachedVideo(cacheId,line))).then(clips=>{if(active)setReady(clips.filter(Boolean).length);});return()=>{active=false;};},[cacheId,scope,id,busy]);
+ async function prepare(){
+  const key=didKeyFor(profile);if(!key){setStatus('Add your paid D-ID API key in Academy settings first.');return;}
+  if(!cacheAvailable()){setStatus('Install the desktop app to save videos before using paid preparation.');return;}
+  getSpeech().stop();cancelled.current=false;setBusy(true);setStatus('Preparing and saving clips. Keep this screen open.');
+  try{const result=await prepareAcademyVideos({provider:didVideoProvider(key),cacheId,image,voice:{provider:'microsoft',voiceId},lines,onProgress:p=>{if(mounted.current)setProgress(p);},cancelled:()=>cancelled.current});if(mounted.current){setReady(result.ready);setStatus(`${cancelled.current?'Stopped':'Ready'}: ${result.ready} of ${result.total} clips saved, including ${result.skipped} already on disk.`);}}
+  catch(e){if(mounted.current)setStatus(e instanceof Error?e.message:'Video preparation failed.');}
+  finally{if(mounted.current)setBusy(false);}
+ }
+ return <div className="center academy-video-studio"><div className="row between"><h1>🎬 Talking tutor studio</h1><button className="btn ghost" disabled={busy} onClick={onBack}>Back to academy</button></div><p>Prepare a real D-ID talking video once. Its mouth and face animate with the voice, and the saved clip replays from this device.</p><div className="lesson-stage"><img className="academy-video-portrait" src={image} alt={tutor.name}/><div className="card"><label>Tutor<select disabled={busy} value={id} onChange={e=>setId(e.target.value)}>{tutors.map(t=><option key={t.id} value={t.id}>{t.name}</option>)}</select></label><label>Video voice<select disabled={busy} value={voiceId} onChange={e=>onUpdate({...profile,tutorVideoVoices:{...profile.tutorVideoVoices,[id]:e.target.value}})}>{VIDEO_VOICE_OPTIONS.map(v=><option key={v.id} value={v.id}>{v.label}</option>)}</select></label><label>Preparation set<select disabled={busy} value={scope} onChange={e=>setScope(e.target.value as 'starter'|'all')}><option value="starter">Greeting and first lesson</option><option value="all">All fixed academy lessons for this tutor</option></select></label><p><strong>{ready} of {lines.length} clips already saved</strong></p><p className="faint">New clips use D-ID API credits. Already-saved clips are skipped. A new face or video voice uses a separate recording set.</p><label><input type="checkbox" checked={profile.videoMode!==false} onChange={e=>onUpdate({...profile,videoMode:e.target.checked})}/> Play saved talking videos during lessons</label><div className="row"><button className="btn" disabled={busy||!cacheAvailable()} onClick={()=>void prepare()}>{busy?'Preparing videos…':'Prepare and save videos'}</button><button className="btn ghost" disabled={busy} onClick={onSettings}>D-ID key and settings</button>{busy&&<button className="btn ghost" onClick={()=>{cancelled.current=true;setStatus('Stopping after the current clip is saved. No more clips will be requested.');}}>Stop after this clip</button>}</div>{!cacheAvailable()&&<p>The video cache is available in the installed Mac or Windows app.</p>}{progress&&<><progress value={progress.ready} max={progress.total} aria-label="Talking video preparation progress"/><p>{progress.ready} / {progress.total} ready</p><p className="faint">{progress.current}</p></>}<p role="status">{status}</p></div></div><details className="card"><summary>Lines in this recording set</summary>{lines.map((line,i)=><p key={i}>{i+1}. {line}</p>)}</details><p className="faint">Dynamic homework responses and isolated phonics demonstrations use live speech. Video preparation does not record your child or her microphone.</p></div>;
+}

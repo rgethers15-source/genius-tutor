@@ -126,5 +126,9 @@
   "vehicle-atlas": {
     "title": "Atlas \u00b7 World Wings",
     "url": "./music/themes/vehicle-atlas.mp3"
+  },
+  "tutor-noah": {
+    "title": "Noah \u00b7 Steady Starlight",
+    "url": "./music/themes/tutor-noah.mp3"
   }
 }

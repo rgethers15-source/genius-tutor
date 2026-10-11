@@ -687,3 +687,46 @@ input:focus, select:focus { outline: 2px solid var(--accent); }
 .transport-backdrop{position:fixed;inset:0;pointer-events:none;background:linear-gradient(#1f3949bb,#214739ee),url('../public/transport/guide-0.webp') center/cover;z-index:0}.transport-world>.content,.transport-world>.room-bar{position:relative;z-index:1}
 
 .transport-world .avatar-mouth,.transport-world .avatar-blink{display:none}
+
+/* Madeline’s celestial academy. These rules do not restyle other worlds. */
+.madeline-academy {color:#fff1df;min-height:100vh;--text:#fff1df;--muted:#e0d4c6;--border:#978473;--bg-raised:#303745;--accent:#e6ba80;}
+.madeline-academy .content {position:relative;z-index:1;}
+.madeline-academy .center {max-width:1180px;}
+.madeline-academy .card {background:rgba(31,38,51,.94);border-color:#7e7369;box-shadow:0 12px 40px #11162230;}
+.madeline-academy .anime-title {font-size:clamp(1.8rem,3vw,2.7rem);color:#fff0d5;text-shadow:0 2px 18px #0008;}
+.madeline-academy .room-bar {background:#1d2637e8;position:relative;z-index:2;flex-wrap:wrap;}
+.madeline-academy .btn {background:#e0b67d;color:#242935;}
+.madeline-academy .btn.ghost {background:#252f40;color:#ffefd7;border-color:#a5937e;}
+.madeline-academy .subject-card {padding:0;overflow:hidden;text-align:left;}
+.madeline-academy .subject-card>button.btn {margin:12px 18px 18px;}
+.academy-guide-card {background:transparent;border:0;color:inherit;display:block;width:100%;padding:0 0 8px;text-align:left;cursor:pointer;font:inherit;}
+.madeline-academy .mini-avatar {width:100%;height:255px;border-radius:0;object-fit:cover;object-position:center 38%;border:0;margin:0 0 14px;}
+.academy-guide-card .avatar-name,.academy-guide-card .avatar-personality {margin:8px 18px;}
+.academy-guide-card .pill {margin-left:18px;}
+.academy-guide-card:focus-visible {outline:3px solid #fff0c9;outline-offset:-4px;}
+.academy-portals {margin:26px 0 18px;gap:14px;}
+.academy-welcome {text-align:center;font-size:1.1rem;background:#252d3add;padding:16px;border-radius:16px;}
+.madeline-academy .tutor-speech {background:#202a3af2;color:#fff1df;line-height:1.75;letter-spacing:.025em;font-size:1.22rem;}
+.academy-reading-window {max-width:56ch;}
+.academy-reading-window .row {margin:12px 0;}
+.academy-reading-window details {font-size:.95rem;line-height:1.7;}
+.academy-gentle-note {padding:14px 18px;border:1px solid #a9957e;background:#263142;border-radius:14px;}
+.madeline-academy .academy-focus-view .lesson-stage {grid-template-columns:260px 1fr;}
+.academy-hint {margin:16px 0;}
+.academy-hint p {padding:14px;background:#394b49;border-radius:12px;line-height:1.6;}
+.academy-video-portrait {width:100%;max-width:370px;border-radius:24px;}
+.madeline-academy label {display:block;margin:16px 0;color:#fff0dc;}
+.madeline-academy input:not([type=checkbox]):not([type=range]),.madeline-academy select,.madeline-academy textarea {background:#202838;color:#fff0dc;border-color:#9b8973;max-width:100%;padding:12px;font:inherit;}
+.madeline-academy select,.madeline-academy textarea {display:block;width:100%;margin-top:8px;}
+.madeline-academy textarea {min-height:90px;resize:vertical;}
+.academy-focus-intro {display:flex;align-items:center;gap:26px;margin:20px 0;}
+.academy-focus-intro img {width:220px;aspect-ratio:1;object-fit:cover;border-radius:18px;}
+.academy-eyebrow {letter-spacing:.12em;color:#edd2a7;font-size:.8rem;}
+.academy-win {padding:14px 0;border-top:1px solid #776e6d;}
+.academy-quest {max-width:1180px;margin:auto;padding:16px;}
+.academy-example {padding:16px;margin:14px 0;background:#344644;border-radius:12px;line-height:1.7;}
+.madeline-academy progress {width:100%;height:20px;accent-color:#e2bd84;}
+.madeline-academy .academy-calm,.academy-calm .sparkle {animation:none;}
+.academy-calm .room-rooms {display:none;}
+@media(max-width:800px){.madeline-academy .grid.cols-3{grid-template-columns:repeat(2,minmax(0,1fr));}.madeline-academy .lesson-stage,.madeline-academy .academy-focus-view .lesson-stage{grid-template-columns:1fr;}.academy-focus-intro{flex-direction:column;}.academy-portals.grid,.academy-focus-studio .grid{grid-template-columns:1fr;}.madeline-academy .mini-avatar{height:230px;}}
+@media(prefers-reduced-motion:reduce){.madeline-academy *{animation:none!important;scroll-behavior:auto!important;}}

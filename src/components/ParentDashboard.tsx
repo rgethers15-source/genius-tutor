@@ -82,6 +82,7 @@ export function ParentDashboard({
       </div>
 
       {profile.jurassicEnvironment && <div className="card" style={{marginBottom:20}}><h2>🦖 Mandela’s expedition fieldwork</h2><p>{profile.jurassicRescues??0} rescue expeditions · {Object.values(profile.jurassicFieldwork??{}).filter(w=>w.done).length} learning goals practiced</p><p>These are practice records, not certified mastery. Review the activity and discuss the evidence with your learner.</p>{Object.entries(profile.jurassicFieldwork??{}).map(([id,work])=><details key={id}><summary>{id} · {work.done?'Practiced':'Notes saved'}</summary><p style={{whiteSpace:'pre-wrap'}}>{work.response||'No written notes. Ask your learner to show their drawing or activity.'}</p><p className="faint">{new Date(work.at).toLocaleDateString()}</p></details>)}</div>}
+      {profile.animeAcademyVersion===1&&<div className="card" style={{marginBottom:20}}><h2>Madeline’s academy growth</h2><p>{profile.animeJourneys??0} celestial journeys · {profile.animeFocusSessions??0} completed study sprints · {profile.animeWins?.length??0} saved small wins</p><p>These are learning and practice records. Review her strategies with her teacher when planning support.</p>{profile.animeWins?.slice(-5).reverse().map((w,i)=><article key={w.at+i}><strong>{w.win}</strong>{w.help&&<p>What helped: {w.help}</p>}{w.next&&<p>Next step: {w.next}</p>}</article>)}</div>}
       {/* Per-subject progress */}
       <div className="card" style={{ marginBottom: 20 }}>
         <h2>By subject</h2>

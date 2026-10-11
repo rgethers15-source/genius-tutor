@@ -29,11 +29,15 @@ export function ReadingPractice({
   profile,
   onEarnStar,
   onBack,
+  wordList = WORDS,
+  sentenceList = SENTENCES,
 }: {
   tutor: AnimeTutor;
   profile: Profile;
   onEarnStar: () => void;
   onBack: () => void;
+  wordList?: string[];
+  sentenceList?: string[];
 }) {
   const supported = isListeningSupported();
   const [mode, setMode] = useState<Mode>('menu');
@@ -44,7 +48,7 @@ export function ReadingPractice({
   const [heard, setHeard] = useState('');
   const [voiceError, setVoiceError] = useState('');
 
-  const list = mode === 'words' ? WORDS : SENTENCES;
+  const list = mode === 'words' ? wordList : sentenceList;
   const target = list[idx] ?? '';
 
   const speak = useCallback(

@@ -1,3 +1,4 @@
+import {upgradeMadelineProfile} from './data/madelineProfile';
 import { TransportEnvironment } from './components/TransportEnvironment';
 import { mandeciesProfile, upgradeMandeciesProfile } from './data/mandeciesProfile';
 import { version as appVersion } from '../package.json';
@@ -73,11 +74,11 @@ export function App() {
   }
 
   function handleComplete(profile: Profile) {
-    profile = upgradeMandeciesProfile(upgradeMandelaProfile(profile));
+    profile = upgradeMadelineProfile(upgradeMandeciesProfile(upgradeMandelaProfile(profile)));
     const next = upsertProfile(data, profile);
     persist(next);
     setActiveId(profile.id);
-    setView(profile.transportEnvironment ? 'transport' : profile.jurassicEnvironment ? 'jurassic' : 'dashboard');
+    setView(profile.transportEnvironment ? 'transport' : profile.jurassicEnvironment ? 'jurassic' : profile.animeEnvironment ? 'anime' : 'dashboard');
   }
 
   function handleUpdate(profile: Profile) {
@@ -93,7 +94,7 @@ export function App() {
   }
 
   function openProfile(p: Profile) {
-    const upgraded = upgradeMandeciesProfile(upgradeMandelaProfile(p));
+    const upgraded = upgradeMadelineProfile(upgradeMandeciesProfile(upgradeMandelaProfile(p)));
     if (upgraded !== p) void persist(upsertProfile(data, upgraded));
     p = upgraded;
     void playEffect('welcome');

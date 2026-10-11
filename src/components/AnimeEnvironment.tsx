@@ -1,8 +1,8 @@
 import { setTutorTheme } from '../engine/focusMusic';
 import { useTutorTheme } from '../engine/useTutorTheme';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type { Profile } from '../types';
-import { ANIME_TUTORS, effectiveVoice, type AnimeTutor } from '../data/animeTutors';
+import { ANIME_TUTORS, effectiveVoice, academyPortrait, ACADEMY_DIRECTION, type AnimeTutor } from '../data/animeTutors';
 import { SUBJECTS } from '../data/curriculum';
 import { type AvatarMood } from './AnimatedAvatar';
 import {
@@ -14,15 +14,13 @@ import {
   webSpeechProvider,
 } from '../engine/speech';
 import {
-  nextQuestion,
-  checkAnswer,
   type TutorTurn,
 } from '../engine/tutorBrain';
 import { fileToDataUrl } from '../data/image';
 import { STUDY_ROOMS, getRoom } from '../data/rooms';
 import { RoomScene } from './RoomScene';
 import { TutorStage } from './TutorStage';
-import { getCachedVideo } from '../data/videoCache';
+import { getCachedVideo, saveCachedVideo } from '../data/videoCache';
 import {
   nextTrack,
   currentTitle,
@@ -35,7 +33,15 @@ import { activeImageFor } from '../data/gallery';
 import { recordAnswer, recordLessonComplete, recordHomework, recordReading } from '../data/stats';
 import { APP_VERSION, RELEASES_URL, checkForUpdate, type UpdateStatus } from '../version';
 import { checkNewBadges, type Badge } from '../data/badges';
-import { generateQuestions } from '../engine/questionGen';
+import { generateAcademyQuestions } from '../engine/academyQuestions';
+import {ACADEMY_LESSONS} from '../data/academyCurriculum';
+import {ACADEMY_CHEER,academyVideoId} from '../engine/academyVideo';
+import {AcademySettings} from './AcademySettings';
+import {AcademyVideoStudio} from './AcademyVideoStudio';
+import {AcademyFocusStudio} from './AcademyFocusStudio';
+const AcademyQuest=lazy(()=>import('./AcademyQuest').then(m=>({default:m.AcademyQuest})));
+import {ReadingWindow} from './ReadingWindow';
+import {openAiKeyFor,elevenKeyFor,didKeyFor} from '../data/keys';
 import { BadgeShelf } from './BadgeShelf';
 import { ReadingPractice } from './ReadingPractice';
 import {
@@ -50,7 +56,7 @@ import {
   offlineHomeworkProvider,
 } from '../engine/homeworkAi';
 
-type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings' | 'gallery' | 'reading' | 'badges';
+type Screen = 'roster' | 'activity' | 'lessons' | 'homework' | 'settings' | 'gallery' | 'reading' | 'badges' | 'academySettings' | 'videoStudio' | 'focus' | 'quest';
 type UploadKind = 'tutor' | 'room' | 'music';
 
 export function AnimeEnvironment({
@@ -63,7 +69,17 @@ export function AnimeEnvironment({
   onUpdate: (p: Profile) => void;
 }) {
   const [screen, setScreen] = useState<Screen>('roster');
-  const [activeTutor, setActiveTutor] = useState<AnimeTutor | null>(null);
+  const [chosenTutor, setActiveTutor] = useState<AnimeTutor | null>(null);
+  const openai=openAiKeyFor(profile),eleven=elevenKeyFor(profile),did=didKeyFor(profile);
+  const usesEleven=profile.princessVoiceProvider==='elevenlabs'||(profile.princessVoiceProvider!=='openai'&&!!eleven);
+  const tutors=ANIME_TUTORS.map(t=>({...t,voice:{...t.voice,rate:profile.princessVoiceRate??.9,preferredVoice:usesEleven?(profile.tutorVoices?.[t.id]||t.voice.preferredVoice):(profile.princessOpenAiVoices?.[t.id]||'echo')}}));
+  const activeTutor=chosenTutor?tutors.find(t=>t.id===chosenTutor.id)!:null;
+  const imageFor=(id:string)=>profile.animeUseNewPortraits!==false?academyPortrait(id):(activeImageFor(profile,id)||academyPortrait(id));
+  const cacheIdFor=(t:AnimeTutor)=>academyVideoId(t.id,imageFor(t.id),profile.tutorVideoVoices?.[t.id]||t.videoVoiceId);
+  const speechRequest=useRef(0);
+  const [practiceIndex,setPracticeIndex]=useState(0);
+  const profileRef=useRef(profile);profileRef.current=profile;
+
   useTutorTheme(activeTutor?.id, profile.tutorThemes);
   const [mood, setMood] = useState<AvatarMood>('idle');
   const [turn, setTurn] = useState<TutorTurn | null>(null);
@@ -102,78 +118,28 @@ export function AnimeEnvironment({
     return () => getSpeech().stop();
   }, []);
 
-  // Smart Homework Help uses OpenAI when its key is present.
-  useEffect(() => {
-    if (profile.openAiKey && profile.openAiKey.trim().length > 10) {
-      setHomeworkAi(openAiHomeworkProvider(profile.openAiKey.trim()));
-    } else {
-      setHomeworkAi(offlineHomeworkProvider);
-    }
-  }, [profile.openAiKey]);
-
-  // Voice priority: ElevenLabs (most natural) > OpenAI TTS > built-in.
-  useEffect(() => {
-    const useHuman = profile.humanVoice !== false;
-    const eleven = profile.elevenLabsKey?.trim();
-    const openai = profile.openAiKey?.trim();
-    if (useHuman && eleven && eleven.length > 10) {
-      setSpeech(elevenLabsSpeechProvider(eleven));
-    } else if (useHuman && openai && openai.length > 10) {
-      setSpeech(openAiSpeechProvider(openai));
-    } else {
-      setSpeech(webSpeechProvider);
-    }
-  }, [profile.elevenLabsKey, profile.openAiKey, profile.humanVoice]);
-
-  // Activate talking-head video avatars when a D-ID key is present.
-  useEffect(() => {
-    if (profile.didKey && profile.didKey.trim().length > 10) {
-      setVideoAvatar(didVideoProvider(profile.didKey.trim()));
-    } else {
-      setVideoAvatar(offlineVideoProvider);
-    }
-  }, [profile.didKey]);
+  useEffect(()=>{setHomeworkAi(openai?openAiHomeworkProvider(openai):offlineHomeworkProvider);},[openai]);
+  useEffect(()=>{
+    if(profile.humanVoice===false)setSpeech(webSpeechProvider);
+    else if(usesEleven&&eleven)setSpeech(elevenLabsSpeechProvider(eleven));
+    else if(openai)setSpeech(openAiSpeechProvider(openai,ACADEMY_DIRECTION));
+    else setSpeech(webSpeechProvider);
+  },[openai,eleven,usesEleven,profile.humanVoice]);
+  useEffect(()=>{setVideoAvatar(did?didVideoProvider(did):offlineVideoProvider);},[did]);
+  useEffect(()=>{speechRequest.current++;window.dispatchEvent(new Event('gt-stop-video'));getSpeech().stop();setVideoUrl(null);},[screen]);
 
   const [nowPlaying, setNowPlaying] = useState(currentTitle());
 
   useEffect(() => { onTrackChange(() => setNowPlaying(currentTitle())); return () => onTrackChange(null); }, []);
 
-  const speak = useCallback(
-    (text: string, tutor: AnimeTutor, nextMood: AvatarMood = 'speaking') => {
-      setBubble(text);
-      // Stop any TTS already playing so voices never overlap.
-      getSpeech().stop();
-      if (profile.autoSpeak === false) {
-        setMood(nextMood === 'speaking' ? 'idle' : nextMood);
-        return;
-      }
-      // If a talking-head VIDEO will play for this exact line, the video
-      // carries its own audio — so DON'T also speak via TTS (prevents the
-      // double-voice bug). Only speak via TTS when there's no cached video.
-      const videoOn = !!profile.didKey && !!profile.videoMode;
-      if (videoOn) {
-        getCachedVideo(tutor.id, text).then((url) => {
-          if (url) {
-            // Video (with its own voice) will play; stay silent on TTS.
-            setMood(nextMood);
-            return;
-          }
-          getSpeech().speak(text, {
-            voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
-            onStart: () => setMood(nextMood),
-            onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
-          });
-        });
-        return;
-      }
-      getSpeech().speak(text, {
-        voice: effectiveVoice(tutor, profile.tutorVoices?.[tutor.id]),
-        onStart: () => setMood(nextMood),
-        onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
-      });
-    },
-    [profile.autoSpeak, profile.didKey, profile.videoMode, profile.tutorVoices]
-  );
+  const speak = useCallback(async(text:string,tutor:AnimeTutor,nextMood:AvatarMood='speaking',force=false)=>{
+    const request=++speechRequest.current;setBubble(text);setVideoUrl(null);
+    window.dispatchEvent(new Event('gt-stop-video'));getSpeech().stop();
+    if(profile.autoSpeak===false&&!force){setMood('idle');return;}
+    if(profile.videoMode!==false){const url=await getCachedVideo(cacheIdFor(tutor),text);if(request!==speechRequest.current)return;if(url){setMood(nextMood);window.dispatchEvent(new CustomEvent('gt-replay-video',{detail:cacheIdFor(tutor)}));return;}}
+    if(request!==speechRequest.current)return;
+    getSpeech().speak(text,{voice:tutor.voice,purpose:'reading',allowSystemFallback:true,onError:message=>setVideoError(message),onStart:()=>setMood(nextMood),onEnd:()=>setMood('idle')});
+  },[profile.autoSpeak,profile.videoMode,profile.tutorVideoVoices,profile.animeUseNewPortraits,profile.tutorGallery,profile.tutorImages,profile.princessVoiceRate,profile.tutorVoices,profile.princessOpenAiVoices]);
 
   function openTutor(tutor: AnimeTutor) {
     setActiveTutor(tutor);
@@ -183,47 +149,19 @@ export function AnimeEnvironment({
     speak(tutor.greeting, tutor, 'speaking');
   }
 
-  function startQuickPractice() {
-    if (!activeTutor) return;
-    setTurn(null);
-    const q = nextQuestion(activeTutor.subject);
-    setTurn(q);
-    speak(q.say, activeTutor, 'speaking');
+  function startQuickPractice(){
+    if(!activeTutor)return;
+    const bank=ACADEMY_LESSONS.filter(l=>l.subject===activeTutor.subject);const lesson=bank[practiceIndex%bank.length],q=lesson.quiz[0];
+    setLocked(false);setTurn({...q,say:q.q,mood:'speaking'});setPracticeIndex(i=>i+1);void speak(q.q,activeTutor);
   }
-
-  function handleChoice(choice: string) {
-    if (!activeTutor || !turn || locked) return;
-    setLocked(true);
-    const result = checkAnswer(turn, choice);
-    speak(result.say, activeTutor, result.mood === 'cheer' ? 'cheer' : 'thinking');
-
-    const wasCorrect = result.mood === 'cheer';
-    if (wasCorrect) {
-      const updated: Profile = {
-        ...profile,
-        starsEarned: profile.starsEarned + 1,
-        progress: {
-          ...profile.progress,
-          [activeTutor.subject]: (profile.progress[activeTutor.subject] ?? 0) + 1,
-        },
-      };
-      onUpdate(updated);
-      // Move to a new question after a short celebration.
-      window.setTimeout(() => {
-        const q = nextQuestion(activeTutor.subject);
-        setTurn(q);
-        setLocked(false);
-        speak(q.say, activeTutor, 'speaking');
-      }, 2800);
-    } else {
-      // Let them try again on the same question.
-      window.setTimeout(() => setLocked(false), 1200);
-    }
+  function handleChoice(choice:string){
+    if(!activeTutor||!turn||locked)return;
+    const correct=choice===turn.answer;
+    let next=recordAnswer(profileRef.current,activeTutor.subject,correct,'quiz');
+    if(correct){setLocked(true);next={...next,starsEarned:next.starsEarned+1,progress:{...next.progress,[activeTutor.subject]:(next.progress[activeTutor.subject]??0)+1}};}
+    update_(next);void speak(correct?ACADEMY_CHEER:(turn.hint||'Use the example and try another choice.'),activeTutor,correct?'cheer':'thinking');
   }
-
-  function repeat() {
-    if (activeTutor && bubble) speak(bubble, activeTutor, 'speaking');
-  }
+  function repeat(){if(activeTutor&&bubble)void speak(bubble,activeTutor,'speaking',true);}
 
   const [videoError, setVideoError] = useState('');
   const [videoDebug, setVideoDebug] = useState<string[]>([]);
@@ -237,7 +175,7 @@ export function AnimeEnvironment({
       setVideoError('Pick or generate a realistic face avatar first (not the emoji).');
       return;
     }
-    getSpeech().stop(); // ensure TTS isn't also playing — video has its own audio
+    ++speechRequest.current;window.dispatchEvent(new Event('gt-stop-video'));getSpeech().stop();
     setVideoBusy(true);
     setVideoError('');
     setVideoDebug([]);
@@ -249,7 +187,14 @@ export function AnimeEnvironment({
     });
     setVideoDebug(res.debug ?? []);
     if (res.ok && res.videoUrl) {
-      setVideoUrl(res.videoUrl);
+      try{
+        const blob=res.blob??await fetch(res.videoUrl).then(r=>{if(!r.ok)throw Error('Video download failed.');return r.blob();});
+        if(!blob||!blob.size)throw Error('The video service returned an empty clip.');
+        const saved=await saveCachedVideo(cacheIdFor(activeTutor),line,blob);
+        setVideoUrl(saved??res.videoUrl);if(!saved)setVideoError('Video plays now, but was not saved. Use the installed desktop app and check disk space.');
+        if(saved&&res.videoUrl.startsWith('blob:'))URL.revokeObjectURL(res.videoUrl);
+      }catch(e){setVideoError(e instanceof Error?e.message:'Video could not be saved.');}
+
     } else {
       setVideoError(res.error ?? 'Could not make the video.');
     }
@@ -301,20 +246,20 @@ export function AnimeEnvironment({
     onUpdate({ ...profile, focusMusic: !profile.focusMusic });
   }
 
-  const imageFor = (id: string) => activeImageFor(profile, id);
+
 
   return (
     <div
-      className="anime-env room-backdrop"
+      className={`anime-env room-backdrop madeline-academy ${profile.support.reducedDistraction?'academy-calm':''}`}
       style={{
         background: roomImage
           ? `linear-gradient(rgba(20,15,18,0.55), rgba(20,15,18,0.75)), url(${roomImage}) center/cover no-repeat`
-          : room.gradient,
+          : `linear-gradient(rgba(18,25,36,.46),rgba(18,25,36,.86)),url(./madeline/academy.webp) center/cover fixed`,
       }}
     >
       {/* Animated scene: use the active tutor's own scene while teaching,
           else the selected room's scene. Hidden if a custom room photo is set. */}
-      {!roomImage && (
+      {!roomImage && !profile.support.reducedDistraction && (
         <RoomScene
           scene={
             activeTutor && screen !== 'roster' && screen !== 'settings'
@@ -426,10 +371,10 @@ export function AnimeEnvironment({
           <div className="center">
             <div className="row between">
               <h1 className="anime-title">
-                <span className="sparkle">✨</span> {profile.name}'s Anime Academy
+                <span className="sparkle">✨</span> {profile.name}'s Celestial Anime Academy
               </h1>
               <div className="row">
-                <button className="btn small" type="button" onClick={() => setScreen('settings')}>
+                <button className="btn small" type="button" onClick={() => setScreen('academySettings')}>
                   ⚙️ Settings
                 </button>
                 <button className="btn ghost" type="button" onClick={onExit}>
@@ -438,30 +383,30 @@ export function AnimeEnvironment({
               </div>
             </div>
 
-            {!profile.openAiKey && (
+            {!openai && (
               <div className="card" style={{ borderColor: 'var(--accent)', marginTop: 8 }}>
                 <div className="row between">
                   <span>
                     🧠 <strong>Turn on Smart Homework Help</strong> — add your OpenAI key in Settings.
                   </span>
-                  <button className="btn small" type="button" onClick={() => setScreen('settings')}>
+                  <button className="btn small" type="button" onClick={() => setScreen('academySettings')}>
                     Open Settings
                   </button>
                 </div>
               </div>
             )}
             <p className="muted" style={{ fontSize: '1.15rem' }}>
-              Pick a tutor to start. Tap a card to learn — they will talk to you! 🎧
+              Sixth-grade ideas. One small step at a time. Your pace belongs here.
             </p>
 
             <div className="grid cols-3" style={{ marginTop: 24 }}>
-              {ANIME_TUTORS.map((t) => {
+              {tutors.map((t) => {
                 const subjectLabel =
                   SUBJECTS.find((s) => s.value === t.subject)?.label ?? t.subject;
                 const img = imageFor(t.id);
                 return (
                   <div key={t.id} className="card subject-card clickable" style={{ borderColor: `${t.accent}55` }}>
-                    <div onClick={() => openTutor(t)}>
+                    <button className="academy-guide-card" type="button" aria-label={`Learn with ${t.name}`} onClick={() => openTutor(t)}>
                       {img ? (
                         <img className="mini-avatar" src={img} alt={t.name} />
                       ) : (
@@ -472,7 +417,7 @@ export function AnimeEnvironment({
                         {subjectLabel}
                       </div>
                       <div className="avatar-personality">{t.tagline}</div>
-                    </div>
+                    </button>
                     <button
                       className="btn ghost small"
                       type="button"
@@ -489,15 +434,7 @@ export function AnimeEnvironment({
               })}
             </div>
 
-            <div className="card" style={{ marginTop: 24 }}>
-              <strong>💡 Tip for grown-ups:</strong>
-              <p className="muted" style={{ margin: '8px 0 0' }}>
-                Click <em>Add picture</em> on each tutor to load the anime character
-                image you chose — the tutor then appears and talks during lessons.
-                Use the top bar to pick a cozy <em>study room</em> (or upload your own
-                lofi loft/bedroom photo) and turn on <em>chill focus music</em>.
-              </p>
-            </div>
+            <div className="academy-portals grid cols-2"><button className="btn big-btn" onClick={()=>setScreen('quest')}>🌌 Enter the 3D celestial academy</button><button className="btn big-btn ghost" onClick={()=>setScreen('focus')}>🌿 Focus studio & small wins</button><button className="btn big-btn ghost" onClick={()=>setScreen('videoStudio')}>🎬 Talking tutor studio</button><button className="btn big-btn ghost" onClick={()=>onUpdate({...profile,animeFocusMode:profile.animeFocusMode===false})}>{profile.animeFocusMode!==false?'Focus view on':'Focus view off'}</button></div><p className="academy-welcome">Ask for a hint. Take a break. Try again. Every strategy you learn is progress.</p>
           </div>
         )}
 
@@ -507,7 +444,7 @@ export function AnimeEnvironment({
             <div className="row between" style={{ marginBottom: 16 }}>
               <span className="stars">⭐ {profile.starsEarned}</span>
               <div className="row">
-                <button className="btn ghost small" type="button" onClick={() => setScreen('settings')}>
+                <button className="btn ghost small" type="button" onClick={() => setScreen('academySettings')}>
                   ⚙️ Settings
                 </button>
                 <button
@@ -525,28 +462,7 @@ export function AnimeEnvironment({
 
             <div className="lesson-stage">
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-                {videoUrl ? (
-                  <video
-                    src={videoUrl}
-                    autoPlay
-                    controls
-                    playsInline
-                    onEnded={() => setVideoUrl(null)}
-                    onError={() =>
-                      setVideoError('The video was created but failed to play. Tap the link below to open it.')
-                    }
-                    style={{ width: 400, borderRadius: 24, border: `3px solid ${activeTutor.accent}` }}
-                  />
-                ) : (
-                  <TutorStage
-                    tutor={activeTutor}
-                    imageSrc={imageFor(activeTutor.id)}
-                    mood={videoBusy ? 'thinking' : mood}
-                    line={bubble}
-                    size={400}
-                    videoEnabled={!!profile.didKey && !!profile.videoMode}
-                  />
-                )}
+                <TutorStage tutor={activeTutor} imageSrc={imageFor(activeTutor.id)} mood={videoBusy?'thinking':mood} line={bubble} size={profile.animeFocusMode!==false?280:400} videoEnabled={profile.videoMode!==false&&profile.autoSpeak!==false} videoCacheId={cacheIdFor(activeTutor)} videoUrlOverride={videoUrl??undefined} onVideoError={()=>{setVideoError('The saved video could not play. Reading it aloud instead.');getSpeech().speak(bubble,{voice:activeTutor.voice,purpose:'reading',allowSystemFallback:true});}}/>
                 <strong style={{ fontSize: '1.3rem', color: activeTutor.accent }}>
                   {activeTutor.name}
                   {videoBusy && <span className="faint"> — making video…</span>}
@@ -580,12 +496,12 @@ export function AnimeEnvironment({
                     Tap <em>🖼️ Change Avatar</em> and Generate/Upload a realistic photo to see the talking video.
                   </div>
                 )}
-                <div className="tutor-speech dyslexia">{bubble || '…'}</div>
+                <div className="tutor-speech dyslexia"><ReadingWindow text={bubble||'…'} enabled={profile.animeReadingWindow!==false}/></div>
                 <div className="row" style={{ marginTop: 12 }}>
                   <button className="read-btn" type="button" onClick={repeat}>
                     🔊 Say it again
                   </button>
-                  {profile.didKey && (
+                  {did && (
                     <button
                       className="read-btn"
                       type="button"
@@ -604,17 +520,8 @@ export function AnimeEnvironment({
                     </button>
                   )}
                 </div>
-                {videoUrl && (
-                  <video
-                    src={videoUrl}
-                    controls
-                    autoPlay
-                    style={{ width: '100%', borderRadius: 14, marginTop: 12, border: '1px solid var(--border)' }}
-                  />
-                )}
-
                 {turn?.choices ? (
-                  <div className="grid cols-3" style={{ marginTop: 20 }}>
+                  <div><button className="btn ghost" onClick={()=>{if(activeTutor)void speak(turn.hint??'Use the worked example.',activeTutor);}}>Show a hint</button><div className="grid cols-3" style={{ marginTop: 20 }}>
                     {turn.choices.map((c) => (
                       <button
                         key={c}
@@ -627,7 +534,7 @@ export function AnimeEnvironment({
                         {c}
                       </button>
                     ))}
-                  </div>
+                  </div>{locked&&<button className="btn" onClick={startQuickPractice}>Next practice challenge</button>}<button className="btn ghost" onClick={()=>{setTurn(null);setLocked(false);}}>Return to tutor activities</button></div>
                 ) : (
                   <div className="grid cols-2" style={{ marginTop: 20 }}>
                     <button
@@ -700,11 +607,16 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             imageSrc={imageFor(activeTutor.id)}
             autoSpeak={profile.autoSpeak !== false}
-            videoEnabled={!!profile.didKey && !!profile.videoMode}
-            voiceOverride={profile.tutorVoices?.[activeTutor.id]}
+            videoEnabled={profile.videoMode!==false&&profile.autoSpeak!==false}
+            videoCacheId={cacheIdFor(activeTutor)}
+            gentleMode={profile.support.extraTime}
+            focusView={profile.animeFocusMode!==false}
+            readingWindow={profile.animeReadingWindow!==false}
+            lessonBank={ACADEMY_LESSONS.filter(l=>l.subject===activeTutor.subject)}
+            voiceOverride={activeTutor.voice.preferredVoice}
             onEarnStar={() => { /* stars handled in onRecordAnswer to avoid double state writes */ }}
             onRecordAnswer={(correct, kind) => {
-              let next = recordAnswer(profile, activeTutor.subject, correct, kind);
+              let next = recordAnswer(profileRef.current, activeTutor.subject, correct, kind);
               if (correct) {
                 next = {
                   ...next,
@@ -718,17 +630,10 @@ export function AnimeEnvironment({
               update_(next);
             }}
             onLessonComplete={(id, title) =>
-              update_(recordLessonComplete(profile, activeTutor.subject, id, title))
+              update_(recordLessonComplete(profileRef.current, activeTutor.subject, id, title))
             }
             onGenerateQuestions={
-              profile.openAiKey && profile.openAiKey.trim().length > 10
-                ? (count) =>
-                    generateQuestions(
-                      profile.openAiKey!,
-                      activeTutor.subject,
-                      profile.reasoningLevel ?? '3',
-                      count
-                    )
+              openai ? (count) => generateAcademyQuestions(openai,activeTutor.subject,count)
                 : undefined
             }
             onBack={() => setScreen('activity')}
@@ -739,7 +644,7 @@ export function AnimeEnvironment({
         {screen === 'homework' && activeTutor && (
           <HomeworkHelp
             tutor={activeTutor}
-            profile={profile}
+            profile={{...profile,openAiKey:openai}}
             onBack={() => setScreen('activity')}
             onUsed={() => update_(recordHomework(profile, activeTutor.subject))}
           />
@@ -750,7 +655,7 @@ export function AnimeEnvironment({
           <TutorGallery
             tutor={activeTutor}
             profile={profile}
-            onUpdate={onUpdate}
+            onUpdate={p=>onUpdate({...p,animeUseNewPortraits:false})}
             onBack={() => setScreen(activeTutor ? 'roster' : 'activity')}
           />
         )}
@@ -759,7 +664,9 @@ export function AnimeEnvironment({
         {screen === 'reading' && activeTutor && (
           <ReadingPractice
             tutor={activeTutor}
-            profile={profile}
+            wordList={['planet','crystal','journey','brave','strategy','evidence','discover','chapter','rhythm','confidence']}
+            sentenceList={['I can ask for a hint and try again.','The explorer followed a map across the sky bridge.','A good strategy helps me solve a new challenge.','I found a clue in the next sentence.']}
+            profile={{...profile,tutorImages:{...profile.tutorImages,[activeTutor.id]:imageFor(activeTutor.id)},activeTutorImage:{...profile.activeTutorImage,[activeTutor.id]:imageFor(activeTutor.id)},tutorVoices:{...profile.tutorVoices,[activeTutor.id]:activeTutor.voice.preferredVoice||''}}}
             onEarnStar={() => {
               const recorded = recordReading(profile, activeTutor.subject);
               update_({ ...recorded, starsEarned: recorded.starsEarned + 1 });
@@ -777,6 +684,10 @@ export function AnimeEnvironment({
           />
         )}
 
+        {screen==='academySettings'&&<AcademySettings profile={profile} tutors={tutors} onUpdate={onUpdate} onBack={()=>setScreen('roster')} onMediaSettings={()=>setScreen('settings')}/>}
+        {screen==='videoStudio'&&<AcademyVideoStudio profile={profile} tutors={tutors} imageFor={imageFor} onUpdate={onUpdate} onBack={()=>setScreen('roster')} onSettings={()=>setScreen('academySettings')}/>}
+        {screen==='focus'&&<AcademyFocusStudio profile={profile} onUpdate={onUpdate} onBack={()=>setScreen('roster')}/>}
+        {screen==='quest'&&<Suspense fallback={<p>Opening the celestial academy…</p>}><AcademyQuest journeys={profile.animeJourneys??0} quiet={profile.support.reducedDistraction} tutors={tutors} imageFor={imageFor} onBack={()=>setScreen('roster')} onAnswer={(correct,subject)=>{let next=recordAnswer(profileRef.current,subject,correct,'quiz');if(correct)next={...next,starsEarned:next.starsEarned+1,progress:{...next.progress,[subject]:(next.progress[subject]??0)+1}};update_(next);}} onJourney={()=>onUpdate({...profileRef.current,animeJourneys:(profileRef.current.animeJourneys??0)+1})}/></Suspense>}
         {/* Settings: OpenAI key for smart mode */}
         {screen === 'settings' && (
           <div className="center">
@@ -863,7 +774,7 @@ export function AnimeEnvironment({
                 >
                   Save key
                 </button>
-                {profile.didKey && (
+                {did && (
                   <button
                     className="btn ghost danger"
                     type="button"
@@ -876,7 +787,7 @@ export function AnimeEnvironment({
                   {profile.didKey ? '🎬 Key saved' : 'Animated portrait (free)'}
                 </span>
               </div>
-              {profile.didKey && (
+              {did && (
                 <div className="toggle-row" style={{ marginTop: 12 }}>
                   <span>
                     Talking-head VIDEO when speaking (realistic mouth)
@@ -943,7 +854,7 @@ export function AnimeEnvironment({
               <div style={{ marginTop: 16, borderTop: '1px solid var(--border)', paddingTop: 14 }}>
                 <strong>🎚️ Each tutor's voice (optional)</strong>
                 <p className="faint" style={{ margin: '4px 0 10px' }}>
-                  The tutors use warm African American male voices by default. To use a
+                  The tutors use natural male guide voices. To use a
                   specific voice, add it to your ElevenLabs account, copy its Voice ID,
                   and paste it here. Tap ▶️ to hear it.
                 </p>
