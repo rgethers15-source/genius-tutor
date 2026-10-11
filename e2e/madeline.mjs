@@ -6,14 +6,15 @@ import {academyMissions} from '../src/data/academyCurriculum.ts';
 mkdirSync('screenshots',{recursive:true});
 const browser=await chromium.launch({headless:true,args:['--enable-unsafe-swiftshader','--autoplay-policy=no-user-gesture-required']});
 const page=await browser.newPage({viewport:{width:1440,height:1100}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+const networkErrors=[];page.on('requestfailed',r=>networkErrors.push({url:r.url(),error:r.failure()?.errorText}));
 const fixture=readFileSync('e2e/fixtures/cached-video.mp4');let talks=0,uploaded=0,denied=false;
 await page.route('https://api.d-id.com/**',async route=>{
  const url=route.request().url();if(denied){await route.fulfill({status:401,contentType:'application/json',body:'{"message":"Invalid test key"}'});return;}
- if(url.endsWith('/images')){uploaded++;assert.ok(route.request().postDataBuffer().includes(Buffer.from('image/png')));await route.fulfill({contentType:'application/json',body:'{"url":"https://test.example/portrait.png"}'});}
+ if(url.endsWith('/images')){uploaded++;assert.ok(route.request().postDataBuffer().includes(Buffer.from('image/png')));await route.fulfill({contentType:'application/json',body:'{"url":"https://mock.d-id.com/portrait.png"}'});}
  else if(url.endsWith('/talks')){talks++;const data=route.request().postDataJSON();assert.equal(data.script.type,'text');assert.equal(data.script.provider.type,'microsoft');await route.fulfill({contentType:'application/json',body:JSON.stringify({id:'test-'+talks})});}
- else await route.fulfill({contentType:'application/json',body:'{"status":"done","result_url":"https://test.example/clip.mp4"}'});
+ else await route.fulfill({contentType:'application/json',body:'{"status":"done","result_url":"https://mock.d-id.com/clip.mp4"}'});
 });
-await page.route('https://test.example/clip.mp4',route=>route.fulfill({contentType:'video/mp4',body:fixture}));
+await page.route('https://mock.d-id.com/clip.mp4',route=>route.fulfill({contentType:'video/mp4',body:fixture}));
 await page.addInitScript(()=>{
  window.__speechCount=0;window.speechSynthesis.speak=()=>{window.__speechCount++;};
  window.__music=[];const Base=window.Audio;window.Audio=function(...args){const a=new Base(...args);window.__music.push(a);return a;};window.Audio.prototype=Base.prototype;
@@ -52,7 +53,7 @@ for(let i=0;i<6;i++){
 }
 await page.getByText('All six learning lights collected!',{exact:true}).waitFor();await page.getByRole('button',{name:'Return to academy',exact:true}).first().click();
 await page.getByRole('button',{name:'Talking tutor studio',exact:false}).click();await page.getByLabel('Tutor',{exact:true}).selectOption('tutor-ren');
-await page.getByRole('button',{name:'Prepare and save videos',exact:true}).click();await page.getByText('Ready: 7 of 7 clips saved, including 0 already on disk.',{exact:true}).waitFor({timeout:60000});assert.equal(talks,7);assert.equal(uploaded,7);
+await page.getByRole('button',{name:'Prepare and save videos',exact:true}).click();await page.getByText('Ready: 7 of 7 clips saved, including 0 already on disk.',{exact:true}).waitFor({timeout:60000}).catch(async e=>{await page.screenshot({path:'screenshots/madeline-video-preparation-error.png',fullPage:true});throw Error(JSON.stringify({error:e.message,status:await page.getByRole('status').allTextContents(),networkErrors,errors}));});assert.equal(talks,7);assert.equal(uploaded,7);
 await page.getByRole('button',{name:'Prepare and save videos',exact:true}).click();await page.getByText('Ready: 7 of 7 clips saved, including 7 already on disk.',{exact:true}).waitFor();assert.equal(talks,7);
 await page.getByRole('button',{name:'Preview saved greeting',exact:true}).click();await page.waitForFunction(()=>document.querySelector('video')?.currentTime>0);await page.getByRole('button',{name:'Close video preview',exact:true}).click();
 await page.getByLabel('Video voice',{exact:true}).selectOption({index:0});await page.getByText('0 of 7 clips already saved',{exact:true}).waitFor();await page.getByLabel('Video voice',{exact:true}).selectOption('en-US-BrandonMultilingualNeural');await page.getByText('7 of 7 clips already saved',{exact:true}).waitFor();
