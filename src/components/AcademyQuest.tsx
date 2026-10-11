@@ -49,7 +49,7 @@ export function AcademyQuest({onBack,onAnswer,onJourney,journeys,quiet,tutors,im
    make(new THREE.TorusGeometry(3,.09,8,48),'#d8bc7f',bx,4.5,z).rotation.x=Math.PI/2;
    for(let j=0;j<4;j++){const angle=j*Math.PI/2;make(new THREE.CylinderGeometry(.13,.13,4,8),'#e1cdaa',bx+Math.cos(angle)*2.5,2.5,z+Math.sin(angle)*2.5);}
    make(new THREE.BoxGeometry(5,.2,2),'#889b9f',side*9.5,.1,z);
-   const portrait=make(new THREE.PlaneGeometry(1.7,1.7),'#ffffff',x,2.8,z-.6);
+   const portrait=make(new THREE.PlaneGeometry(1.7,1.7),'#ffffff',x,2.8,z-.6);portrait.material=portrait.material.clone();
    const tutor=tutors.find(t=>t.subject===academyMissions(0)[i].subject)!;
    texture(imageFor(tutor.id),t=>{(portrait.material as THREE.MeshStandardMaterial).map=t;portrait.material.needsUpdate=true;});
    make(new THREE.BoxGeometry(2,.16,.18),'#d4b677',x,1.89,z-.6);make(new THREE.CylinderGeometry(.08,.12,1.6,8),'#ab9468',x,.85,z-.6);
@@ -61,7 +61,7 @@ export function AcademyQuest({onBack,onAnswer,onJourney,journeys,quiet,tutors,im
   }
   const gate=make(new THREE.TorusGeometry(5,.35,12,72),'#d4b77d',0,5,-46);make(new THREE.BoxGeometry(.3,9,.3),'#9c8c74',-5,4,-46);make(new THREE.BoxGeometry(.3,9,.3),'#9c8c74',5,4,-46);
   const planet=make(new THREE.SphereGeometry(12,32,24),'#a9a0b9',22,34,-75);const ring=make(new THREE.TorusGeometry(17,.35,8,80),'#dec796',22,34,-75);ring.rotation.x=1.2;ring.rotation.y=.3;
-  const painting=make(new THREE.PlaneGeometry(160,107),'#ffffff',0,36,-105);texture('./madeline/academy.webp',t=>{(painting.material as THREE.MeshStandardMaterial).map=t;painting.material.needsUpdate=true;});
+  const painting=make(new THREE.PlaneGeometry(160,107),'#ffffff',0,36,-105);painting.material=painting.material.clone();texture('./madeline/academy.webp',t=>{(painting.material as THREE.MeshStandardMaterial).map=t;painting.material.needsUpdate=true;});
   for(let i=0;i<18;i++){const cloud=make(new THREE.SphereGeometry(4+i%3,12,8),'#c7c0c2',(i%2?-1:1)*(24+i*2),-4-i%4,25-i*6);cloud.scale.set(2,.35,1);}
   const beacon=new THREE.Group();scene.add(beacon);make(new THREE.TorusGeometry(1.1,.1,8,40),'#ffe2a3',0,.13,0,beacon).rotation.x=Math.PI/2;
   const gem=make(new THREE.OctahedronGeometry(.5),'#ffd46a',0,1.4,0,beacon);
@@ -84,7 +84,7 @@ export function AcademyQuest({onBack,onAnswer,onJourney,journeys,quiet,tutors,im
    if(!quiet){gem.rotation.y=elapsed*.6;gem.position.y=1.4+Math.sin(elapsed*1.7)*.15;floating.forEach((orb,i)=>{orb.position.y=7.6+Math.sin(elapsed+i)*.18;});gate.rotation.z=elapsed*.02;planet.rotation.y=elapsed*.01;}
    if(elapsed-hud>.2){const dist=Math.hypot(camera.position.x-bx,camera.position.z-bz);setDistance(Math.round(dist));setNear(dist<3);hud=elapsed;}
    renderer.render(scene,camera);frame=requestAnimationFrame(loop);};frame=requestAnimationFrame(loop);
-  return()=>{disposed=true;textures.forEach(t=>t.dispose());cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);keys.current.clear();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});renderer.dispose();renderer.domElement.remove();};
+  return()=>{disposed=true;textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);keys.current.clear();scene.traverse(o=>{if(o instanceof THREE.Mesh){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});renderer.dispose();renderer.domElement.remove();};
  },[quiet]);
  function answer(choice:string){if(answerLocked.current)return;const correct=choice===task.answer;onAnswer(correct,task.subject);if(correct){answerLocked.current=true;setSolved(true);setFeedback('Learning light earned. You used a strategy!');void playEffect('reward');}else setFeedback(task.hint);}
  const move=(label:string,key:string)=><button className="btn" key={key} aria-label={label} onPointerDown={e=>{e.currentTarget.setPointerCapture(e.pointerId);keys.current.add(key);}} onPointerUp={()=>keys.current.delete(key)} onPointerCancel={()=>keys.current.delete(key)} onLostPointerCapture={()=>keys.current.delete(key)}>{label}</button>;
