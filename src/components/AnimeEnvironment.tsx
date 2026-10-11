@@ -1,3 +1,4 @@
+import { academyVoiceFor, academyDeliveryFor } from '../data/animeTutors';
 import { setTutorTheme } from '../engine/focusMusic';
 import { useTutorTheme } from '../engine/useTutorTheme';
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
@@ -71,8 +72,8 @@ export function AnimeEnvironment({
   const [screen, setScreen] = useState<Screen>('roster');
   const [chosenTutor, setActiveTutor] = useState<AnimeTutor | null>(null);
   const openai=openAiKeyFor(profile),eleven=elevenKeyFor(profile),did=didKeyFor(profile);
-  const usesEleven=profile.princessVoiceProvider==='elevenlabs'||(profile.princessVoiceProvider!=='openai'&&!!eleven);
-  const tutors=ANIME_TUTORS.map(t=>({...t,voice:{...t.voice,rate:profile.princessVoiceRate??.9,preferredVoice:usesEleven?(profile.tutorVoices?.[t.id]||t.voice.preferredVoice):(profile.princessOpenAiVoices?.[t.id]||'echo')}}));
+  const usesEleven=profile.princessVoiceProvider==='elevenlabs'||(profile.princessVoiceProvider!=='openai'&&!openai&&!!eleven);
+  const tutors=ANIME_TUTORS.map(t=>({...t,voice:{...t.voice,rate:profile.princessVoiceRate??.95,instructions:academyDeliveryFor(t.id),preferredVoice:usesEleven?(profile.tutorVoices?.[t.id]||t.voice.preferredVoice):(profile.princessOpenAiVoices?.[t.id]||academyVoiceFor(t.id))}}));
   const activeTutor=chosenTutor?tutors.find(t=>t.id===chosenTutor.id)!:null;
   const imageFor=(id:string)=>profile.animeUseNewPortraits!==false?academyPortrait(id):(activeImageFor(profile,id)||academyPortrait(id));
   const cacheIdFor=(t:AnimeTutor)=>academyVideoId(t.id,imageFor(t.id),profile.tutorVideoVoices?.[t.id]||t.videoVoiceId);

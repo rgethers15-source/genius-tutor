@@ -1,3 +1,4 @@
+import { academyVoiceFor, academyDeliveryFor } from '../data/animeTutors';
 import { useEffect, useState } from 'react';
 import type { Profile } from '../types';
 import type { AnimeTutor } from '../data/animeTutors';
@@ -15,7 +16,7 @@ export function AcademySettings({ profile, onUpdate, onBack, tutors = PRINCESS_T
   const provider = draft.princessVoiceProvider ?? 'auto';
   const eleven = elevenKeyFor(draft);
   const openai = openAiKeyFor(draft);
-  const usesEleven = provider === 'elevenlabs' || (provider === 'auto' && !!eleven);
+  const usesEleven = provider === 'elevenlabs' || (provider === 'auto' && !openai && !!eleven);
   async function testSpeakers() {
     const context = new AudioContext();
     try {
@@ -40,19 +41,19 @@ export function AcademySettings({ profile, onUpdate, onBack, tutors = PRINCESS_T
     if (!key || key.length < 10) { setStatus('Add the selected service’s API key to hear a natural voice.'); return; }
     const player = usesEleven ? elevenLabsSpeechProvider(key) : openAiSpeechProvider(key, direction);
     setPreview(player); setStatus('Preparing voice…');
-    player.speak(`Hello ${profile.name}! Welcome to our celestial academy. Let’s discover something wonderful together.`, {
-      voice: { gender: tutors.find(t => t.id === id)?.voice.gender ?? 'female', rate: draft.princessVoiceRate ?? 0.95, pitch: 1,
-        preferredVoice: usesEleven ? draft.tutorVoices?.[id] || tutors.find(t => t.id === id)?.voice.preferredVoice : draft.princessOpenAiVoices?.[id] ?? ('echo') },
+    player.speak(tutors.find(t => t.id === id)?.greeting ?? `Hey ${profile.name}! Let’s take this one step at a time. You’ve got this.`, {
+      voice: { instructions: academyDeliveryFor(id), gender: tutors.find(t => t.id === id)?.voice.gender ?? 'female', rate: draft.princessVoiceRate ?? 0.95, pitch: 1,
+        preferredVoice: usesEleven ? draft.tutorVoices?.[id] || tutors.find(t => t.id === id)?.voice.preferredVoice : draft.princessOpenAiVoices?.[id] ?? academyVoiceFor(id) },
       purpose: 'reading', onStart: () => setStatus('Playing your voice preview'),
       onEnd: () => setStatus(s => s === 'Playing your voice preview' || s === 'Preparing voice…' ? '' : s), onError: setStatus,
     });
   }
   return <div className="center princess-settings card">
     <h1>{title}</h1>
-    <p>Choose each guide’s voice, hear it first, then save. Voices are AI generated.</p>
+    <p>Choose each guide’s voice, hear it first, then save. Voices are AI generated. Madeline’s OpenAI voices use a youthful, relaxed urban conversational delivery. Preview each voice before saving. ElevenLabs uses your selected voice recording; it cannot apply this delivery prompt.</p>
     <button className="btn ghost" onClick={testSpeakers}>🔈 Test speakers (short chime)</button>
     <label>Natural voice service<select value={provider} onChange={e => setDraft({ ...draft, princessVoiceProvider: e.target.value as Profile['princessVoiceProvider'] })}>
-      <option value="auto">Automatic: ElevenLabs, then OpenAI</option><option value="openai">OpenAI storybook voice</option><option value="elevenlabs">ElevenLabs selected voice</option>
+      <option value="auto">Automatic: OpenAI teen delivery, then ElevenLabs</option><option value="openai">OpenAI youthful conversational voice</option><option value="elevenlabs">ElevenLabs selected voice</option>
     </select></label>
     <div className="grid cols-2">
       <label>OpenAI API key<input type="password" autoComplete="off" value={draft.openAiKey ?? ''} placeholder={openAiKeyFor(profile) ? 'Shared device key available' : 'Paste key'} onChange={e => setDraft({ ...draft, openAiKey: e.target.value })} /></label>
@@ -62,8 +63,8 @@ export function AcademySettings({ profile, onUpdate, onBack, tutors = PRINCESS_T
     {tutors.map(t => <div className="row between" key={t.id} style={{ margin: '12px 0' }}>
       <strong>{t.name}</strong>
       {usesEleven ? <input aria-label={`${t.name} ElevenLabs voice ID`} placeholder="Your chosen ElevenLabs voice ID" value={draft.tutorVoices?.[t.id] ?? t.voice.preferredVoice ?? ''} onChange={e => setDraft({ ...draft, tutorVoices: { ...draft.tutorVoices, [t.id]: e.target.value } })} /> :
-        <select aria-label={`${t.name} OpenAI voice`} value={draft.princessOpenAiVoices?.[t.id] ?? ('echo')} onChange={e => setDraft({ ...draft, princessOpenAiVoices: { ...draft.princessOpenAiVoices, [t.id]: e.target.value } })}>
-          <option value="echo">Echo · explorer</option><option value="onyx">Onyx · calm guide</option><option value="shimmer">Shimmer · bright</option><option value="nova">Nova · lively</option><option value="coral">Coral · warm</option><option value="alloy">Alloy · balanced</option>
+        <select aria-label={`${t.name} OpenAI voice`} value={draft.princessOpenAiVoices?.[t.id] ?? academyVoiceFor(t.id)} onChange={e => setDraft({ ...draft, princessOpenAiVoices: { ...draft.princessOpenAiVoices, [t.id]: e.target.value } })}>
+          <option value="ash">Ash · soft and relaxed</option><option value="verse">Verse · expressive</option><option value="ballad">Ballad · warm storyteller</option><option value="cedar">Cedar · clear</option><option value="echo">Echo · explorer</option><option value="onyx">Onyx · calm guide</option><option value="shimmer">Shimmer · bright</option><option value="nova">Nova · lively</option><option value="coral">Coral · warm</option><option value="alloy">Alloy · balanced</option>
         </select>}
       <button className="btn" onClick={() => hear(t.id)}>▶ Hear voice</button>
     </div>)}

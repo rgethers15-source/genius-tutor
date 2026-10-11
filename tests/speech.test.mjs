@@ -174,3 +174,19 @@ test('ordinary princess narration can recover with system audio, while phonemes 
   assert.match(error, /device voice/);
   p.stop();
 });
+
+test('Madeline character delivery reaches speech requests without changing isolated sounds', async () => {
+  const p = openAiSpeechProvider('test-key-long-enough', 'Youthful urban conversational delivery.');
+  const cfg = { ...voice, gender:'male', preferredVoice:'verse', instructions:'Easygoing confident rhythm.' };
+  p.speak('We can solve this together.', { voice:cfg, purpose:'reading' });
+  const body = JSON.parse(requests[0].options.body);
+  assert.equal(body.voice,'verse');
+  assert.match(body.instructions,/Youthful urban/);
+  assert.match(body.instructions,/Easygoing confident/);
+  p.stop(); requests[0].resolve(response()); await flush();
+  p.speak('p',{voice:cfg,purpose:'reading',pronunciation:{ipa:'p',example:'pig',cue:''}});
+  const phonics=JSON.parse(requests[1].options.body);
+  assert.match(phonics.instructions,/ONLY the isolated phoneme/);
+  assert.doesNotMatch(phonics.instructions,/urban|Easygoing/);
+  p.stop();requests[1].resolve(response());await flush();
+});
