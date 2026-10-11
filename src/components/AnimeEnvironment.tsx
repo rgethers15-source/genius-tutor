@@ -110,12 +110,16 @@ export function AnimeEnvironment({
     }
   }
 
+  function navigate(next:Screen){
+    speechRequest.current++;window.dispatchEvent(new Event('gt-stop-video'));getSpeech().stop();setVideoUrl(null);setScreen(next);
+  }
+
   const room = getRoom(profile.activeRoomId);
   const roomImage = profile.roomImages?.[room.id];
 
   useEffect(() => {
     warmUpVoices();
-    return () => getSpeech().stop();
+    return () => {speechRequest.current++;window.dispatchEvent(new Event('gt-stop-video'));getSpeech().stop();};
   }, []);
 
   useEffect(()=>{setHomeworkAi(openai?openAiHomeworkProvider(openai):offlineHomeworkProvider);},[openai]);
@@ -126,7 +130,7 @@ export function AnimeEnvironment({
     else setSpeech(webSpeechProvider);
   },[openai,eleven,usesEleven,profile.humanVoice]);
   useEffect(()=>{setVideoAvatar(did?didVideoProvider(did):offlineVideoProvider);},[did]);
-  useEffect(()=>{speechRequest.current++;window.dispatchEvent(new Event('gt-stop-video'));getSpeech().stop();setVideoUrl(null);},[screen]);
+
 
   const [nowPlaying, setNowPlaying] = useState(currentTitle());
 
@@ -139,11 +143,11 @@ export function AnimeEnvironment({
     if(profile.videoMode!==false){const url=await getCachedVideo(cacheIdFor(tutor),text);if(request!==speechRequest.current)return;if(url){setMood(nextMood);window.dispatchEvent(new CustomEvent('gt-replay-video',{detail:cacheIdFor(tutor)}));return;}}
     if(request!==speechRequest.current)return;
     getSpeech().speak(text,{voice:tutor.voice,purpose:'reading',allowSystemFallback:true,onError:message=>setVideoError(message),onStart:()=>setMood(nextMood),onEnd:()=>setMood('idle')});
-  },[profile.autoSpeak,profile.videoMode,profile.tutorVideoVoices,profile.animeUseNewPortraits,profile.tutorGallery,profile.tutorImages,profile.princessVoiceRate,profile.tutorVoices,profile.princessOpenAiVoices]);
+  },[profile.autoSpeak,profile.videoMode,profile.tutorVideoVoices,profile.animeUseNewPortraits,profile.tutorGallery,profile.tutorImages,profile.activeTutorImage,profile.princessVoiceRate,profile.tutorVoices,profile.princessOpenAiVoices]);
 
   function openTutor(tutor: AnimeTutor) {
     setActiveTutor(tutor);
-    setScreen('activity');
+    navigate('activity');
     setLocked(false);
     setTurn(null);
     speak(tutor.greeting, tutor, 'speaking');
@@ -374,7 +378,7 @@ export function AnimeEnvironment({
                 <span className="sparkle">✨</span> {profile.name}'s Celestial Anime Academy
               </h1>
               <div className="row">
-                <button className="btn small" type="button" onClick={() => setScreen('academySettings')}>
+                <button className="btn small" type="button" onClick={() => navigate('academySettings')}>
                   ⚙️ Settings
                 </button>
                 <button className="btn ghost" type="button" onClick={onExit}>
@@ -389,7 +393,7 @@ export function AnimeEnvironment({
                   <span>
                     🧠 <strong>Turn on Smart Homework Help</strong> — add your OpenAI key in Settings.
                   </span>
-                  <button className="btn small" type="button" onClick={() => setScreen('academySettings')}>
+                  <button className="btn small" type="button" onClick={() => navigate('academySettings')}>
                     Open Settings
                   </button>
                 </div>
@@ -424,7 +428,7 @@ export function AnimeEnvironment({
                       style={{ marginTop: 12 }}
                       onClick={() => {
                         setActiveTutor(t);
-                        setScreen('gallery');
+                        navigate('gallery');
                       }}
                     >
                       🖼️ {img ? 'Gallery' : 'Add / Generate'}
@@ -434,7 +438,7 @@ export function AnimeEnvironment({
               })}
             </div>
 
-            <div className="academy-portals grid cols-2"><button className="btn big-btn" onClick={()=>setScreen('quest')}>🌌 Enter the 3D celestial academy</button><button className="btn big-btn ghost" onClick={()=>setScreen('focus')}>🌿 Focus studio & small wins</button><button className="btn big-btn ghost" onClick={()=>setScreen('videoStudio')}>🎬 Talking tutor studio</button><button className="btn big-btn ghost" onClick={()=>onUpdate({...profile,animeFocusMode:profile.animeFocusMode===false})}>{profile.animeFocusMode!==false?'Focus view on':'Focus view off'}</button></div><p className="academy-welcome">Ask for a hint. Take a break. Try again. Every strategy you learn is progress.</p>
+            <div className="academy-portals grid cols-2"><button className="btn big-btn" onClick={()=>navigate('quest')}>🌌 Enter the 3D celestial academy</button><button className="btn big-btn ghost" onClick={()=>navigate('focus')}>🌿 Focus studio & small wins</button><button className="btn big-btn ghost" onClick={()=>navigate('videoStudio')}>🎬 Talking tutor studio</button><button className="btn big-btn ghost" onClick={()=>onUpdate({...profile,animeFocusMode:profile.animeFocusMode===false})}>{profile.animeFocusMode!==false?'Focus view on':'Focus view off'}</button></div><p className="academy-welcome">Ask for a hint. Take a break. Try again. Every strategy you learn is progress.</p>
           </div>
         )}
 
@@ -444,7 +448,7 @@ export function AnimeEnvironment({
             <div className="row between" style={{ marginBottom: 16 }}>
               <span className="stars">⭐ {profile.starsEarned}</span>
               <div className="row">
-                <button className="btn ghost small" type="button" onClick={() => setScreen('academySettings')}>
+                <button className="btn ghost small" type="button" onClick={() => navigate('academySettings')}>
                   ⚙️ Settings
                 </button>
                 <button
@@ -452,7 +456,7 @@ export function AnimeEnvironment({
                   type="button"
                   onClick={() => {
                     getSpeech().stop();
-                    setScreen('roster');
+                    navigate('roster');
                   }}
                 >
                   ← Choose another tutor
@@ -543,7 +547,7 @@ export function AnimeEnvironment({
                       style={{ background: activeTutor.accent }}
                       onClick={() => {
                         getSpeech().stop();
-                        setScreen('lessons');
+                        navigate('lessons');
                       }}
                     >
                       📚 Lessons & Tests
@@ -554,7 +558,7 @@ export function AnimeEnvironment({
                       style={{ background: activeTutor.accent }}
                       onClick={() => {
                         getSpeech().stop();
-                        setScreen('homework');
+                        navigate('homework');
                       }}
                     >
                       📝 Homework Help
@@ -572,7 +576,7 @@ export function AnimeEnvironment({
                       style={{ background: activeTutor.accent }}
                       onClick={() => {
                         getSpeech().stop();
-                        setScreen('reading');
+                        navigate('reading');
                       }}
                     >
                       🎤 Read Out Loud
@@ -580,7 +584,7 @@ export function AnimeEnvironment({
                     <button
                       className="btn big-btn ghost"
                       type="button"
-                      onClick={() => setScreen('badges')}
+                      onClick={() => navigate('badges')}
                     >
                       🏆 My Trophies
                     </button>
@@ -589,7 +593,7 @@ export function AnimeEnvironment({
                       type="button"
                       onClick={() => {
                         getSpeech().stop();
-                        setScreen('gallery');
+                        navigate('gallery');
                       }}
                     >
                       🖼️ Change Avatar
@@ -636,7 +640,7 @@ export function AnimeEnvironment({
               openai ? (count) => generateAcademyQuestions(openai,activeTutor.subject,count)
                 : undefined
             }
-            onBack={() => setScreen('activity')}
+            onBack={() => navigate('activity')}
           />
         )}
 
@@ -645,7 +649,7 @@ export function AnimeEnvironment({
           <HomeworkHelp
             tutor={activeTutor}
             profile={{...profile,openAiKey:openai}}
-            onBack={() => setScreen('activity')}
+            onBack={() => navigate('activity')}
             onUsed={() => update_(recordHomework(profile, activeTutor.subject))}
           />
         )}
@@ -656,7 +660,7 @@ export function AnimeEnvironment({
             tutor={activeTutor}
             profile={profile}
             onUpdate={p=>onUpdate({...p,animeUseNewPortraits:false})}
-            onBack={() => setScreen(activeTutor ? 'roster' : 'activity')}
+            onBack={() => navigate(activeTutor ? 'roster' : 'activity')}
           />
         )}
 
@@ -671,7 +675,7 @@ export function AnimeEnvironment({
               const recorded = recordReading(profile, activeTutor.subject);
               update_({ ...recorded, starsEarned: recorded.starsEarned + 1 });
             }}
-            onBack={() => setScreen('activity')}
+            onBack={() => navigate('activity')}
           />
         )}
 
@@ -680,14 +684,14 @@ export function AnimeEnvironment({
           <BadgeShelf
             profile={profile}
             accent={activeTutor?.accent}
-            onBack={() => setScreen(activeTutor ? 'activity' : 'roster')}
+            onBack={() => navigate(activeTutor ? 'activity' : 'roster')}
           />
         )}
 
-        {screen==='academySettings'&&<AcademySettings profile={profile} tutors={tutors} onUpdate={onUpdate} onBack={()=>setScreen('roster')} onMediaSettings={()=>setScreen('settings')}/>}
-        {screen==='videoStudio'&&<AcademyVideoStudio profile={profile} tutors={tutors} imageFor={imageFor} onUpdate={onUpdate} onBack={()=>setScreen('roster')} onSettings={()=>setScreen('academySettings')}/>}
-        {screen==='focus'&&<AcademyFocusStudio profile={profile} onUpdate={onUpdate} onBack={()=>setScreen('roster')}/>}
-        {screen==='quest'&&<Suspense fallback={<p>Opening the celestial academy…</p>}><AcademyQuest journeys={profile.animeJourneys??0} quiet={profile.support.reducedDistraction} tutors={tutors} imageFor={imageFor} onBack={()=>setScreen('roster')} onAnswer={(correct,subject)=>{let next=recordAnswer(profileRef.current,subject,correct,'quiz');if(correct)next={...next,starsEarned:next.starsEarned+1,progress:{...next.progress,[subject]:(next.progress[subject]??0)+1}};update_(next);}} onJourney={()=>onUpdate({...profileRef.current,animeJourneys:(profileRef.current.animeJourneys??0)+1})}/></Suspense>}
+        {screen==='academySettings'&&<AcademySettings profile={profile} tutors={tutors} onUpdate={onUpdate} onBack={()=>navigate('roster')} onMediaSettings={()=>navigate('settings')}/>}
+        {screen==='videoStudio'&&<AcademyVideoStudio profile={profile} tutors={tutors} imageFor={imageFor} onUpdate={onUpdate} onBack={()=>navigate('roster')} onSettings={()=>navigate('academySettings')}/>}
+        {screen==='focus'&&<AcademyFocusStudio profile={profile} onUpdate={onUpdate} onBack={()=>navigate('roster')}/>}
+        {screen==='quest'&&<Suspense fallback={<p>Opening the celestial academy…</p>}><AcademyQuest journeys={profile.animeJourneys??0} quiet={profile.support.reducedDistraction} tutors={tutors} imageFor={imageFor} onBack={()=>navigate('roster')} onAnswer={(correct,subject)=>{let next=recordAnswer(profileRef.current,subject,correct,'quiz');if(correct)next={...next,starsEarned:next.starsEarned+1,progress:{...next.progress,[subject]:(next.progress[subject]??0)+1}};update_(next);}} onJourney={()=>onUpdate({...profileRef.current,animeJourneys:(profileRef.current.animeJourneys??0)+1})}/></Suspense>}
         {/* Settings: OpenAI key for smart mode */}
         {screen === 'settings' && (
           <div className="center">
@@ -696,7 +700,7 @@ export function AnimeEnvironment({
               <button
                 className="btn ghost"
                 type="button"
-                onClick={() => setScreen(activeTutor ? 'activity' : 'roster')}
+                onClick={() => navigate(activeTutor ? 'activity' : 'roster')}
               >
                 ← Back
               </button>
