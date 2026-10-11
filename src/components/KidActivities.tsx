@@ -1,3 +1,4 @@
+import { TransportGames } from './TransportGames';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import type { Profile } from '../types';
 import { TutorStage } from './TutorStage';
@@ -84,7 +85,7 @@ export function KidActivities({
             {mode === 'learnRead' && <LearnToRead speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />}
             {mode === 'phonics' && <Phonics speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />}
             {mode === 'montessori' && <Montessori speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />}
-            {mode === 'games' && <Games speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />}
+            {mode === 'games' && (profile.transportEnvironment ? <TransportGames speak={speak} onEarnStar={onEarnStar}/> : <Games speak={speak} onEarnStar={onEarnStar} accent={tutor.accent} />)}
           </div>
         </div>
       </div>

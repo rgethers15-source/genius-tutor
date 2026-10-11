@@ -9,12 +9,14 @@ export function ProfilePicker({
   onAdd,
   onDelete,
   onAddMandela,
+  onAddMandecies,
 }: {
   data: AppData;
   onOpen: (p: Profile) => void;
   onAdd: () => void;
   onDelete: (p: Profile) => void;
   onAddMandela: () => void;
+  onAddMandecies: () => void;
 }) {
   const canAdd = data.profiles.length < MAX_PROFILES;
 
@@ -24,6 +26,7 @@ export function ProfilePicker({
       <p className="muted">Up to {MAX_PROFILES} learner profiles. Pick yours to begin.</p>
 
       {canAdd && !data.profiles.some(p => p.jurassicEnvironment || p.name.toLowerCase() === 'mandela') && <button className="btn big-btn" onClick={onAddMandela}>🦖 Set up Mandela’s dinosaur academy</button>}
+      {canAdd && !data.profiles.some(p => p.transportEnvironment || p.name.trim().toLowerCase() === 'mandecies') && <button className="btn big-btn" onClick={onAddMandecies}>🚂 Set up Mandecies’s vehicle academy</button>}
       <div className="grid cols-4" style={{ marginTop: 24 }}>
         {data.profiles.map((p) => {
           const av = getAvatar(p.avatarId);
@@ -31,7 +34,7 @@ export function ProfilePicker({
           return (
             <div key={p.id} className="card clickable avatar-tile" onClick={() => onOpen(p)}>
               <div className="avatar-glyph" style={{ background: `${av?.accent ?? '#e0925c'}33` }}>
-                {p.jurassicEnvironment ? '🦖' : av?.glyph ?? '🙂'}
+                {p.transportEnvironment ? '🚂' : p.jurassicEnvironment ? '🦖' : av?.glyph ?? '🙂'}
               </div>
               <div className="avatar-name">{p.name}</div>
               <div className="muted">{grade?.label ?? `Grade ${p.plan.gradeLevel}`}</div>

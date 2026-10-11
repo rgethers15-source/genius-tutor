@@ -12,9 +12,12 @@ rosters += [('royal-prince','Prince Adisa · Garden of Stars','royal')]
 ids=['ranger-jay','hero-kofi','rex','scout-malik','hero-zion','ranger-amari','triceratops','hero-noah','explorer-musa']
 names=['Jay · Jungle Journal','Kofi · Amber Shield','Rex · Ancient Giants','Malik · Trail Stories','Zion · Homeward Map','Amari · Clear Skies','Trix · Fern Colors','Noah · Expedition Groove','Musa · Roots and Rivers']
 rosters += [(i,n,'adventure') for i,n in zip(ids,names)]
+rosters += [('vehicle-pip', 'Pip · Happy Rails', 'royal'), ('vehicle-dex', 'Dex · Building Blocks', 'royal'), ('vehicle-sky', 'Sky · Cloud Hopping', 'royal'), ('vehicle-mix', 'Mixie · Mix and Make', 'royal'), ('vehicle-helper', 'Helper · Helping Hands', 'royal'), ('vehicle-dash', 'Dash · Color Cargo', 'royal'), ('vehicle-rhythm', 'Rolo · Rolling Rhythm', 'royal'), ('vehicle-heli', 'Heli · Clear Skies', 'royal'), ('vehicle-atlas', 'Atlas · World Wings', 'royal')]
 scale=[0,2,4,7,9,12,14,16]
 manifest={}
 for idx,(id,title,kind) in enumerate(rosters):
+ manifest[id]={'title':title,'url':'./music/themes/'+id+'.mp3'}
+ if (ROOT/'public/music/themes'/f'{id}.mp3').exists(): continue
  bpm=(76+idx%5*3) if kind!='royal' else (84+idx%4*3)
  beat=60/bpm;duration=32*beat;audio=np.zeros((int((duration+2)*SR),2),dtype=np.float64)
  root=48+[0,2,5,7,9][idx%5]

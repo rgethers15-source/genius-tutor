@@ -90,5 +90,41 @@
   "explorer-musa": {
     "title": "Musa \u00b7 Roots and Rivers",
     "url": "./music/themes/explorer-musa.mp3"
+  },
+  "vehicle-pip": {
+    "title": "Pip \u00b7 Happy Rails",
+    "url": "./music/themes/vehicle-pip.mp3"
+  },
+  "vehicle-dex": {
+    "title": "Dex \u00b7 Building Blocks",
+    "url": "./music/themes/vehicle-dex.mp3"
+  },
+  "vehicle-sky": {
+    "title": "Sky \u00b7 Cloud Hopping",
+    "url": "./music/themes/vehicle-sky.mp3"
+  },
+  "vehicle-mix": {
+    "title": "Mixie \u00b7 Mix and Make",
+    "url": "./music/themes/vehicle-mix.mp3"
+  },
+  "vehicle-helper": {
+    "title": "Helper \u00b7 Helping Hands",
+    "url": "./music/themes/vehicle-helper.mp3"
+  },
+  "vehicle-dash": {
+    "title": "Dash \u00b7 Color Cargo",
+    "url": "./music/themes/vehicle-dash.mp3"
+  },
+  "vehicle-rhythm": {
+    "title": "Rolo \u00b7 Rolling Rhythm",
+    "url": "./music/themes/vehicle-rhythm.mp3"
+  },
+  "vehicle-heli": {
+    "title": "Heli \u00b7 Clear Skies",
+    "url": "./music/themes/vehicle-heli.mp3"
+  },
+  "vehicle-atlas": {
+    "title": "Atlas \u00b7 World Wings",
+    "url": "./music/themes/vehicle-atlas.mp3"
   }
 }
