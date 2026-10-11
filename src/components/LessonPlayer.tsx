@@ -1,3 +1,5 @@
+import {ReadingWindow} from './ReadingWindow';
+import {ACADEMY_CHEER,ACADEMY_FINISHED} from '../engine/academyVideo';
 import { TRANSPORT_LESSONS } from '../data/curriculumK';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { effectiveVoice, type AnimeTutor } from '../data/animeTutors';
@@ -20,6 +22,10 @@ export function LessonPlayer({
   voiceOverride,
   gradeBand = '6',
   lessonBank,
+  gentleMode = false,
+  readingWindow = false,
+  videoCacheId,
+  focusView = false,
   onEarnStar,
   onRecordAnswer,
   onLessonComplete,
@@ -34,6 +40,10 @@ export function LessonPlayer({
   /** '1' uses the 1st-grade curriculum; otherwise 6th-grade. */
   gradeBand?: 'K' | '1' | '6';
   lessonBank?: Lesson[];
+  gentleMode?: boolean;
+  readingWindow?: boolean;
+  videoCacheId?: string;
+  focusView?: boolean;
   onEarnStar: () => void;
   onRecordAnswer?: (correct: boolean, kind: 'quiz' | 'test') => void;
   onLessonComplete?: (lessonId: string, title: string) => void;
@@ -62,6 +72,9 @@ export function LessonPlayer({
   const [aiBusy, setAiBusy] = useState(false);
   const [aiError, setAiError] = useState('');
   const [voiceError, setVoiceError] = useState('');
+  const [ready,setReady]=useState(false),[showHint,setShowHint]=useState(false);
+  const pendingAction=useRef<(()=>void)|null>(null);
+  function queueAdvance(action:()=>void){if(gentleMode){pendingAction.current=action;setReady(true);}else advanceTimer.current=window.setTimeout(action,2600);}
   const readingVoice = tutor.subject === 'reading' || tutor.subject === 'speech';
 
   async function startAiPractice() {
@@ -88,22 +101,24 @@ export function LessonPlayer({
   }
 
   const speak = useCallback(
-    (text: string, nextMood: AvatarMood = 'speaking') => {
+    (text: string, nextMood: AvatarMood = 'speaking', force = false) => {
       const request = ++speechRequest.current;
       setVoiceError('');
       setBubble(text);
+      window.dispatchEvent(new Event('gt-stop-video'));
       getSpeech().stop(); // never overlap voices
-      if (!autoSpeak) {
+      if (!autoSpeak && !force) {
         setMood(nextMood === 'speaking' ? 'idle' : nextMood);
         return;
       }
       // If a cached talking-head video will play for this line, let the
       // video's own audio speak — skip TTS to avoid two voices at once.
-      if (videoEnabled && !readingVoice) {
-        getCachedVideo(tutor.id, text).then((url) => {
+      if (videoEnabled && (!readingVoice || gentleMode || !!videoCacheId)) {
+        getCachedVideo(videoCacheId ?? tutor.id, text).then((url) => {
           if (request !== speechRequest.current) return;
           if (url) {
             setMood(nextMood);
+            window.dispatchEvent(new CustomEvent('gt-replay-video',{detail:videoCacheId??tutor.id}));
             return;
           }
           getSpeech().speak(text, {
@@ -124,7 +139,7 @@ export function LessonPlayer({
         onEnd: () => setMood((m) => (m === 'cheer' ? 'happy' : 'idle')),
       });
     },
-    [autoSpeak, tutor, voiceOverride, videoEnabled, readingVoice]
+    [autoSpeak, tutor, voiceOverride, videoEnabled, readingVoice, gentleMode, videoCacheId]
   );
 
   useEffect(() => () => {
@@ -135,6 +150,7 @@ export function LessonPlayer({
 
   // ---- Teaching ----
   function startLesson(l: Lesson) {
+    setReady(false);setShowHint(false);setLocked(false);
     setLesson(l);
     setStepIdx(0);
     setPhase('teach');
@@ -151,7 +167,7 @@ export function LessonPlayer({
       setPhase('quiz');
       setQuizIdx(0);
       setLocked(false);
-      speak(`Great! Now let's try a question. ${lesson.quiz[0].q}`);
+      speak((gentleMode || videoCacheId) ? lesson.quiz[0].q : `Great! Now let's try a question. ${lesson.quiz[0].q}`);
     }
   }
 
@@ -164,26 +180,28 @@ export function LessonPlayer({
     if (correct) {
       setLocked(true);
       onEarnStar();
-      speak(pickCheer(), 'cheer');
-      advanceTimer.current = window.setTimeout(() => {
+      speak((gentleMode || videoCacheId) ? ACADEMY_CHEER : pickCheer(), 'cheer');
+      queueAdvance(() => {
         const next = quizIdx + 1;
         if (next < lesson.quiz.length) {
+          setShowHint(false);
           setQuizIdx(next);
           setLocked(false);
           speak(lesson.quiz[next].q);
         } else {
           onLessonComplete?.(lesson.id, lesson.title);
           setPhase('menu');
-          speak('You finished the lesson! Amazing work. Pick another, or try a test!', 'happy');
+          speak((gentleMode || videoCacheId) ? ACADEMY_FINISHED : 'You finished the lesson! Amazing work. Pick another, or try a test!', 'happy');
         }
-      }, 2600);
+      });
     } else {
-      speak(`${pickGentle()} Hint: ${item.hint}`, 'thinking');
+      setShowHint(true);speak(gentleMode ? `Let’s use a clue. ${item.hint}` : `${pickGentle()} Hint: ${item.hint}`, 'thinking');
     }
   }
 
   // ---- Test (scored, gentle) ----
   function startTest() {
+    setReady(false);setShowHint(false);
     const pool = lessons.flatMap((l) => l.quiz);
     const items = (pool.length
       ? [...pool].sort(() => Math.random() - 0.5)
@@ -194,7 +212,7 @@ export function LessonPlayer({
     setTestScore(0);
     setLocked(false);
     setPhase('test');
-    speak(`Test time! No worries — just do your best. ${items[0]?.q ?? ''}`);
+    speak(gentleMode ? `A short check-in. Use what you learned. ${items[0]?.q ?? ''}` : `Test time! No worries — just do your best. ${items[0]?.q ?? ''}`);
   }
   function answerTest(choice: string) {
     if (locked) return;
@@ -209,9 +227,10 @@ export function LessonPlayer({
     } else {
       speak(`Good try! The answer was ${item.answer}. You are learning!`, 'thinking');
     }
-    advanceTimer.current = window.setTimeout(() => {
+    queueAdvance(() => {
       const next = testIdx + 1;
       if (next < testItems.length) {
+        setShowHint(false);
         setTestIdx(next);
         setLocked(false);
         speak(testItems[next].q);
@@ -219,11 +238,11 @@ export function LessonPlayer({
         setPhase('result');
         const finalScore = testScore + (correct ? 1 : 0);
         speak(
-          `You got ${finalScore} out of ${testItems.length}! I am so proud of you, superstar! 🌟`,
+          gentleMode ? `You practiced ${testItems.length} questions. ${finalScore} were correct. Every clue you use helps you learn.` : `You got ${finalScore} out of ${testItems.length}! I am so proud of you, superstar! 🌟`,
           'cheer'
         );
       }
-    }, 2600);
+    });
   }
 
   const currentChoices =
@@ -235,7 +254,7 @@ export function LessonPlayer({
   const onChoice = phase === 'quiz' ? answerQuiz : answerTest;
 
   return (
-    <div className="center">
+    <div className={`center ${focusView ? "academy-focus-view" : ""}`}>
       <div className="row between" style={{ marginBottom: 16 }}>
         <strong style={{ color: tutor.accent, fontSize: '1.2rem' }}>
           {tutor.name} • Lessons
@@ -252,9 +271,11 @@ export function LessonPlayer({
         </button>
       </div>
 
+      {gentleMode && <p className="academy-gentle-note">One idea at a time. Hints are welcome. Continue when you’re ready.</p>}
       {voiceError && <p role="alert" className="muted">{voiceError}</p>}
       {phase === 'menu' ? (
         <div>
+          {(gentleMode||videoCacheId)&&bubble===ACADEMY_FINISHED&&<div className="lesson-stage"><TutorStage tutor={tutor} imageSrc={imageSrc} mood={mood} line={bubble} size={240} videoCacheId={videoCacheId} videoEnabled={videoEnabled&&autoSpeak}/><p className="tutor-speech">{bubble}</p></div>}
           <p className="muted" style={{ fontSize: '1.1rem' }}>
             📗 <strong>NC {gradeBand === 'K' ? 'Kindergarten' : (gradeBand === '1' ? '1st' : '6th') + '-Grade'} {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject === 'africanHeritage' ? 'African Heritage' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
           </p>
@@ -273,7 +294,7 @@ export function LessonPlayer({
               style={{ borderColor: tutor.accent }}
               onClick={startTest}
             >
-              <strong style={{ fontSize: '1.15rem' }}>📝 Take a Test</strong>
+              <strong style={{ fontSize: '1.15rem' }}>{gentleMode ? '📝 Learning check-in' : '📝 Take a Test'}</strong>
               <div className="muted">5 quick questions. Earn stars!</div>
             </div>
             {onGenerateQuestions && (
@@ -299,8 +320,10 @@ export function LessonPlayer({
               imageSrc={imageSrc}
               mood={mood}
               line={bubble}
-              size={380}
-              videoEnabled={videoEnabled && autoSpeak && !readingVoice}
+              size={focusView ? 240 : 380}
+              videoCacheId={videoCacheId}
+              onVideoError={()=>getSpeech().speak(bubble,{voice:effectiveVoice(tutor,voiceOverride),purpose:readingVoice?'reading':undefined,allowSystemFallback:!readingVoice,onError:setVoiceError})}
+              videoEnabled={videoEnabled && autoSpeak && (!readingVoice || gentleMode || !!videoCacheId)}
             />
             {phase === 'test' && (
               <div className="faint">
@@ -316,15 +339,18 @@ export function LessonPlayer({
                   {lesson.steps[stepIdx].visual}
                 </div>
               )}
-              {bubble || '…'}
+              <ReadingWindow text={bubble || '…'} enabled={readingWindow}/>
             </div>
 
             <div className="row" style={{ marginTop: 12 }}>
-              <button className="read-btn" type="button" onClick={() => speak(bubble)}>
+              <button className="read-btn" type="button" onClick={() => speak(bubble,'speaking',true)}>
                 🔊 Say it again
               </button>
             </div>
 
+            {gentleMode && phase === 'teach' && <p className="faint">Step {stepIdx+1} of {lesson?.steps.length}</p>}
+            {gentleMode && currentChoices && <div className="academy-hint"><button className="btn ghost" onClick={()=>setShowHint(h=>!h)}>{showHint?'Hide hint':'Show a hint'}</button>{showHint&&<p>{phase==='quiz'?lesson?.quiz[quizIdx].hint:testItems[testIdx]?.hint}</p>}</div>}
+            {ready && <button className="btn big-btn" onClick={()=>{const action=pendingAction.current;pendingAction.current=null;setReady(false);action?.();}}>Continue when ready →</button>}
             {phase === 'teach' && (
               <button
                 className="btn big-btn"
@@ -336,6 +362,7 @@ export function LessonPlayer({
               </button>
             )}
 
+            {gentleMode&&phase==='quiz'&&bubble!==lesson?.quiz[quizIdx].q&&<p className="academy-question">{lesson?.quiz[quizIdx].q}</p>}
             {currentChoices && (
               <div className="grid cols-3" style={{ marginTop: 18 }}>
                 {currentChoices.map((c) => (

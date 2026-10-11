@@ -52,7 +52,22 @@ async function uploadImage(imageDataUrl: string, auth: string): Promise<string |
     // If it's already an http(s) URL, use it directly.
     if (/^https?:\/\//i.test(imageDataUrl)) return imageDataUrl;
 
-    const blob = await (await fetch(imageDataUrl)).blob();
+    // Electron loads bundled artwork from file://. Browser fetch cannot reliably
+    // read file URLs; an image element can, and canvas produces a genuine PNG.
+    let blob:Blob;
+    if(!/^(data:|blob:)/i.test(imageDataUrl)){
+      const image=await new Promise<HTMLImageElement>((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('Could not load the tutor portrait.'));img.src=imageDataUrl;});
+      const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+      canvas.getContext('2d')!.drawImage(image,0,0);
+      blob=await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Could not prepare the portrait.')),'image/png'));
+    }else blob=await (await fetch(imageDataUrl)).blob();
+    // Bundled portraits use WebP; send a real PNG to the photo-avatar upload.
+    if (blob.type === 'image/webp') {
+      const bitmap = await createImageBitmap(blob);
+      const canvas = document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;
+      canvas.getContext('2d')!.drawImage(bitmap,0,0);bitmap.close();
+      blob = await new Promise<Blob>((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Could not prepare the portrait.')),'image/png'));
+    }
     const form = new FormData();
     form.append('image', blob, 'avatar.png');
     const res = await fetch('https://api.d-id.com/images', {

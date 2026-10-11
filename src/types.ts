@@ -53,6 +53,14 @@ export interface LearningPlan {
 }
 
 export interface Profile {
+  animeAcademyVersion?: 1;
+  animeFocusMode?: boolean;
+  animeReadingWindow?: boolean;
+  animeUseNewPortraits?: boolean;
+  animeJourneys?: number;
+  animeFocusSessions?: number;
+  animeWins?: {at:string;win:string;help:string;next:string}[];
+
   transportEnvironment?: boolean;
   transportTrips?: number;
   id: string;

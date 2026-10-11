@@ -13,6 +13,7 @@ ids=['ranger-jay','hero-kofi','rex','scout-malik','hero-zion','ranger-amari','tr
 names=['Jay · Jungle Journal','Kofi · Amber Shield','Rex · Ancient Giants','Malik · Trail Stories','Zion · Homeward Map','Amari · Clear Skies','Trix · Fern Colors','Noah · Expedition Groove','Musa · Roots and Rivers']
 rosters += [(i,n,'adventure') for i,n in zip(ids,names)]
 rosters += [('vehicle-pip', 'Pip · Happy Rails', 'royal'), ('vehicle-dex', 'Dex · Building Blocks', 'royal'), ('vehicle-sky', 'Sky · Cloud Hopping', 'royal'), ('vehicle-mix', 'Mixie · Mix and Make', 'royal'), ('vehicle-helper', 'Helper · Helping Hands', 'royal'), ('vehicle-dash', 'Dash · Color Cargo', 'royal'), ('vehicle-rhythm', 'Rolo · Rolling Rhythm', 'royal'), ('vehicle-heli', 'Heli · Clear Skies', 'royal'), ('vehicle-atlas', 'Atlas · World Wings', 'royal')]
+rosters += [('tutor-noah','Noah · Steady Starlight','anime')]
 scale=[0,2,4,7,9,12,14,16]
 manifest={}
 for idx,(id,title,kind) in enumerate(rosters):

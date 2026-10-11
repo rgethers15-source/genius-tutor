@@ -8,7 +8,7 @@ test('royal quests cover nine subjects with distinct answerable choices',()=>{
 });
 test('every tutor and the royal prince has a nonempty original instrumental',()=>{
  const themes=JSON.parse(readFileSync(new URL('../src/data/tutorThemes.json',import.meta.url)));
- assert.equal(Object.keys(themes).length,32);
- assert.equal(new Set(Object.values(themes).map(t=>t.url)).size,32);
+ assert.equal(Object.keys(themes).length,33);
+ assert.equal(new Set(Object.values(themes).map(t=>t.url)).size,33);
  for(const t of Object.values(themes)){assert.ok(t.title);assert.ok(statSync(new URL('../public/'+t.url.replace(/^\.\//,''),import.meta.url)).size>100000);}
 });

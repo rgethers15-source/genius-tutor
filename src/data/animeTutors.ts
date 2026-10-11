@@ -5,8 +5,8 @@ import type { SceneKind } from './rooms';
 // ============================================================
 // Madeline's anime tutor roster.
 //
-// Five tutors, each matching one of the character portraits provided.
-// The caregiver uploads each character's image on first run; the image
+// Six original anime-realism academy guides, with bundled portraits.
+// Optional caregiver uploads and generated images are retained; each image
 // (a data URL) is stored per-tutor in the profile. Each tutor teaches a
 // subject with a gentle personality and a distinct voice.
 // ============================================================
@@ -31,23 +31,15 @@ export interface AnimeTutor {
   videoVoiceId: string;
 }
 
-// Voices: warm, natural African American MALE voices. preferredVoice holds
-// an ElevenLabs voice ID (used directly by the ElevenLabs provider). The IDs
-// below are warm male voices; for the most authentic African American sound,
-// add any of these ElevenLabs library voices to your account and paste the
-// ID into Settings → per-tutor voice override:
-//   • "Knox"  • "Marcus"  • "Caleb"  • "Jeremiah"  • "Darnell"  • "Theo"
-// (Search the ElevenLabs Voice Library for African American male voices,
-//  click "Add to my voices", then copy the voice ID.)
-// Rates are kept a touch slower for easy listening (dyslexia/ADHD-friendly).
+// Natural male guide voices can be previewed and changed per tutor.
 export const ANIME_TUTORS: AnimeTutor[] = [
   {
     id: 'tutor-kaito',
     name: 'Kaito',
     subject: 'reading',
-    tagline: 'Your calm reading guide',
+    tagline: 'Your calm star-library guide',
     greeting: "Hi Madeline! I'm Kaito. Let's read together. I will help you with every word. You've got this!",
-    // Warm, deep African American male (default: deep male premade voice)
+    // Warm, deep male (default: deep male premade voice)
     voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'nPczCjzI2devNBz1zQrb' },
     accent: '#e8a04b',
     fallbackGlyph: '📖',
@@ -58,9 +50,9 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     id: 'tutor-ren',
     name: 'Ren',
     subject: 'math',
-    tagline: 'Your friendly math buddy',
+    tagline: 'Your patient constellation strategist',
     greeting: "Hey Madeline! I'm Ren. Math is like a puzzle, and we solve it one small step at a time. Ready?",
-    // Warm, confident African American male
+    // Warm, confident male
     voice: { rate: 0.95, pitch: 1.0, gender: 'male', preferredVoice: 'cjVigY5qzO86Huf0OWal' },
     accent: '#d98a5a',
     fallbackGlyph: '🔢',
@@ -71,9 +63,9 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     id: 'tutor-sora',
     name: 'Sora',
     subject: 'science',
-    tagline: 'Your curious science explorer',
+    tagline: 'Your observatory science explorer',
     greeting: "Hello Madeline! I'm Sora. Science is full of cool surprises. Let's discover something amazing!",
-    // Smooth, friendly African American male
+    // Smooth, friendly male
     voice: { rate: 0.97, pitch: 1.0, gender: 'male', preferredVoice: 'bIHbv24MWmeRgasZH58o' },
     accent: '#e39a6f',
     fallbackGlyph: '🔬',
@@ -84,9 +76,9 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     id: 'tutor-akira',
     name: 'Akira',
     subject: 'writing',
-    tagline: 'Your gentle writing coach',
+    tagline: 'Your story-studio writing coach',
     greeting: "Hi Madeline! I'm Akira. Your ideas are wonderful. Let's turn them into words, one at a time.",
-    // Warm, gentle African American male
+    // Warm, gentle male
     voice: { rate: 0.92, pitch: 1.0, gender: 'male', preferredVoice: 'iP95p4xoKVk53GoZ742B' },
     accent: '#cf8752',
     fallbackGlyph: '✏️',
@@ -97,15 +89,16 @@ export const ANIME_TUTORS: AnimeTutor[] = [
     id: 'tutor-haru',
     name: 'Haru',
     subject: 'socialStudies',
-    tagline: 'Your storytelling history friend',
+    tagline: 'Your sky-garden history guide',
     greeting: "Hey Madeline! I'm Haru. History is full of great stories. Let me tell you one and we'll explore it!",
-    // Relaxed, storytelling African American male
+    // Relaxed, storytelling male
     voice: { rate: 0.93, pitch: 1.0, gender: 'male', preferredVoice: 'onwK4e9ZLuTAKqWW03F9' },
     accent: '#e0925c',
     fallbackGlyph: '🌍',
     scene: 'galaxy',
     videoVoiceId: 'en-US-JasonNeural',
   },
+  {id:'tutor-noah',name:'Noah',subject:'music',tagline:'Your rhythm and focus guide',greeting:"Hey Madeline, I’m Noah. Your pace matters. Let’s find a steady rhythm and take one small step.",voice:{rate:.9,pitch:1,gender:'male',preferredVoice:'iP95p4xoKVk53GoZ742B'},accent:'#c6b2e3',fallbackGlyph:'🎧',scene:'aurora',videoVoiceId:'en-US-AndrewMultilingualNeural'},
 ];
 
 export function getAnimeTutor(id: string | undefined): AnimeTutor | undefined {
@@ -123,3 +116,6 @@ export function effectiveVoice(tutor: AnimeTutor, override?: string): VoiceConfi
 export function tutorForSubject(subject: Subject): AnimeTutor | undefined {
   return ANIME_TUTORS.find((t) => t.subject === subject);
 }
+
+export const ACADEMY_DIRECTION='An original male anime academy guide: youthful, warm, thoughtful and confidently encouraging. Natural clear American English, gentle pauses between ideas, calm conversational energy. Support a sixth-grade learner with short concrete explanations. No flirting, romance, baby talk, shouting, singing or exaggerated pitch. Keep isolated phonemes precise.';
+export const academyPortrait=(id:string)=>`./madeline/guide-${Math.max(0,ANIME_TUTORS.findIndex(t=>t.id===id))}.webp`;
