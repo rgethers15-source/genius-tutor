@@ -113,7 +113,7 @@ export function LessonPlayer({
       }
       // If a cached talking-head video will play for this line, let the
       // video's own audio speak — skip TTS to avoid two voices at once.
-      if (videoEnabled && (!readingVoice || gentleMode)) {
+      if (videoEnabled && (!readingVoice || gentleMode || !!videoCacheId)) {
         getCachedVideo(videoCacheId ?? tutor.id, text).then((url) => {
           if (request !== speechRequest.current) return;
           if (url) {
@@ -167,7 +167,7 @@ export function LessonPlayer({
       setPhase('quiz');
       setQuizIdx(0);
       setLocked(false);
-      speak(gentleMode ? lesson.quiz[0].q : `Great! Now let's try a question. ${lesson.quiz[0].q}`);
+      speak((gentleMode || videoCacheId) ? lesson.quiz[0].q : `Great! Now let's try a question. ${lesson.quiz[0].q}`);
     }
   }
 
@@ -180,7 +180,7 @@ export function LessonPlayer({
     if (correct) {
       setLocked(true);
       onEarnStar();
-      speak(gentleMode ? ACADEMY_CHEER : pickCheer(), 'cheer');
+      speak((gentleMode || videoCacheId) ? ACADEMY_CHEER : pickCheer(), 'cheer');
       queueAdvance(() => {
         const next = quizIdx + 1;
         if (next < lesson.quiz.length) {
@@ -191,7 +191,7 @@ export function LessonPlayer({
         } else {
           onLessonComplete?.(lesson.id, lesson.title);
           setPhase('menu');
-          speak(gentleMode ? ACADEMY_FINISHED : 'You finished the lesson! Amazing work. Pick another, or try a test!', 'happy');
+          speak((gentleMode || videoCacheId) ? ACADEMY_FINISHED : 'You finished the lesson! Amazing work. Pick another, or try a test!', 'happy');
         }
       });
     } else {
@@ -275,7 +275,7 @@ export function LessonPlayer({
       {voiceError && <p role="alert" className="muted">{voiceError}</p>}
       {phase === 'menu' ? (
         <div>
-          {gentleMode&&bubble===ACADEMY_FINISHED&&<div className="lesson-stage"><TutorStage tutor={tutor} imageSrc={imageSrc} mood={mood} line={bubble} size={240} videoCacheId={videoCacheId} videoEnabled={videoEnabled&&autoSpeak}/><p className="tutor-speech">{bubble}</p></div>}
+          {(gentleMode||videoCacheId)&&bubble===ACADEMY_FINISHED&&<div className="lesson-stage"><TutorStage tutor={tutor} imageSrc={imageSrc} mood={mood} line={bubble} size={240} videoCacheId={videoCacheId} videoEnabled={videoEnabled&&autoSpeak}/><p className="tutor-speech">{bubble}</p></div>}
           <p className="muted" style={{ fontSize: '1.1rem' }}>
             📗 <strong>NC {gradeBand === 'K' ? 'Kindergarten' : (gradeBand === '1' ? '1st' : '6th') + '-Grade'} {tutor.subject === 'socialStudies' ? 'Social Studies' : tutor.subject === 'africanHeritage' ? 'African Heritage' : tutor.subject.charAt(0).toUpperCase() + tutor.subject.slice(1)}</strong> — pick a lesson to learn, or take a fun test!
           </p>
@@ -323,7 +323,7 @@ export function LessonPlayer({
               size={focusView ? 240 : 380}
               videoCacheId={videoCacheId}
               onVideoError={()=>getSpeech().speak(bubble,{voice:effectiveVoice(tutor,voiceOverride),purpose:readingVoice?'reading':undefined,allowSystemFallback:!readingVoice,onError:setVoiceError})}
-              videoEnabled={videoEnabled && autoSpeak && (!readingVoice || gentleMode)}
+              videoEnabled={videoEnabled && autoSpeak && (!readingVoice || gentleMode || !!videoCacheId)}
             />
             {phase === 'test' && (
               <div className="faint">
