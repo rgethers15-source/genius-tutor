@@ -107,7 +107,7 @@ export function getAnimeTutor(id: string | undefined): AnimeTutor | undefined {
 
 /** Voice config for a tutor, applying any per-tutor override from the profile. */
 export function effectiveVoice(tutor: AnimeTutor, override?: string): VoiceConfig {
-  if (override && (override.trim().length >= 15 || ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral'].includes(override.trim().toLowerCase()))) {
+  if (override && (override.trim().length >= 15 || ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral', 'ash', 'ballad', 'verse', 'cedar'].includes(override.trim().toLowerCase()))) {
     return { ...tutor.voice, preferredVoice: override.trim() };
   }
   return tutor.voice;
@@ -117,5 +117,15 @@ export function tutorForSubject(subject: Subject): AnimeTutor | undefined {
   return ANIME_TUTORS.find((t) => t.subject === subject);
 }
 
-export const ACADEMY_DIRECTION='An original male anime academy guide: youthful, warm, thoughtful and confidently encouraging. Natural clear American English, gentle pauses between ideas, calm conversational energy. Support a sixth-grade learner with short concrete explanations. No flirting, romance, baby talk, shouting, singing or exaggerated pitch. Keep isolated phonemes precise.';
+export const ACADEMY_DIRECTION='An original fictional teen male anime guide with a youthful, light, natural voice. Contemporary urban American conversational delivery: relaxed, friendly, confident, expressive and easygoing, like a supportive classmate. Avoid a deep adult announcer voice or an exaggerated accent. Read the supplied words exactly; do not add slang or change grammar. Encourage without condescension. Keep a comfortable pace and brief pauses between ideas. No flirting, romance, baby talk, shouting, singing or artificial pitch shifting. During reading, prioritize accurate consonants and vowel sounds over character style.';
+export const ACADEMY_VOICES: Record<string, {voice:string; personality:string}> = {
+ 'tutor-kaito':{voice:'ash',personality:'Soft, thoughtful and reassuring; light youthful resonance, unhurried clear phrasing.'},
+ 'tutor-ren':{voice:'verse',personality:'Easygoing, confident and upbeat; friendly conversational rhythm, never booming.'},
+ 'tutor-sora':{voice:'echo',personality:'Curious and animated; bright youthful energy, never rushed.'},
+ 'tutor-akira':{voice:'ballad',personality:'Expressive, warm and creative; gentle emphasis on interesting words.'},
+ 'tutor-haru':{voice:'ash',personality:'Relaxed storyteller; lively natural inflection and inviting curiosity.'},
+ 'tutor-noah':{voice:'verse',personality:'Chill and steady; mellow youthful speaking voice, not singing or rapping.'},
+};
+export const academyVoiceFor=(id:string)=>ACADEMY_VOICES[id]?.voice??'ash';
+export const academyDeliveryFor=(id:string)=>ACADEMY_VOICES[id]?.personality??'';
 export const academyPortrait=(id:string)=>`./madeline/guide-${Math.max(0,ANIME_TUTORS.findIndex(t=>t.id===id))}.webp`;

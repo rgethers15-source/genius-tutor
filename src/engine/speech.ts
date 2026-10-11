@@ -13,6 +13,8 @@ import { READING_INSTRUCTIONS, soundInstructions, phonemeMarkup, type Pronunciat
 export interface VoiceConfig {
   /** Preferred voice name substring to match (e.g. "Google UK English Male"). */
   preferredVoice?: string;
+  /** Optional character delivery; isolated phonemes always use precise articulation. */
+  instructions?: string;
   /** Speaking speed. Lower = slower/calmer (good for dyslexia/ADHD). */
   rate: number;
   /** Voice pitch. */
@@ -210,8 +212,9 @@ export function openAiSpeechProvider(apiKey: string, direction?: string): Speech
   return remoteSpeechProvider(apiKey, async (text, opts, signal) => {
     const cfg = opts.voice;
     const preferred = cfg.preferredVoice?.toLowerCase();
-    const voice = preferred && ['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer', 'coral'].includes(preferred)
+    const voice = preferred && ['alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'onyx', 'nova', 'sage', 'shimmer', 'verse', 'marin', 'cedar'].includes(preferred)
       ? preferred : cfg.gender === 'female' ? 'nova' : 'onyx';
+    const delivery = [direction, cfg.instructions].filter(Boolean).join(' ');
     const res = await fetch('https://api.openai.com/v1/audio/speech', {
       method: 'POST',
       signal,
@@ -221,7 +224,7 @@ export function openAiSpeechProvider(apiKey: string, direction?: string): Speech
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini-tts', voice, input: text,
-        ...(opts.purpose === 'reading' ? { instructions: opts.pronunciation ? soundInstructions(opts.pronunciation) : `${direction ?? ""} ${READING_INSTRUCTIONS}` } : direction ? { instructions: direction } : {}),
+        ...(opts.purpose === 'reading' ? { instructions: opts.pronunciation ? soundInstructions(opts.pronunciation) : `${delivery} ${READING_INSTRUCTIONS}` } : delivery ? { instructions: delivery } : {}),
         speed: Math.min(4, Math.max(0.25, cfg.rate)),
       }),
     });
